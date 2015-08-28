@@ -1,0 +1,40 @@
+{% extends "members/main.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<h1>Membership list</h1>
+
+
+{% if membership_list %}
+<a class="btn btn-default" href="{% url 'membershipList' %}">Show All</a>
+<a class="btn btn-default" href="{% url 'membershipList' %}?show=active">Show Active</a>
+<a class="btn btn-default" href="{% url 'membershipList'  %}?show=expired">Show Expired</a>
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Member First Name</th>
+      <th>Member Last Name</th>
+	  <th>Start Date</th>
+	  <th>End Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for m in membership_list %}
+    <tr>
+      <td>{{m.member.first_name}}</td>
+      <td>{{m.member.last_name}}</td>
+      <td>{{m.start_date}}</td>
+	  <td>{{m.expire_date}}</td>
+    </tr>
+      {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>
+  No memberships...
+</p>
+{% endif %}
+
+<a class="btn btn-default" href="{% url 'addMember' %}">Add new member</a>
+
+{% endblock %}

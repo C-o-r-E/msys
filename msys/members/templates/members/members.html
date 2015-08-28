@@ -1,0 +1,35 @@
+{% extends "members/main.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<h1>Member list</h1>
+
+
+{% if member_list %}
+<table class="table table-condensed table-hover">
+  <thead>
+    <tr>
+      <th>Number</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for mem in member_list %}
+    <tr>
+      <td>{{mem.number}}</td>
+      <td><a href="{% url 'memberDetails' mem.pk %}">{{mem.first_name}}</a></td>
+      <td>{{mem.last_name}}</td>
+    </tr>
+      {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>
+  No members...
+</p>
+{% endif %}
+
+<a class="btn btn-default" href="{% url 'addMember' %}">Add new member</a>
+
+{% endblock %}

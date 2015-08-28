@@ -1,0 +1,43 @@
+{% extends "members/main.html" %}
+{% load staticfiles %}
+{% block content %}
+
+{% if notifications %}
+
+<div class="container">
+    {% for msg in notifications %}
+        <p class="bg-warning">{{ msg }}</p>
+    {% endfor %}
+</div>
+
+{% endif %}
+
+{% if logged_in %}
+
+<div class="container">
+  <p class="bg-warning">You are already logged in</p>
+</div>
+
+{% else %}
+
+<form role="form" action="{% url 'userLogin' %}" method="post">
+    {% csrf_token %}
+    <div group="form-group">
+        <label>Username</label>
+        <input type="text" class="form-control" name="usr" placeholder="Username">
+    </div>
+    
+    <div group="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control" name="pass" placeholder="Password">
+    </div>
+    
+    <button type="submit" class="btn btn-default">Submit</button>
+    
+</form>
+
+
+{% endif %}
+
+{% endblock %}
+

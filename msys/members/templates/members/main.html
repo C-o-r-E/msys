@@ -1,0 +1,44 @@
+<!DOCTYPE html>{% load staticfiles %}
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Helios Makerspace Member System</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.css" %}" />
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script type="text/javascript" src="{% static "js/bootstrap.js" %}"></script>
+  <script lang="javascript">
+  $(function() {
+    function go_en() {
+      $(":lang(en)").show();
+      $(":lang(fr)").hide();
+      document.cookie = "lang_pref=en; expires=Wed, 07 Sep 2039 11:47:35 GMT; path=/"
+    }
+    function go_fr() {
+      $(":lang(en)").hide();
+      $(":lang(fr)").show();
+      document.cookie = "lang_pref=fr; expires=Wed, 07 Sep 2039 11:47:35 GMT; path=/"
+    }
+
+    $("#do_en").click(go_en);
+    $("#do_fr").click(go_fr);
+
+    if (document.cookie.match(/lang_pref=en/)) {
+      go_en();
+    } else {
+      go_fr();
+    }
+  });
+  </script>
+  <style type="text/css">
+  .navbar-static-top {
+  margin-bottom: 19px;
+  }
+  </style>
+</head>
+<body>
+  <div id="content" class="container">
+{% block content %}Error 418 I am a teapot{% endblock %}
+  </div>
+</body>
+</html>

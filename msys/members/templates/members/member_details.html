@@ -1,0 +1,150 @@
+{% extends "members/main.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<h1>Member Details</h1>
+
+{% if member %}
+
+<table class="table table-condensed table-hover">
+  <tbody>
+	
+	<tr>
+	  <td>
+		Number
+	  </td>
+	  <td>
+		{{ member.number }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		First Name
+	  </td>
+	  <td>
+		{{ member.first_name }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		Last Name
+	  </td>
+	  <td>
+		{{ member.last_name }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		Type
+	  </td>
+	  <td>
+		{{ member.type }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		Birth Date
+	  </td>
+	  <td>
+		{{ member.birth_date }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		First Seen
+	  </td>
+	  <td>
+		{{ member.first_seen_date }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		Last Seen
+	  </td>
+	  <td>
+		{{ member.last_seen_date }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		Address
+	  </td>
+	  <td>
+		{{ member.address }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		City
+	  </td>
+	  <td>
+		{{ member.city }}
+	  </td>
+	</tr>  
+
+	<tr>
+	  <td>
+		Postal Code
+	  </td>
+	  <td>
+		{{ member.postal_code }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		Phone Number
+	  </td>
+	  <td>
+		{{ member.phone_number }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		Email
+	  </td>
+	  <td>
+		{{ member.email }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		Emergency Contact
+	  </td>
+	  <td>
+		{{ member.emergency_contact }}
+	  </td>
+	</tr>
+
+	<tr>
+	  <td>
+		Emergency Phone Number
+	  </td>
+	  <td>
+		{{ member.emergency_phone_number }}
+	  </td>
+	</tr>
+
+  </tbody>
+</table>
+
+<a class="btn btn-default" href="{% url 'editDetails' member.pk %}">Edit Member Details</a>
+
+{% else %}
+
+Member does not exist.
+
+{% endif %}
+
+{% endblock %}
+
