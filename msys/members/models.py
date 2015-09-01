@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 from django.forms import ModelForm
 
@@ -39,6 +40,17 @@ class Membership(models.Model):
     member = models.ForeignKey(Member)
     start_date = models.DateField()
     expire_date = models.DateField()
+
+    def __str__(self):
+        ret = str(self.member) + ": " + str(self.start_date) + " to " + str(self.expire_date) 
+
+        if self.expire_date < datetime.date.today():
+            ret += ' (expired)'
+        else:
+            delta = self.expire_date - datetime.date.today()
+            ret += ' (' + str(delta.days) + ' remaining)'
+
+        return ret
 
 class MemberForm(ModelForm):
     class Meta:
