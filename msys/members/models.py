@@ -60,3 +60,7 @@ class MemberForm(ModelForm):
                   'postal_code', 'phone_number', 'email',
                   'emergency_contact', 'emergency_phone_number']
 
+class AccessBlock(models.Model):
+    member = models.ForeignKey(Member)
+    start = models.DateTimeField()
+    end = models.DateTimeField()
