@@ -4,11 +4,11 @@
 
 <h1>Membership list</h1>
 
-
-{% if membership_list %}
 <a class="btn btn-default" href="{% url 'membershipList' %}">Show All</a>
 <a class="btn btn-default" href="{% url 'membershipList' %}?show=active">Show Active</a>
 <a class="btn btn-default" href="{% url 'membershipList'  %}?show=expired">Show Expired</a>
+
+{% if membership_list %}
 <table class="table table-condensed table-hover">
   <thead>
     <tr>
