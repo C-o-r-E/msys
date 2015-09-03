@@ -1,4 +1,4 @@
-from members.models import Member, MemberForm, Membership
+from members.models import Member, MemberForm, Membership, AccessBlock
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
@@ -45,10 +45,16 @@ def memberDetails(request, member_id):
         return render(request, 'members/home.html', {})
 
     logged_in = True
-    member = get_object_or_404(Member, pk=member_id)
+    mem = get_object_or_404(Member, pk=member_id)
+
+    accessList = AccessBlock.objects.filter(member = mem)
 
 
-    return render(request, 'members/member_details.html', {'member': member, 'logged_in': logged_in})
+    return render(request,
+                  'members/member_details.html',
+                  {'member': mem,
+                   'access_list': accessList,
+                   'logged_in': logged_in})
 
 def editDetails(request, member_id):
     if not request.user.is_authenticated():

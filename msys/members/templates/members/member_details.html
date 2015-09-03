@@ -140,11 +140,20 @@
 
 <a class="btn btn-default" href="{% url 'editDetails' member.pk %}">Edit Member Details</a>
 
+<h1>Access Times</h1>
+
+{% if access_list %}
+{% for access_block in access_list %}
+<p>{{access_block}}</p>
+{% endfor %}
+
+{% endif %} {# if access_list #}
+
 {% else %}
 
 Member does not exist.
 
-{% endif %}
+{% endif %} {# if member #}
 
 {% endblock %}
 
