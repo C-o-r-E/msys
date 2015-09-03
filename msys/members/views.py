@@ -103,11 +103,12 @@ def memberships(request):
         return render(request, 'members/home.html', {})
 
     logged_in = True
-    membershipList = Membership.objects.all()
+    mList = Membership.objects.all()
 
-    if request.method == 'GET' and request.GET.has_key('show'):
+    if request.method == 'GET' and 'show' in request.GET:
         if request.GET['show'] == 'expired':
-            membershipList = Membership.objects.filter(expire_date__lt = datetime.datetime.today())
+            mList = Membership.objects.filter(expire_date__lt = datetime.datetime.today())
         elif request.GET['show'] == 'active':
-            membershipList = Membership.objects.filter(expire_date__gte = datetime.datetime.today())
-    return render(request, 'members/memberships.html', {'membership_list': membershipList, 'logged_in': logged_in})
+            mList = Membership.objects.filter(expire_date__gte = datetime.datetime.today())
+            
+    return render(request, 'members/memberships.html', {'membership_list': mList, 'logged_in': logged_in})

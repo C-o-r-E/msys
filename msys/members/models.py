@@ -81,4 +81,5 @@ class AccessBlock(models.Model):
 
     def __str__(self):
         ret = self.day + ' from ' + str(self.start) + ' to ' + str(self.end)
+        ret += ' (' + str(self.member) + ')'
         return ret
