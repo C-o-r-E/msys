@@ -61,6 +61,24 @@ class MemberForm(ModelForm):
                   'emergency_contact', 'emergency_phone_number']
 
 class AccessBlock(models.Model):
+    DAY_CHOICES = (
+        ('mon', 'Monday'),
+        ('tues', 'Tuesday'),
+        ('wed', 'Wednesday'),
+        ('thurs', 'Thursday'),
+        ('fri', 'Friday'),
+        ('sat', 'Saturday'),
+        ('sun', 'Sunday'),
+        ('all', 'Every Day'),
+    )
+    
     member = models.ForeignKey(Member)
-    start = models.DateTimeField()
-    end = models.DateTimeField()
+    day = models.CharField(max_length = 8,
+                           choices = DAY_CHOICES,
+                           default = 'sat')
+    start = models.TimeField(default = datetime.time.min)
+    end = models.TimeField(default = datetime.time.max)
+
+    def __str__(self):
+        ret = self.day + ' from ' + str(self.start) + ' to ' + str(self.end)
+        return ret
