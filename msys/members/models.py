@@ -32,6 +32,31 @@ class Member(models.Model):
     emergency_contact = models.CharField(max_length=200)
     emergency_phone_number = models.CharField(max_length=200)
 
+    def has_access_now(self):
+        day2day = { 'mon': 0,
+                    'tues': 1,
+                    'wed': 2,
+                    'thurs': 3,
+                    'fri': 4,
+                    'sat': 5,
+                    'sun': 6
+        }
+        #get a list of access blocks owned by the member
+        aList = AccessBlock.objects.filter(member=self)
+        for block in aList:
+            if block.day == 'all':
+                #now just check if we are between times
+                tNow = datetime.datetime.now().time()
+                if block.start < tNow and tNow < block.end:
+                    return True
+                
+            elif block.day in day2day:
+                if day2day[block.day] == datetime.date.today().day:
+                    tNow = datetime.datetime.now().time()
+                    if block.start < tNow and tNow < block.end:
+                        return True
+                pass
+        return false
 
     def __str__(self):
         return self.first_name + " " + self.last_name
