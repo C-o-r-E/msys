@@ -54,7 +54,24 @@ def memberDetails(request, member_id):
                   'members/member_details.html',
                   {'member': mem,
                    'access_list': accessList,
-                   'logged_in': logged_in})
+                   'logged_in': logged_in}
+    )
+
+def memberDetailsByRFID(request, rfid):
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+
+    card = get_object_or_404(AccessCard, unique_id=rfid)
+    mem = card.member
+
+    return render(request,
+                  'members/member_details.html',
+                  {'member': mem,
+                   'access_list': accessList,
+                   'logged_in': logged_in}
+    )
 
 def editDetails(request, member_id):
     if not request.user.is_authenticated():

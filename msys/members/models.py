@@ -113,5 +113,14 @@ class AccessCard(models.Model):
     member = models.ForeignKey(Member)
     unique_id = models.CharField(max_length = 30)
 
+    def numeric(self):
+        byteList = self.unique_id.split()
+        num = 0
+        for b in byteList:
+            num = num << 8
+            num = num + int(b, base=16)
+
+        return num
+    
     def __str__(self):
         return self.unique_id
