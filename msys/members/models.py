@@ -87,3 +87,6 @@ class AccessBlock(models.Model):
 class AccessCard(models.Model):
     member = models.ForeignKey(Member)
     unique_id = models.CharField(max_length = 30)
+
+    def __str__(self):
+        return self.unique_id
