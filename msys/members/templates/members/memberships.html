@@ -2,14 +2,16 @@
 {% load staticfiles %}
 {% block content %}
 
-<h1>Membership list</h1>
+<div class="page-header">
+  <h1>Membership list</h1>
+</div>
 
 <a class="btn btn-default" href="{% url 'membershipList' %}">Show All</a>
 <a class="btn btn-default" href="{% url 'membershipList' %}?show=active">Show Active</a>
 <a class="btn btn-default" href="{% url 'membershipList'  %}?show=expired">Show Expired</a>
 
 {% if membership_list %}
-<table class="table table-condensed table-hover">
+<table class="table table-striped table-hover">
   <thead>
     <tr>
       <th>Member First Name</th>
@@ -35,6 +37,5 @@
 </p>
 {% endif %}
 
-<a class="btn btn-default" href="{% url 'addMember' %}">Add new member</a>
 
 {% endblock %}
