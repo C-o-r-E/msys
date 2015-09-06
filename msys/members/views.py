@@ -48,12 +48,13 @@ def memberDetails(request, member_id):
     mem = get_object_or_404(Member, pk=member_id)
 
     accessList = AccessBlock.objects.filter(member = mem)
-
+    cards = AccessCard.objects.filter(member = mem)
 
     return render(request,
                   'members/member_details.html',
                   {'member': mem,
                    'access_list': accessList,
+                   'access_cards': cards,
                    'logged_in': logged_in}
     )
 
