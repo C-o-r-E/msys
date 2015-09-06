@@ -86,9 +86,19 @@
   </nav>
   <!-- end NAVBAR -->
 
+  {% if msg_info %}
+  <div class="panel panel-info">
+	<div class="panel-heading">
+      <h3 class="panel-title">Info</h3>
+	</div>
+	<div class="panel-body">
+      {{msg_info}}
+	</div>
+  </div>
+  {% endif %}
   
   <div id="content" class="container">
-	{% block content %}Error 418 I am a teapot{% endblock %}
+	{% block content %}<!--Error 418 I am a teapot-->{% endblock %}
   </div>
 </body>
 </html>

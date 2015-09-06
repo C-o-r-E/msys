@@ -143,12 +143,20 @@ def addMembership(request):
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
+    logged_in = True
     if request.method == 'POST':
         msForm = MembershipForm(request.POST)
         if msForm.is_valid():
             newMembership = msForm.save(commit=False)
             newMembership.save()
-            return HttpResponseRedirect('../')
+            info = 'Created new membership'
+            
+
+            mList = Membership.objects.all()
+            return render(request, 'members/main.html',
+                          {'membership_list': mList,
+                           'msg_info': info,
+                           'logged_in': logged_in, })
 
     else:
         msForm = MembershipForm()
