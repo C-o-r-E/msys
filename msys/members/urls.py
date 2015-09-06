@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^$', views.members, name='memberList'),
     url(r'^add/$', views.addMember, name='addMember'),
     url(r'^details/(?P<member_id>\d+)/$', views.memberDetails, name='memberDetails'),
+    url(r'^byID/(?P<rfid>[ A-Fa-f0-9]+)/$', views.memberDetailsByRFID, name='memberDetailsByRFID'),
     url(r'^edit/(?P<member_id>\d+)/$', views.editDetails, name='editDetails'),
     url(r'^memberships/$', views.memberships, name='membershipList'),
     url(r'^login/$', views.user_login, name='userLogin'),

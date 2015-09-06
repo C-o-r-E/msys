@@ -1,4 +1,4 @@
-from members.models import Member, MemberForm, Membership, AccessBlock
+from members.models import Member, MemberForm, Membership, AccessBlock, AccessCard
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
@@ -62,9 +62,11 @@ def memberDetailsByRFID(request, rfid):
         return render(request, 'members/home.html', {})
 
     logged_in = True
-
+    
     card = get_object_or_404(AccessCard, unique_id=rfid)
     mem = card.member
+
+    accessList = AccessBlock.objects.filter(member = mem)
 
     return render(request,
                   'members/member_details.html',
