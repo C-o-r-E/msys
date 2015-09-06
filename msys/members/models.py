@@ -77,14 +77,6 @@ class Membership(models.Model):
 
         return ret
 
-class MemberForm(ModelForm):
-    class Meta:
-        model = Member
-        fields = ['type', 'first_name', 'last_name',
-                  'birth_date', 'address', 'city',
-                  'postal_code', 'phone_number', 'email',
-                  'emergency_contact', 'emergency_phone_number']
-
 class AccessBlock(models.Model):
     DAY_CHOICES = (
         ('mon', 'Monday'),
@@ -123,4 +115,27 @@ class AccessCard(models.Model):
         return num
     
     def __str__(self):
-        return self.unique_id
+        ret = self.unique_id
+        ret += ' (' + str(self.member) + ')'
+        return ret
+
+
+
+
+    ############### Forms #############
+
+class MemberForm(ModelForm):
+    class Meta:
+        model = Member
+        fields = ['type', 'first_name', 'last_name',
+                  'birth_date', 'address', 'city',
+                  'postal_code', 'phone_number', 'email',
+                  'emergency_contact', 'emergency_phone_number']
+
+class MembershipForm(ModelForm):
+    class Meta:
+        model = Membership
+        fields = ['member',
+                  'start_date', 'expire_date']
+
+        

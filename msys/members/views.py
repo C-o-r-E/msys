@@ -1,4 +1,4 @@
-from members.models import Member, MemberForm, Membership, AccessBlock, AccessCard
+from members.models import *
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
@@ -137,3 +137,33 @@ def memberships(request):
             mList = Membership.objects.filter(expire_date__gte = datetime.datetime.today())
             
     return render(request, 'members/memberships.html', {'membership_list': mList, 'logged_in': logged_in})
+
+def addMembership(request):
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    if request.method == 'POST':
+        msForm = MembershipForm(request.POST)
+        if msForm.is_valid():
+            newMembership = msForm.save(commit=False)
+            newMembership.save()
+            return HttpResponseRedirect('../')
+
+    else:
+        msForm = MembershipForm()
+
+    logged_in = True
+    
+    
+    return render(request, 'members/add_membership.html', {'ms_form': msForm, 'logged_in': logged_in})
+
+
+
+def cards(request):
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    cards = AccessCard.objects.all()
+
+    return render(request, 'members/access_cards.html', {'card_list': cards, 'logged_in': logged_in})

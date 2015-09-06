@@ -3,11 +3,11 @@
 {% block content %}
 
 <div class="page-header">
-  <h1>Add a new member</h1>
+  <h1>Create a new membership</h1>
 </div>
 
-<form class="form-horizontal" role="form" action="{% url 'addMember' %}" method="post"> {% csrf_token %}
-  {% for field in mem_form %}
+<form class="form-horizontal" role="form" action="{% url 'addMembership' %}" method="post"> {% csrf_token %}
+  {% for field in ms_form %}
   <div class="form-group">
 	 {{ field.errors }}
 	 {{ field.label_tag }} {{ field }}

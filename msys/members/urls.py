@@ -9,6 +9,8 @@ urlpatterns = [
     url(r'^byID/(?P<rfid>[ A-Fa-f0-9]+)/$', views.memberDetailsByRFID, name='memberDetailsByRFID'),
     url(r'^edit/(?P<member_id>\d+)/$', views.editDetails, name='editDetails'),
     url(r'^memberships/$', views.memberships, name='membershipList'),
+    url(r'^memberships/add/$', views.addMembership, name='addMembership'),
+    url(r'^cards/$', views.cards, name='cardList'),
     url(r'^login/$', views.user_login, name='userLogin'),
     url(r'^logout/$', views.user_logout, name='userLogout'),
 ]
