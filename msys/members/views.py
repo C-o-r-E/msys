@@ -177,6 +177,34 @@ def cards(request):
 
     return render(request, 'members/access_cards.html', {'card_list': cards, 'logged_in': logged_in})
 
+
+def addCard(request):
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    if request.method == 'POST':
+        cForm = CardForm(request.POST)
+        if cForm.is_valid():
+            newCard = cForm.save(commit=False)
+            newCard.save()
+            info = 'Created new Access Card'
+            
+
+            cList = AccessCard.objects.all()
+            return render(request, 'members/main.html',
+                          {'card_list': cList,
+                           'msg_info': info,
+                           'logged_in': logged_in, })
+
+    else:
+        cForm = CardForm()
+
+    logged_in = True
+    
+    
+    return render(request, 'members/add_card.html', {'card_form': cForm, 'logged_in': logged_in})
+
 def blocks(request):
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
@@ -185,3 +213,32 @@ def blocks(request):
     cards = AccessBlock.objects.all()
 
     return render(request, 'members/access_blocks.html', {'block_list': cards, 'logged_in': logged_in})
+
+
+
+def addBlock(request):
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    if request.method == 'POST':
+        bForm = BlockForm(request.POST)
+        if bForm.is_valid():
+            newBlock = bForm.save(commit=False)
+            newBlock.save()
+            info = 'Created new Access Block'
+            
+
+            bList = AccessBlock.objects.all()
+            return render(request, 'members/main.html',
+                          {'block_list': bList,
+                           'msg_info': info,
+                           'logged_in': logged_in, })
+
+    else:
+        bForm = BlockForm()
+
+    logged_in = True
+    
+    
+    return render(request, 'members/add_block.html', {'block_form': bForm, 'logged_in': logged_in})

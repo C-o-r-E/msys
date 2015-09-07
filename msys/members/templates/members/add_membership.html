@@ -3,17 +3,23 @@
 {% block content %}
 
 <div class="page-header">
-  <h1>Create a new membership</h1>
+  <h1>New membership</h1>
 </div>
 
-<form class="form-horizontal" role="form" action="{% url 'addMembership' %}" method="post"> {% csrf_token %}
-  {% for field in ms_form %}
-  <div class="form-group">
-	 {{ field.errors }}
-	 {{ field.label_tag }} {{ field }}
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">Create a new Member</h3>
   </div>
-	 {% endfor %}
-	 <input type="submit" value="Submit" />
-</form>
-
+  <div class="panel-body">
+	<form class="form-horizontal" role="form" action="{% url 'addMembership' %}" method="post"> {% csrf_token %}
+	  {% for field in ms_form %}
+	  <div class="form-group">
+		{{ field.errors }}
+		{{ field.label_tag }} {{ field }}
+	  </div>
+	  {% endfor %}
+	  <input type="submit" value="Submit" />
+	</form>
+  </div>
+</div>
 {% endblock %}

@@ -138,4 +138,17 @@ class MembershipForm(ModelForm):
         fields = ['member',
                   'start_date', 'expire_date']
 
+class CardForm(ModelForm):
+    class Meta:
+        model = AccessCard
+        fields = ['member',
+                  'unique_id']
+
+class BlockForm(ModelForm):
+    class Meta:
+        model = AccessBlock
+        fields = ['member',
+                  'day',
+                  'start',
+                  'end']
         
