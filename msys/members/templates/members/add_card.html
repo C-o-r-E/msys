@@ -1,0 +1,25 @@
+{% extends "members/main.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="page-header">
+  <h1>New card</h1>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">Create a new Access Card</h3>
+  </div>
+  <div class="panel-body">
+	<form class="form-horizontal" role="form" action="{% url 'addCard' %}" method="post"> {% csrf_token %}
+	  {% for field in card_form %}
+	  <div class="form-group">
+		{{ field.errors }}
+		{{ field.label_tag }} {{ field }}
+	  </div>
+	  {% endfor %}
+	  <input type="submit" value="Submit" />
+	</form>
+  </div>
+</div>
+{% endblock %}
