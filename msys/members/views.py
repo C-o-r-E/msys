@@ -176,3 +176,12 @@ def cards(request):
     cards = AccessCard.objects.all()
 
     return render(request, 'members/access_cards.html', {'card_list': cards, 'logged_in': logged_in})
+
+def blocks(request):
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    cards = AccessBlock.objects.all()
+
+    return render(request, 'members/access_blocks.html', {'block_list': cards, 'logged_in': logged_in})
