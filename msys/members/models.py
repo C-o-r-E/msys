@@ -51,7 +51,7 @@ class Member(models.Model):
                     return True
                 
             elif block.day in day2day:
-                if day2day[block.day] == datetime.date.today().day:
+                if day2day[block.day] == datetime.date.today().weekday():
                     tNow = datetime.datetime.now().time()
                     if block.start < tNow and tNow < block.end:
                         return True
