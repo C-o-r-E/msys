@@ -16,4 +16,5 @@ urlpatterns = [
     url(r'^blocks/add/$', views.addBlock, name='addBlock'),
     url(r'^login/$', views.user_login, name='userLogin'),
     url(r'^logout/$', views.user_logout, name='userLogout'),
+    url(r'^auth/$', views.auth, name='auth'),
 ]

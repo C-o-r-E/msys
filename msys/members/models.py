@@ -56,7 +56,7 @@ class Member(models.Model):
                     if block.start < tNow and tNow < block.end:
                         return True
                 pass
-        return false
+        return False
 
     def __str__(self):
         return self.first_name + " " + self.last_name

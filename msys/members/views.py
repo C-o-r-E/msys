@@ -1,7 +1,8 @@
 from members.models import *
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt
 
 import datetime
 
@@ -242,3 +243,22 @@ def addBlock(request):
     
     
     return render(request, 'members/add_block.html', {'block_form': bForm, 'logged_in': logged_in})
+
+
+@csrf_exempt
+def auth(request):
+    if request.method == 'POST':
+        if 'id' in request.POST:
+            uID = request.POST['id']
+
+            cards = AccessCard.objects.filter(unique_id=uID)
+            if len(cards) < 1:
+                return HttpResponse("Denied", content_type="text/plain")
+            else:
+                mem = cards[0].member
+
+                if mem.has_access_now():
+                    return HttpResponse("Granted", content_type="text/plain")
+
+    response = HttpResponse("Denied", content_type="text/plain")
+    return response
