@@ -55,7 +55,7 @@ class Member(models.Model):
                     tNow = datetime.datetime.now().time()
                     if block.start < tNow and tNow < block.end:
                         return True
-                pass
+                pass #todo: remove?
         return False
 
     def __str__(self):
