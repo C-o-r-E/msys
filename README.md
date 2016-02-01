@@ -25,28 +25,41 @@ You can install the dependancies using whatever method (virtualenv, package mana
 
 ### get pip
 
-> $ wget https://bootstrap.pypa.io/get-pip.py
+```
+wget https://bootstrap.pypa.io/get-pip.py
+```
 
-> $ python get-pip.py --user
+```
+python get-pip.py --user
+```
 
 ### get django
 
-> $ pip install django --user
-
+```
+pip install django --user
+```
 
 ### clone the repo
 
-> $ git clone https://github.com/C-o-r-E/msys.git
+```
+git clone https://github.com/C-o-r-E/msys.git
+```
 
-> $ cd msys/msys
+```
+cd msys/msys
+```
 
-> $ echo "somerandomdata" > key.txt
+```
+echo "somerandomdata" > key.txt
+```
 
 You should replace that string with real random data... (read the Django docs for more info)
 
 ### Run the server in devel mode
 
-> $ python manage.py runserver
+```
+python manage.py runserver
+```
 
 
 ### TODO
