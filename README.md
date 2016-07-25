@@ -61,6 +61,26 @@ You should replace that string with real random data... (read the Django docs fo
 python manage.py runserver
 ```
 
+At this point the server should start. It might complain about unapplied migrations which we will resolve later.
+
+Now open a browser and navigate to http://127.0.0.1:8000/members (the server should indicate the listening address in the terminal where it was started). If all went well you should see a prompt to log in to the member system.
+
+### Set up the database
+
+Use Ctrl-C in the terminal to halt the devel server. We now need to create a super user.
+
+```
+python manage.py createsuperuser
+```
+
+Once the superuser is created, we need to create the database tables required for msys to function correctly. To create the proper structure do the following:
+
+```
+python manage.py makemigrations members
+```
+
+
+
 
 ### TODO
 
