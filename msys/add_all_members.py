@@ -35,7 +35,7 @@ if __name__ == "__main__":
     with open('members.csv', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            fname = row['First name']
+            fname = row['First Name']
             lname = row['Last Name']
 
             if len(fname) == 0 and len(lname) == 0:
@@ -67,16 +67,20 @@ if __name__ == "__main__":
             except django.core.exceptions.ValidationError:
                 print('error: skipping', fname, lname)
                 raise
-                
 
             #attempt to make a membership
             try:
-                last_day = datetime.datetime.strptime(row['Last day of Membership'], '%Y-%m-%d').date()
-                if last_day > datetime.date.today():
-                    ms = Membership(member = m,
-                                    start_date = datetime.date.today(),
-                                    expire_date = last_day)
-                    ms.save()
+                #for empty strings on expire date
+                if not row['Last day of Membership']:
+                    last_day = datetime.date.today()
+                else:
+
+                    last_day = datetime.datetime.strptime(row['Last day of Membership'], '%Y-%m-%d').date()
+                    if last_day > datetime.date.today():
+                        ms = Membership(member = m,
+                                        start_date = datetime.date.today(),
+                                        expire_date = last_day)
+                        ms.save()
             except ValueError:
                 print('\t could not parse date: [', row['Last day of Membership'], ']')
                 pass
