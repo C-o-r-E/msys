@@ -219,6 +219,15 @@ def addCard(request):
     
     return render(request, 'members/add_card.html', {'card_form': cForm, 'logged_in': logged_in})
 
+def groups(request):
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    groups = AccessGroup.objects.all()
+
+    return render(request, 'members/access_groups.html', {'group_list' : groups, 'logged_in' : logged_in})
+
 def tblks(request):
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
