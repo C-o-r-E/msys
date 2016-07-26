@@ -98,10 +98,10 @@ class TimeBlock(models.Model):
         default = 'sat')
     start = models.TimeField(default = datetime.time.min)
     end = models.TimeField(default = datetime.time.max)
-    group = self.ForeignKey(AccessGroup)
+    group = models.ForeignKey(AccessGroup)
 
     def __str__(self):
-        return '{} from {} to {}'.format(self.start, self.end)
+        return '{} from {} to {}'.format(self.day, self.start, self.end)
 
 class AccessBlock(models.Model):
     DAY_CHOICES = (
