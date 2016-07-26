@@ -6,6 +6,18 @@ from django.views.decorators.csrf import csrf_exempt
 
 import datetime
 
+def ensure_login(in_fn):
+    """
+    This is a decorator to make sure user is logged in
+    """
+
+    def wrapper():
+        if not request.user.is_authenticated():
+            return render(request, 'members/home.html', {})
+        return in_fn()
+
+    return wrapper    
+
 def user_logout(request):
     logout(request)
     notes = ["Logged out successfully"]
@@ -206,14 +218,21 @@ def addCard(request):
     
     return render(request, 'members/add_card.html', {'card_form': cForm, 'logged_in': logged_in})
 
+@ensure_login
+def tblks(request):
+    blocks = TimeBlock.objects.all()
+
+    return render(request, 'members/time_blocks.html', {'block_list' : blocks, 'logged_in' : logged_in})
+
+
 def blocks(request):
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
-    cards = AccessBlock.objects.all()
+    blocks = AccessBlock.objects.all()
 
-    return render(request, 'members/access_blocks.html', {'block_list': cards, 'logged_in': logged_in})
+    return render(request, 'members/access_blocks.html', {'block_list': blocks, 'logged_in': logged_in})
 
 
 

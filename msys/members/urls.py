@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^memberships/add/$', views.addMembership, name='addMembership'),
     url(r'^cards/$', views.cards, name='cardList'),
     url(r'^cards/add/$', views.addCard, name='addCard'),
+    url(r'^blks/$', views.tblks, name=blklst),
     url(r'^blocks/$', views.blocks, name='blockList'),
     url(r'^blocks/add/$', views.addBlock, name='addBlock'),
     url(r'^login/$', views.user_login, name='userLogin'),
