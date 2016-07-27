@@ -77,8 +77,27 @@ class Membership(models.Model):
 
         return ret
 
+class AccessCard(models.Model):
+    member = models.ForeignKey(Member)
+    unique_id = models.CharField(max_length = 30)
+
+    def numeric(self):
+        byteList = self.unique_id.split()
+        num = 0
+        for b in byteList:
+            num = num << 8
+            num = num + int(b, base=16)
+
+        return num
+    
+    def __str__(self):
+        ret = self.unique_id
+        ret += ' (' + str(self.member) + ')'
+        return ret
+
 class AccessGroup(models.Model):
     name = models.CharField(max_length=200)
+    card = models.ManyToManyField(AccessCard, null=True, blank=True)
 
     def __str__(self):
         return str(self.name)
@@ -126,25 +145,6 @@ class AccessBlock(models.Model):
         ret = self.day + ' from ' + str(self.start) + ' to ' + str(self.end)
         ret += ' (' + str(self.member) + ')'
         return ret
-
-class AccessCard(models.Model):
-    member = models.ForeignKey(Member)
-    unique_id = models.CharField(max_length = 30)
-
-    def numeric(self):
-        byteList = self.unique_id.split()
-        num = 0
-        for b in byteList:
-            num = num << 8
-            num = num + int(b, base=16)
-
-        return num
-    
-    def __str__(self):
-        ret = self.unique_id
-        ret += ' (' + str(self.member) + ')'
-        return ret
-
 
 
 

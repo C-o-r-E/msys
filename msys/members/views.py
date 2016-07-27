@@ -192,6 +192,43 @@ def cards(request):
     return render(request, 'members/access_cards.html', {'card_list': cards, 'logged_in': logged_in})
 
 
+def cardDetails(request, card_id):
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    card = get_object_or_404(AccessCard, pk=card_id)
+
+    return render(request,
+                  'members/card_details.html',
+                  {'card': card,
+                   'logged_in': logged_in})
+
+
+def editCard(request, card_id):
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    if request.method == 'POST':
+        cardForm = CardForm(request.POST)
+        if cardForm.is_valid():
+            editedCard = cardForm.save(commit=False)
+            actualCard = get_object_or_404(AccessCard, pk=card_id)
+            editedCard.unique_id = actualCard.unique_id
+            editedCard.pk = actualCard.pk
+            editedCard.save()
+            return cards(request)
+
+    else:
+        logged_in = True
+        card = get_object_or_404(AccessCard, pk=card_id)
+        cardForm = CardForm(instance=card)
+
+
+    return render(request, 'members/editCard.html', {'card': card, 'card_form': cardForm, 'logged_in': logged_in})
+
+
+
 def addCard(request):
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})

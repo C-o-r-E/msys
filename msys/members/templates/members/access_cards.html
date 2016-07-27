@@ -18,7 +18,7 @@
   <tbody>
     {% for c in card_list %}
     <tr>
-	  <td>{{c.unique_id}}</td>
+	  <td><a href="{% url 'cardDetails' c.pk %}">{{c.unique_id}}</a></td>
       <td>{{c.member.first_name}}</td>
       <td>{{c.member.last_name}}</td>
     </tr>
