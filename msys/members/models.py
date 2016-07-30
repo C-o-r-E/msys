@@ -32,6 +32,8 @@ class Member(models.Model):
     emergency_contact = models.CharField(max_length=200)
     emergency_phone_number = models.CharField(max_length=200)
 
+    stripe_customer_code = models.CharField(max_length=200, null=True, blank=True)
+
     def has_access_now(self):
         day2day = { 'mon': 0,
                     'tues': 1,
@@ -65,6 +67,8 @@ class Membership(models.Model):
     member = models.ForeignKey(Member)
     start_date = models.DateField()
     expire_date = models.DateField()
+
+    stripe_subscription_code = models.CharField(max_length=200, null=True, blank=True)
 
     def __str__(self):
         ret = str(self.member) + ": " + str(self.start_date) + " to " + str(self.expire_date) 
@@ -156,13 +160,18 @@ class MemberForm(ModelForm):
         fields = ['type', 'first_name', 'last_name',
                   'birth_date', 'address', 'city',
                   'postal_code', 'phone_number', 'email',
-                  'emergency_contact', 'emergency_phone_number']
+                  'emergency_contact', 'emergency_phone_number',
+                  'stripe_customer_code']
+        labels = {
+            'birth_date': 'Birthdate (YYYY-MM-DD)'
+        }
 
 class MembershipForm(ModelForm):
     class Meta:
         model = Membership
         fields = ['member',
-                  'start_date', 'expire_date']
+                  'start_date', 'expire_date',
+                  'stripe_subscription_code']
 
 class CardForm(ModelForm):
     class Meta:
