@@ -226,12 +226,15 @@ def cardAssign(request, card_id):
         for g in r_groups:
             card.accessgroup_set.add(g)
 
-        notes = ['Updated AccessGroups associated with ' + str(card) ]
+        notes = 'Updated AccessGroups associated with Card ' + str(card)
+
+        groups = card.accessgroup_set.all()
 
         return render(request,
                   'members/card_details.html',
                   {'card': card,
-                   'notifications': notes,
+                   'groups': groups,
+                   'msg_info': notes,
                    'logged_in': logged_in})
 
     else:

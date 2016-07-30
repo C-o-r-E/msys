@@ -35,7 +35,24 @@
 <a class="btn btn-default" href="{% url 'editCard' card.pk %}">Edit Card Details</a>
 <a class="btn btn-default" href="{% url 'assignCard' card.pk %}">Assign Access Times</a>
 
+{% if groups %}
+<h3>
+	This card grants access for the following (AccessGroups):
+</h3>
+<table class="table table-condensed table-hover">
+  <tbody>
+	{% for group in groups %}
+	<tr>
+	  <td>
+		{{ group }}
+	  </td>
+	</tr>
+	{% endfor %}
 
+  </tbody>
+</table>
+
+{% endif %}
 
 {% else %}
 
