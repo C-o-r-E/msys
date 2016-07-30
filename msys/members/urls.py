@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^cards/$', views.cards, name='cardList'),
     url(r'^cards/add/$', views.addCard, name='addCard'),
     url(r'^cards/details/(?P<card_id>\d+)/$', views.cardDetails, name='cardDetails'),
+    url(r'^cards/assign/(?P<card_id>\d+)/$', views.cardAssign, name='assignCard'),
     url(r'^cards/edit/(?P<card_id>\d+)/$', views.editCard, name='editCard'),
     url(r'^blks/$', views.tblks, name='blklst'),
     url(r'^groups/$', views.groups, name='groupList'),

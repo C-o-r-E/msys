@@ -1,4 +1,5 @@
 from members.models import *
+from members.forms import *
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
@@ -204,6 +205,32 @@ def cardDetails(request, card_id):
                   {'card': card,
                    'logged_in': logged_in})
 
+def cardAssign(request, card_id):
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    card = get_object_or_404(AccessCard, pk=card_id)
+
+    if request.method == 'POST':
+        print('post-up')
+        print(request.POST)
+        print(type(request.POST['groups']))
+        return render(request,
+                  'members/card_details.html',
+                  {'card': card,
+                   'logged_in': logged_in})
+
+    else:
+        form = AddGroupToCardForm()
+        #Now get all the AccessGroups
+        groups = AccessGroup.objects.all()
+        print (groups)
+        return render(request,
+                  'members/card_assign.html',
+                  {'card': card,
+                   'form': form,
+                   'logged_in': logged_in})
 
 def editCard(request, card_id):
     if not request.user.is_authenticated():
