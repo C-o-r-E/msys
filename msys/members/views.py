@@ -213,12 +213,25 @@ def cardAssign(request, card_id):
     card = get_object_or_404(AccessCard, pk=card_id)
 
     if request.method == 'POST':
-        print('post-up')
-        print(request.POST)
-        print(type(request.POST['groups']))
+
+        #1) get list from user
+        r_groups = []
+        for key in request.POST.getlist('groups'):
+            r_groups.append(AccessGroup.objects.get(pk=key))
+
+        #2) remove (clear) current card relations to accessgroups
+        card.accessgroup_set.clear()
+
+        #3 link the card with the groups specified by user
+        for g in r_groups:
+            card.accessgroup_set.add(g)
+
+        notes = ['Updated AccessGroups associated with ' + str(card) ]
+
         return render(request,
                   'members/card_details.html',
                   {'card': card,
+                   'notifications': notes,
                    'logged_in': logged_in})
 
     else:
