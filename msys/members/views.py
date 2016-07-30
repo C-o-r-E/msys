@@ -200,9 +200,11 @@ def cardDetails(request, card_id):
     logged_in = True
     card = get_object_or_404(AccessCard, pk=card_id)
 
+    groups = card.accessgroup_set.all()
     return render(request,
                   'members/card_details.html',
                   {'card': card,
+                   'groups': groups,
                    'logged_in': logged_in})
 
 def cardAssign(request, card_id):
