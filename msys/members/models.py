@@ -93,6 +93,28 @@ class AccessCard(models.Model):
             num = num + int(b, base=16)
 
         return num
+
+    def has_access_at_time(self, date, time):
+        day2day = { 'mon': 0,
+                    'tues': 1,
+                    'wed': 2,
+                    'thurs': 3,
+                    'fri': 4,
+                    'sat': 5,
+                    'sun': 6
+        }#Todo: this code should not be replicated in more than one place!!
+        #get a list of AGs linked to this card
+        ag_set = self.accessgroup_set.all()
+        for ag in ag_set:
+            #now get the TBs linked to the AG
+            tb_set = TimeBlock.objects.filter(group=ag)
+            for tb in tb_set:
+                if day2day[date.weekday()] == tb.day:
+                    if 
+                else:
+                    continue
+                
+        
     
     def __str__(self):
         ret = self.unique_id
