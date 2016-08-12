@@ -201,6 +201,44 @@ def cardDetails(request, card_id):
     card = get_object_or_404(AccessCard, pk=card_id)
 
     groups = card.accessgroup_set.all()
+
+    """
+    This is the part where we generate the fancy
+    calendar like table of access times for the
+    next few days. This is probably an expensive
+    operation and may need to be evaluated again
+    if performance becomes an issue.
+    """
+
+    #first we get the datetime object with today's info
+    today = datetime.datetime.today()
+
+    #now we can start constructing our list of days
+    t_cal = []
+    for r in range(7):
+        t_cal.append([])
+
+
+    #at this point we should have a list of empty lists. One for each of the next 7 days.
+
+    #create a base datetime where it is the same day as today but 0h:00:00...
+    base_dt = datetime.datetime(today.year, today.month, today. day)
+
+    print("tcal before")
+    print(t_cal)
+
+    n = 0
+    for cal_date in t_cal:
+        delta = datetime.timedelta(days=n)
+        print(cal_date)
+        for h in range(24):
+            hour = base_dt + datetime.timedelta(hours=h) + delta
+            cal_date.append([hour, card.has_access_at_time(hour.date(), hour.time())])
+        n += 1
+
+    print("tcal after")
+    print(t_cal)
+
     return render(request,
                   'members/card_details.html',
                   {'card': card,
