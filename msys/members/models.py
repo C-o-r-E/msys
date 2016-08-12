@@ -109,9 +109,14 @@ class AccessCard(models.Model):
             #now get the TBs linked to the AG
             tb_set = TimeBlock.objects.filter(group=ag)
             for tb in tb_set:
-                if date.weekday() == tb.day and time > tb.start and time <= tb.end :
+                if date.weekday() == day2day[tb.day] and time > tb.start and time <= tb.end :
                     return True
                 else:
+                    #print(tb)
+                    #print("\tday: {} == {} ({})".format(date.weekday(), tb.day, day2day[tb.day]))
+                    #print("\tstart: {} > {}".format(time, tb.start))
+                    #print("\tend: {} <= {}".format(time, tb.end))
+                    #print("\tday: {} start: {} end: {}".format(date.weekday() == day2day[tb.day], time > tb.start, time <= tb.end))
                     continue
         return False
                 
