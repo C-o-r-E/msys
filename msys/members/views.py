@@ -201,48 +201,75 @@ def cardDetails(request, card_id):
     card = get_object_or_404(AccessCard, pk=card_id)
 
     groups = card.accessgroup_set.all()
+    
+    t_cal = None
+    
+    if request.method == 'GET':
+        if 'table' in request.GET:
+            """
+            This is the part where we generate the fancy
+            calendar like table of access times for the
+            next few days. This is probably an expensive
+            operation and may need to be evaluated again
+            if performance becomes an issue.
+            
+            
+            It seems that due to the nature of django 
+            templates, we need to craft our datastructure
+            to reflect how we want our HTML table to be
+            constructed. Since HTML tables are constructed
+            row by row our data should look like this:
+            
+            data = [ ['Mon', 'Tues', ... 'Sun'],
+                     [ '12am', False, ... True ],
+                     [ '1am', False, ... False ],
+                     ...,
+                     ...,
+                     [ '11pm', True, ... True ] ]
+                     
+            data is a list of 24 lists.
+            """
 
-    """
-    This is the part where we generate the fancy
-    calendar like table of access times for the
-    next few days. This is probably an expensive
-    operation and may need to be evaluated again
-    if performance becomes an issue.
-    """
+            #first we get the datetime object with today's info
+            today = datetime.datetime.today()
 
-    #first we get the datetime object with today's info
-    today = datetime.datetime.today()
-
-    #now we can start constructing our list of days
-    t_cal = []
-    for r in range(7):
-        t_cal.append([])
+            #now we can start constructing our list of days
+            t_cal = []
+            for r in range(24):
+                t_cal.append([])
 
 
-    #at this point we should have a list of empty lists. One for each of the next 7 days.
+            #at this point we should have a list of empty lists. One for each of the next 7 days.
 
-    #create a base datetime where it is the same day as today but 0h:00:00...
-    base_dt = datetime.datetime(today.year, today.month, today. day)
+            #create a base datetime where it is the same day as today but 0h:00:00...
+            base_dt = datetime.datetime(today.year, today.month, today. day)
 
-    print("tcal before")
-    print(t_cal)
-
-    n = 0
-    for cal_date in t_cal:
-        delta = datetime.timedelta(days=n)
-        print(cal_date)
-        for h in range(24):
-            hour = base_dt + datetime.timedelta(hours=h) + delta
-            cal_date.append([hour, card.has_access_at_time(hour.date(), hour.time())])
-        n += 1
-
-    print("tcal after")
-    print(t_cal)
-
+            n = 0
+            t_cal[0].append("Hour / Date")
+            #first populate the first row with title stuff
+            for nDay in range(7):
+                delta = datetime.timedelta(days=n)
+                day = base_dt + delta
+                t_cal[0].append(day.strftime("%A %b %d"))
+                n += 1
+                
+            #now append the rows by hour with the first col being the title
+            h = 0
+            for row in t_cal[1:]:
+                hour = base_dt + datetime.timedelta(hours=h)
+                timeStr = hour.strftime("%X")
+                row.append(timeStr)
+                for n_day in range(7):
+                    cell_dt = base_dt + datetime.timedelta(days=n_day, hours=h)
+                    row.append(card.has_access_at_time(cell_dt.date(), cell_dt.time()))
+                h += 1
+        #end GET handler
+    
     return render(request,
                   'members/card_details.html',
                   {'card': card,
                    'groups': groups,
+                   't_cal': t_cal,
                    'logged_in': logged_in})
 
 def cardAssign(request, card_id):

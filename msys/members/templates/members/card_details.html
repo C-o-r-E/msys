@@ -54,6 +54,44 @@
 
 {% endif %}
 
+{% if t_cal %}
+
+<table class="table">
+    <thead>
+        <tr>
+            {% for day in t_cal.0 %}
+                <th>{{day}}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for t_row in t_cal|slice:"1:" %}
+            <tr>
+                <td>
+                <b>{{t_row.0}}</b>
+                </td>
+            {% for t_cell in t_row|slice:"1:" %}
+                    {% if t_cell %}
+                        <td style="background-color:#009600">
+                            {{t_cell}}
+                        </td>
+                    {% else %}
+                        <td>
+                            {{t_cell}}
+                        </td>
+                    {% endif %}
+            {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+
+<a class="btn btn-default" href="{% url 'cardDetails' card.pk %}?table=full">Show Table</a>
+
+{% endif %}
+
 {% else %}
 
 Card does not exist.
