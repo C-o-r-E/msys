@@ -55,6 +55,21 @@ class Member(models.Model):
     emergency_phone_number = models.CharField(max_length=200)
 
     stripe_customer_code = models.CharField(max_length=200, null=True, blank=True)
+    
+    def has_active_membership(self):
+        """
+        Check to see if the Member has an active Membership
+        
+        Returns True if there is at least one Membership associated with the Member
+        that has not yet expired.
+        """
+        m_ships = Membership.objects.filter(member=self.pk)
+        
+        for ship in m_ships:
+            if ship.is_active():
+                return True
+
+        return False
 
     def has_access_now(self):
         """
@@ -100,6 +115,19 @@ class Membership(models.Model):
     expire_date = models.DateField()
 
     stripe_subscription_code = models.CharField(max_length=200, null=True, blank=True)
+    
+    def is_active(self):
+        """
+        Check if the membership has expired or not
+        
+        Returns True if the membership start date is earlier than the current date and
+        the membership end date is in the future.
+        """
+        today = datetime.date.today()
+        if self.start_date <= today and self.expire_date > today:
+            return True
+
+        return False
 
     def __str__(self):
         ret = str(self.member) + ": " + str(self.start_date) + " to " + str(self.expire_date)

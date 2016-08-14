@@ -13,6 +13,7 @@
       <th>Number</th>
       <th>First Name</th>
       <th>Last Name</th>
+      <th>Active</th>
     </tr>
   </thead>
   <tbody>
@@ -21,6 +22,7 @@
       <td>{{mem.number}}</td>
       <td><a href="{% url 'memberDetails' mem.pk %}">{{mem.first_name}}</a></td>
       <td>{{mem.last_name}}</td>
+      <td>{% if mem.has_active_membership %} &#x2713; {% endif %}</td>
     </tr>
       {% endfor %}
   </tbody>
