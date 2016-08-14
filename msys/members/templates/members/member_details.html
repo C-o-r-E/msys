@@ -136,11 +136,23 @@
 		{{ member.emergency_phone_number }}
 	  </td>
 	</tr>
+	
+	<tr>
+	    <td>Stripe Customer ID</td>
+	    <td>{{member.stripe_customer_code}}</td>
+	<tr>
+	
+	<tr>
+	    <td>Stripe Membership ID</td>
+	    <td></td>
+	<tr>
 
   </tbody>
 </table>
 
 <a class="btn btn-default" href="{% url 'editDetails' member.pk %}">Edit Member Details</a>
+<a class="btn btn-default" href="{% url 'membershipsByMember' member.pk %}">List Memberships</a>
+<a class="btn btn-default" href="{% url 'addMembershipForMember' member.pk %}">Create Membership</a>
 
 
 {% if access_list %}

@@ -165,23 +165,27 @@ def addMember(request):
     return render(request, 'members/add.html', {'mem_form': mem_form, 'logged_in': logged_in})
 
 
-def memberships(request):
+def memberships(request, member_id=None):
     """Render a list of Memberships"""
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
-    m_list = Membership.objects.all()
+    
+    if member_id:
+        m_list = Membership.objects.filter(member=member_id)
+    else:
+        m_list = Membership.objects.all()
 
-    if request.method == 'GET' and 'show' in request.GET:
-        if request.GET['show'] == 'expired':
-            m_list = Membership.objects.filter(expire_date__lt=datetime.datetime.today())
-        elif request.GET['show'] == 'active':
-            m_list = Membership.objects.filter(expire_date__gte=datetime.datetime.today())
+        if request.method == 'GET' and 'show' in request.GET:
+            if request.GET['show'] == 'expired':
+                m_list = Membership.objects.filter(expire_date__lt=datetime.datetime.today())
+            elif request.GET['show'] == 'active':
+                m_list = Membership.objects.filter(expire_date__gte=datetime.datetime.today())
 
     return render(request, 'members/memberships.html', {'membership_list': m_list, 'logged_in': logged_in})
 
-def addMembership(request):
+def addMembership(request, member_id=None):
     """Create a new Membership"""
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
@@ -203,7 +207,8 @@ def addMembership(request):
 
     else:
         ms_form = MembershipForm()
-
+        if member_id:
+            ms_form = MembershipForm(initial={'member':member_id})
     logged_in = True
 
 
