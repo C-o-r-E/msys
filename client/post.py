@@ -7,8 +7,9 @@ Stay tuned for more to come...
 import urllib.parse
 import urllib.request
 
-url = 'http://morg.123core.net/members/auth/'
-values = {'id' : 'CF 95 3C A4'}
+#url = 'http://morg.123core.net/members/auth/'
+url = 'http://127.0.0.1:8000/members/auth/'
+values = {'id' : '123'}
 
 data = urllib.parse.urlencode(values)
 data = data.encode('utf-8')

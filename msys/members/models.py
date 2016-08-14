@@ -71,36 +71,6 @@ class Member(models.Model):
 
         return False
 
-    def has_access_now(self):
-        """
-        Method for checking if the member can access the space right now.
-
-        Returns True if the member has access, False otherwise.
-        """
-        day2day = {'mon': 0,
-                   'tues': 1,
-                   'wed': 2,
-                   'thurs': 3,
-                   'fri': 4,
-                   'sat': 5,
-                   'sun': 6
-                  }
-        #get a list of access blocks owned by the member
-        a_list = AccessBlock.objects.filter(member=self)
-        for block in a_list:
-            if block.day == 'all':
-                #now just check if we are between times
-                t_now = datetime.datetime.now().time()
-                if block.start < t_now and t_now < block.end:
-                    return True
-
-            elif block.day in day2day:
-                if day2day[block.day] == datetime.date.today().weekday():
-                    t_now = datetime.datetime.now().time()
-                    if block.start < t_now and t_now < block.end:
-                        return True
-        return False
-
     def __str__(self):
         return self.first_name + " " + self.last_name
 
@@ -160,6 +130,11 @@ class AccessCard(models.Model):
             num = num + int(b_byte, base=16)
 
         return num
+
+    def has_access_now(self):
+        """Simplified wrapper for has_access_at_time(...)"""
+        return self.has_access_at_time(datetime.datetime.now().date(),
+                                       datetime.datetime.now().time())
 
     def has_access_at_time(self, date, time):
         """

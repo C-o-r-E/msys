@@ -496,7 +496,7 @@ def auth(request):
     """
     Authenticate access requests
 
-    Uses a custom protocol on top of HTTP to communicate with msys clients
+    Uses a simple protocol on top of HTTP to communicate with msys clients
     """
     if request.method == 'POST':
         if 'id' in request.POST:
@@ -504,11 +504,17 @@ def auth(request):
 
             cards = AccessCard.objects.filter(unique_id=uID)
             if len(cards) < 1:
+                #we didnt find any cards matching the ID
                 return HttpResponse("Denied", content_type="text/plain")
             else:
-                mem = cards[0].member
+                #one or more cards found
+                granted = False
+                for card in cards:
+                    if card.has_access_now():
+                        granted = True
+                        break
 
-                if mem.has_access_now():
+                if granted:
                     return HttpResponse("Granted", content_type="text/plain")
 
     response = HttpResponse("Denied", content_type="text/plain")
