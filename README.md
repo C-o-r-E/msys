@@ -82,10 +82,23 @@ python manage.py makemigrations members
 
 
 
-### TODO
+### TODO - Docs
 
 * Set up the database
 * Set up the webserver
 * Set up wsgi
 * import members data
 * client docs
+
+
+### TODO - Dev
+
+* jquery datepicker for certain forms
+* Client
+    * Test cases for latency
+    * Design access cache
+    * Protocol for transmitting access info
+* Get import script to populate stripe data
+* Update instance on Morgianna
+* Stripe API integration
+    
