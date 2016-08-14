@@ -1,38 +1,47 @@
+"""
+Views
+
+This is where the main logic happens behind the scenes.
+
+"""
+import datetime
 from members.models import *
 from members.forms import *
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
-
-import datetime
 """
 def ensure_login(in_fn):
-    
+
     #This is a decorator to make sure user is logged in
-    
+
 
     def wrapper():
         if not request.user.is_authenticated():
             return render(request, 'members/home.html', {})
         return in_fn()
 
-    return wrapper    
+    return wrapper
 """
 
 def user_logout(request):
+    """Log out the user"""
     logout(request)
     notes = ["Logged out successfully"]
-    return render(request, 'members/login.html', { 'notifications':notes })
+    return render(request, 'members/login.html', {'notifications':notes})
 
 def user_login(request):
+    """
+    This function attempts to authenticate the user
+    """
     notes = None
     logged_in = False
 
     if request.method == 'POST':
         usr = request.POST['usr']
         pword = request.POST['pass']
-        user = authenticate(username = usr, password = pword)
+        user = authenticate(username=usr, password=pword)
         if user is not None:
             login(request, user)
             return members(request)
@@ -40,170 +49,200 @@ def user_login(request):
             #                                          'username':user.username})
         else:
             notes = ["Invalid login"]
-        
+
     if request.user.is_authenticated():
         logged_in = True
 
-    return render(request, 'members/login.html', { 'notifications':notes, 'logged_in':logged_in })
+    return render(request, 'members/login.html', {'notifications':notes, 'logged_in':logged_in})
 
 def members(request):
+    """Simply render a list of members"""
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
-    memberList = Member.objects.all()
+    member_list = Member.objects.all()
 
-    return render(request, 'members/members.html', {'member_list': memberList, 'logged_in': logged_in})
+    return render(request,
+                  'members/members.html',
+                  {'member_list': member_list, 'logged_in': logged_in})
 
 def memberDetails(request, member_id):
+    """Show details about a specific Member"""
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
     mem = get_object_or_404(Member, pk=member_id)
 
-    accessList = AccessBlock.objects.filter(member = mem)
-    cards = AccessCard.objects.filter(member = mem)
+    access_list = AccessBlock.objects.filter(member=mem)
+    cards = AccessCard.objects.filter(member=mem)
 
     return render(request,
                   'members/member_details.html',
                   {'member': mem,
-                   'access_list': accessList,
+                   'access_list': access_list,
                    'access_cards': cards,
                    'logged_in': logged_in}
-    )
+                 )
 
 def memberDetailsByRFID(request, rfid):
+    """
+    Get some details about a specific member
+
+    Params:
+
+    rfid -- a unique id related to a Member via AccessCard object
+    """
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
-    
+
     card = get_object_or_404(AccessCard, unique_id=rfid)
     mem = card.member
 
-    accessList = AccessBlock.objects.filter(member = mem)
+    access_list = AccessBlock.objects.filter(member=mem)
 
     return render(request,
                   'members/member_details.html',
                   {'member': mem,
-                   'access_list': accessList,
+                   'access_list': access_list,
                    'logged_in': logged_in}
-    )
+                 )
 
 def editDetails(request, member_id):
+    """
+    For editing information about a Member
+    """
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     if request.method == 'POST':
-        memForm = MemberForm(request.POST)
-        if memForm.is_valid():
-            editedMember = memForm.save(commit=False)
-            actualMember = get_object_or_404(Member, pk=member_id)
-            editedMember.number = actualMember.number
-            editedMember.pk = actualMember.pk
-            editedMember.first_seen_date = actualMember.first_seen_date
-            editedMember.last_seen_date = actualMember.first_seen_date
-            editedMember.save()
+        mem_form = MemberForm(request.POST)
+        if mem_form.is_valid():
+            edited_member = mem_form.save(commit=False)
+            actual_member = get_object_or_404(Member, pk=member_id)
+            edited_member.number = actual_member.number
+            edited_member.pk = actual_member.pk
+            edited_member.first_seen_date = actual_member.first_seen_date
+            edited_member.last_seen_date = actual_member.first_seen_date
+            edited_member.save()
             #return HttpResponseRedirect('../')
             return members(request)
 
     else:
         logged_in = True
         member = get_object_or_404(Member, pk=member_id)
-        memForm = MemberForm(instance=member)
+        mem_form = MemberForm(instance=member)
 
 
-    return render(request, 'members/editDetails.html', {'member': member, 'member_form': memForm, 'logged_in': logged_in})
+    return render(request,
+                  'members/editDetails.html',
+                  {'member': member, 'member_form': mem_form, 'logged_in': logged_in})
 
 def addMember(request):
+    """Add a new Member"""
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     if request.method == 'POST':
-        memForm = MemberForm(request.POST)
-        if memForm.is_valid():
-            newMember = memForm.save(commit=False)
-            newMember.number = Member.objects.all().count() + 1
-            newMember.first_seen_date = datetime.date.today()
-            newMember.last_seen_date = datetime.date.today()
-            newMember.save()
+        mem_form = MemberForm(request.POST)
+        if mem_form.is_valid():
+            new_member = mem_form.save(commit=False)
+            new_member.number = Member.objects.all().count() + 1
+            new_member.first_seen_date = datetime.date.today()
+            new_member.last_seen_date = datetime.date.today()
+            new_member.save()
             return HttpResponseRedirect('../')
 
     else:
-        memForm = MemberForm()
+        mem_form = MemberForm()
 
     logged_in = True
-    
-    
-    return render(request, 'members/add.html', {'mem_form': memForm, 'logged_in': logged_in})
+
+
+    return render(request, 'members/add.html', {'mem_form': mem_form, 'logged_in': logged_in})
 
 
 def memberships(request):
+    """Render a list of Memberships"""
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
-    mList = Membership.objects.all()
+    m_list = Membership.objects.all()
 
     if request.method == 'GET' and 'show' in request.GET:
         if request.GET['show'] == 'expired':
-            mList = Membership.objects.filter(expire_date__lt = datetime.datetime.today())
+            m_list = Membership.objects.filter(expire_date__lt=datetime.datetime.today())
         elif request.GET['show'] == 'active':
-            mList = Membership.objects.filter(expire_date__gte = datetime.datetime.today())
-            
-    return render(request, 'members/memberships.html', {'membership_list': mList, 'logged_in': logged_in})
+            m_list = Membership.objects.filter(expire_date__gte=datetime.datetime.today())
+
+    return render(request, 'members/memberships.html', {'membership_list': m_list, 'logged_in': logged_in})
 
 def addMembership(request):
+    """Create a new Membership"""
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
     if request.method == 'POST':
-        msForm = MembershipForm(request.POST)
-        if msForm.is_valid():
-            newMembership = msForm.save(commit=False)
-            newMembership.save()
+        ms_form = MembershipForm(request.POST)
+        if ms_form.is_valid():
+            new_membership = ms_form.save(commit=False)
+            new_membership.save()
             info = 'Created new membership'
-            
 
-            mList = Membership.objects.all()
+
+            m_list = Membership.objects.all()
             return render(request, 'members/main.html',
-                          {'membership_list': mList,
+                          {'membership_list': m_list,
                            'msg_info': info,
                            'logged_in': logged_in, })
 
     else:
-        msForm = MembershipForm()
+        ms_form = MembershipForm()
 
     logged_in = True
-    
-    
-    return render(request, 'members/add_membership.html', {'ms_form': msForm, 'logged_in': logged_in})
+
+
+    return render(request, 'members/add_membership.html', {'ms_form': ms_form, 'logged_in': logged_in})
 
 
 
 def cards(request):
+    """Render list of AccessCard objects"""
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
-    cards = AccessCard.objects.all()
+    card_list = AccessCard.objects.all()
 
-    return render(request, 'members/access_cards.html', {'card_list': cards, 'logged_in': logged_in})
+    return render(request, 'members/access_cards.html', {'card_list': card_list, 'logged_in': logged_in})
 
 
 def cardDetails(request, card_id):
+    """
+    Get details about an AccessCard
+
+    This will also fetch a list of AccessGroups associated with the Card.
+
+    Optionally the user can request (via POST) to have a visual aid generated.
+    The visual aid is a table of times over the next 7 days (hour-by-hour). The
+    table will show the user which times the card provides access and which
+    times it does not. This may be a slow and expensive opteration.
+    """
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
     card = get_object_or_404(AccessCard, pk=card_id)
 
-    groups = card.accessgroup_set.all()
-    
+    group_list = card.accessgroup_set.all()
+
     t_cal = None
-    
+
     if request.method == 'GET':
         if 'table' in request.GET:
             """
@@ -212,21 +251,21 @@ def cardDetails(request, card_id):
             next few days. This is probably an expensive
             operation and may need to be evaluated again
             if performance becomes an issue.
-            
-            
-            It seems that due to the nature of django 
+
+
+            It seems that due to the nature of django
             templates, we need to craft our datastructure
             to reflect how we want our HTML table to be
             constructed. Since HTML tables are constructed
             row by row our data should look like this:
-            
+
             data = [ ['Mon', 'Tues', ... 'Sun'],
                      [ '12am', False, ... True ],
                      [ '1am', False, ... False ],
                      ...,
                      ...,
                      [ '11pm', True, ... True ] ]
-                     
+
             data is a list of 24 lists.
             """
 
@@ -235,7 +274,7 @@ def cardDetails(request, card_id):
 
             #now we can start constructing our list of days
             t_cal = []
-            for r in range(24):
+            for thing in range(24):
                 t_cal.append([])
 
 
@@ -244,35 +283,38 @@ def cardDetails(request, card_id):
             #create a base datetime where it is the same day as today but 0h:00:00...
             base_dt = datetime.datetime(today.year, today.month, today. day)
 
-            n = 0
+            day_n = 0
             t_cal[0].append("Hour / Date")
             #first populate the first row with title stuff
-            for nDay in range(7):
-                delta = datetime.timedelta(days=n)
+            for n_Day in range(7):
+                delta = datetime.timedelta(days=day_n)
                 day = base_dt + delta
                 t_cal[0].append(day.strftime("%A %b %d"))
-                n += 1
-                
+                day_n += 1
+
             #now append the rows by hour with the first col being the title
-            h = 0
+            time_h = 0
             for row in t_cal[1:]:
-                hour = base_dt + datetime.timedelta(hours=h)
-                timeStr = hour.strftime("%X")
-                row.append(timeStr)
+                hour = base_dt + datetime.timedelta(hours=time_h)
+                time_str = hour.strftime("%X")
+                row.append(time_str)
                 for n_day in range(7):
-                    cell_dt = base_dt + datetime.timedelta(days=n_day, hours=h)
+                    cell_dt = base_dt + datetime.timedelta(days=n_day, hours=time_h)
                     row.append(card.has_access_at_time(cell_dt.date(), cell_dt.time()))
-                h += 1
+                time_h += 1
         #end GET handler
-    
+
     return render(request,
                   'members/card_details.html',
                   {'card': card,
-                   'groups': groups,
+                   'groups': group_list,
                    't_cal': t_cal,
                    'logged_in': logged_in})
 
 def cardAssign(request, card_id):
+    """
+    Assign one or more AccessGroups to a card.
+    """
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
@@ -290,83 +332,92 @@ def cardAssign(request, card_id):
         card.accessgroup_set.clear()
 
         #3 link the card with the groups specified by user
-        for g in r_groups:
-            card.accessgroup_set.add(g)
+        for grp in r_groups:
+            card.accessgroup_set.add(grp)
 
         notes = 'Updated AccessGroups associated with Card ' + str(card)
 
         groups = card.accessgroup_set.all()
 
         return render(request,
-                  'members/card_details.html',
-                  {'card': card,
-                   'groups': groups,
-                   'msg_info': notes,
-                   'logged_in': logged_in})
+                      'members/card_details.html',
+                      {'card': card,
+                       'groups': groups,
+                       'msg_info': notes,
+                       'logged_in': logged_in})
 
     else:
         form = AddGroupToCardForm()
         #Now get all the AccessGroups
         groups = AccessGroup.objects.all()
-        print (groups)
+        print(groups)
         return render(request,
-                  'members/card_assign.html',
-                  {'card': card,
-                   'form': form,
-                   'logged_in': logged_in})
+                      'members/card_assign.html',
+                      {'card': card,
+                       'form': form,
+                       'logged_in': logged_in})
 
 def editCard(request, card_id):
+    """
+    Edit details of AccessCard
+    """
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     if request.method == 'POST':
-        cardForm = CardForm(request.POST)
-        if cardForm.is_valid():
-            editedCard = cardForm.save(commit=False)
-            actualCard = get_object_or_404(AccessCard, pk=card_id)
-            editedCard.unique_id = actualCard.unique_id
-            editedCard.pk = actualCard.pk
-            editedCard.save()
+        card_form = CardForm(request.POST)
+        if card_form.is_valid():
+            edited_card = card_form.save(commit=False)
+            actual_card = get_object_or_404(AccessCard, pk=card_id)
+            edited_card.unique_id = actual_card.unique_id
+            edited_card.pk = actual_card.pk
+            edited_card.save()
             return cards(request)
 
     else:
         logged_in = True
         card = get_object_or_404(AccessCard, pk=card_id)
-        cardForm = CardForm(instance=card)
+        card_form = CardForm(instance=card)
 
 
-    return render(request, 'members/editCard.html', {'card': card, 'card_form': cardForm, 'logged_in': logged_in})
+    return render(request, 'members/editCard.html', {'card': card, 'card_form': card_form, 'logged_in': logged_in})
 
 
 
 def addCard(request):
+    """
+    Create a new AccessCard
+    """
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
     if request.method == 'POST':
-        cForm = CardForm(request.POST)
-        if cForm.is_valid():
-            newCard = cForm.save(commit=False)
+        c_form = CardForm(request.POST)
+        if c_form.is_valid():
+            newCard = c_form.save(commit=False)
             newCard.save()
             info = 'Created new Access Card'
-            
 
-            cList = AccessCard.objects.all()
+
+            c_list = AccessCard.objects.all()
             return render(request, 'members/main.html',
-                          {'card_list': cList,
+                          {'card_list': c_list,
                            'msg_info': info,
                            'logged_in': logged_in, })
 
     else:
-        cForm = CardForm()
+        c_form = CardForm()
 
     logged_in = True
-    
-    
-    return render(request, 'members/add_card.html', {'card_form': cForm, 'logged_in': logged_in})
+
+
+    return render(request, 'members/add_card.html', {'card_form': c_form, 'logged_in': logged_in})
 
 def groups(request):
+    """
+    Get a list of AccessGroups
+    """
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
@@ -376,56 +427,72 @@ def groups(request):
     return render(request, 'members/access_groups.html', {'group_list' : groups, 'logged_in' : logged_in})
 
 def tblks(request):
+    """
+    Get a list of TimeBlocks
+    """
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
-    blocks = TimeBlock.objects.all()
+    block_list = TimeBlock.objects.all()
 
-    return render(request, 'members/time_blocks.html', {'block_list' : blocks, 'logged_in' : logged_in})
+    return render(request, 'members/time_blocks.html', {'block_list' : block_list, 'logged_in' : logged_in})
 
 
 def blocks(request):
+    """
+    Get a list of AccessBlocks (OBSOLETE)
+
+    TODO: remove
+    """
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
-    blocks = AccessBlock.objects.all()
+    block_list = AccessBlock.objects.all()
 
-    return render(request, 'members/access_blocks.html', {'block_list': blocks, 'logged_in': logged_in})
+    return render(request, 'members/access_blocks.html', {'block_list': block_list, 'logged_in': logged_in})
 
 
 
 def addBlock(request):
+    """
+    Create a new AccessBlock
+    """
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
 
     logged_in = True
     if request.method == 'POST':
-        bForm = BlockForm(request.POST)
-        if bForm.is_valid():
-            newBlock = bForm.save(commit=False)
-            newBlock.save()
+        b_form = BlockForm(request.POST)
+        if b_form.is_valid():
+            new_block = b_form.save(commit=False)
+            new_block.save()
             info = 'Created new Access Block'
-            
 
-            bList = AccessBlock.objects.all()
+
+            b_list = AccessBlock.objects.all()
             return render(request, 'members/main.html',
-                          {'block_list': bList,
+                          {'block_list': b_list,
                            'msg_info': info,
                            'logged_in': logged_in, })
 
     else:
-        bForm = BlockForm()
+        b_form = BlockForm()
 
     logged_in = True
+
     
-    
-    return render(request, 'members/add_block.html', {'block_form': bForm, 'logged_in': logged_in})
+    return render(request, 'members/add_block.html', {'block_form': b_form, 'logged_in': logged_in})
 
 
 @csrf_exempt
 def auth(request):
+    """
+    Authenticate access requests
+
+    Uses a custom protocol on top of HTTP to communicate with msys clients
+    """
     if request.method == 'POST':
         if 'id' in request.POST:
             uID = request.POST['id']
