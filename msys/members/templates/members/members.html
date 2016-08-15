@@ -7,13 +7,19 @@
 </div>
 
 {% if member_list %}
+
+<a class="btn btn-default" href="{% url 'memberList' %}?show_active=1">Indicate Active Memberships</a>
+
 <table class="table table-striped table-hover">
   <thead>
     <tr>
       <th>Number</th>
       <th>First Name</th>
       <th>Last Name</th>
+      <th>Stripe Customer ID</th>
+      {% if show_active %}
       <th>Active</th>
+      {% endif %}
     </tr>
   </thead>
   <tbody>
@@ -22,7 +28,10 @@
       <td>{{mem.number}}</td>
       <td><a href="{% url 'memberDetails' mem.pk %}">{{mem.first_name}}</a></td>
       <td>{{mem.last_name}}</td>
+      <td>{{mem.stripe_customer_code}}</td>
+      {% if show_active %}
       <td>{% if mem.has_active_membership %} &#x2713; {% endif %}</td>
+      {% endif %}
     </tr>
       {% endfor %}
   </tbody>

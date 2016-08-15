@@ -61,11 +61,18 @@ def members(request):
         return render(request, 'members/home.html', {})
 
     logged_in = True
+    show_active = False
     member_list = Member.objects.all()
+    
+    if request.method == 'GET':
+        if 'show_active' in request.GET:
+            show_active = True
 
     return render(request,
                   'members/members.html',
-                  {'member_list': member_list, 'logged_in': logged_in})
+                  {'member_list': member_list,
+                   'show_active': show_active,
+                   'logged_in': logged_in})
 
 def memberDetails(request, member_id):
     """Show details about a specific Member"""

@@ -98,7 +98,6 @@ python manage.py makemigrations members
     * Test cases for latency
     * Design access cache
     * Protocol for transmitting access info
-* Get import script to populate stripe data
 * Update instance on Morgianna
 * Stripe API integration
     

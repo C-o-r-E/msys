@@ -59,7 +59,8 @@ if __name__ == "__main__":
                        phone_number = row['Contact #'],
                        email = row['Email'],
                        emergency_contact = row['Emergency Contact'],
-                       emergency_phone_number = row['Emergency Phone'])
+                       emergency_phone_number = row['Emergency Phone'],
+                       stripe_customer_code = row['Stripe cus_ code'])
             if len(m.birth_date) == 0:
                 m.birth_date = datetime.date.today()
             try:
@@ -79,7 +80,8 @@ if __name__ == "__main__":
                     if last_day > datetime.date.today():
                         ms = Membership(member = m,
                                         start_date = datetime.date.today(),
-                                        expire_date = last_day)
+                                        expire_date = last_day,
+                                        stripe_subscription_code = row['Stripe Membership sub_ code'])
                         ms.save()
             except ValueError:
                 print('\t could not parse date: [', row['Last day of Membership'], ']')
