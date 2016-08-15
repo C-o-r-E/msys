@@ -100,4 +100,5 @@ python manage.py makemigrations members
     * Protocol for transmitting access info
 * Update instance on Morgianna
 * Stripe API integration
+* Logging!!
     

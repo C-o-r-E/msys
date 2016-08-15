@@ -8,9 +8,11 @@ import datetime
 from members.models import *
 from members.forms import *
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from time import sleep
 """
 def ensure_login(in_fn):
 
@@ -497,7 +499,25 @@ def addBlock(request):
     
     return render(request, 'members/add_block.html', {'block_form': b_form, 'logged_in': logged_in})
 
+@csrf_exempt
+def latency(request):
+    """
+    Used to for clients to test latency
+    """
 
+    if not settings.DEBUG:
+        return HttpResponseForbidden()
+
+    if request.method == 'POST':
+        if 'time' in request.POST:
+            nap_time = float(request.POST['time'])
+            print("Sleeping {}s...".format(nap_time))
+            if nap_time > 10:
+                nap_time = 10
+                print("Time too long: setting to {}s".format(nap_time))
+            sleep(nap_time)
+
+    return HttpResponse("ok", content_type="text/plain")
 @csrf_exempt
 def auth(request):
     """
