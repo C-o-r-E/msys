@@ -8,6 +8,8 @@ and just like a friendly castle guard, will be able to remember people that have
 
 Gatekeeper will cache the results of the recent authentications.
 """
+import urllib.parse
+import urllib.request
 
 class Gatekeeper():
     """
@@ -25,4 +27,4 @@ class Gatekeeper():
         Returns True if the server allows access for the ID or if the server is unavailable,
         will return True if the cache indicates the ID had recent access
         """
-        pass
+        print("Auth id: [{}]".format(rfid))
