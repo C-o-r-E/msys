@@ -13,21 +13,22 @@ if sys.version_info[0] < 3:
 
 reader = MIFAREReader = MFRC522.MFRC522()
 
-door = GateKeeper('http://192.168.1.100/members/auth/')
+door = Gatekeeper('http://192.168.1.100/members/auth/')
 
 
 while True:
     (status, data) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL) 
-    if status == IFAREReader.MI_OK:
+    if status == MIFAREReader.MI_OK:
         pass
     else:
-        print("PICC_REQIDL error: {}".format(status))
-        break
+        #print("PICC_REQIDL error: {}".format(status))
+        #break
+        pass #Need to look in to why an error is returned before being able to read the uid...
 
 
 
     (status, data) = MIFAREReader.MFRC522_Anticoll()
-    if status == IFAREReader.MI_OK:
+    if status == MIFAREReader.MI_OK:
         uid = ''
         for byte in data[:-1]:
             uid += hex(byte)[2:]
