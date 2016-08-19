@@ -21,7 +21,7 @@ while True:
     if status == IFAREReader.MI_OK:
         pass
     else:
-        print("PICC_REQIDL error: {}".format(status)
+        print("PICC_REQIDL error: {}".format(status))
         break
 
 
@@ -33,7 +33,7 @@ while True:
             uid += hex(byte)[2:]
         door.authenticate(uid)
     else:
-        print("PICC_AntiColl error: {}".format(status)
+        print("PICC_AntiColl error: {}".format(status))
         break
     
     sleep(1)
