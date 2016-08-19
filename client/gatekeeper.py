@@ -36,7 +36,7 @@ class Gatekeeper():
 
         t1 = perf_counter()
 
-        req = urllib.request.Request(url, data)
+        req = urllib.request.Request(self.url, data)
         resp = urllib.request.urlopen(req)
 
         text = resp.read()
