@@ -28,3 +28,18 @@ class Gatekeeper():
         will return True if the cache indicates the ID had recent access
         """
         print("Auth id: [{}]".format(rfid))
+        
+        values = {'id' : rfid}
+        data = urllib.parse.urlencode(values)
+        data = data.encode('utf-8')
+
+        t1 = perf_counter()
+
+        req = urllib.request.Request(url, data)
+        resp = urllib.request.urlopen(req)
+
+        text = resp.read()
+
+        t2 = perf_counter()
+        
+        print("Auth got [{}] in {} sec".format(text, t2-t1))

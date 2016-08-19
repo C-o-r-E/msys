@@ -15,6 +15,18 @@ reader = MIFAREReader = MFRC522.MFRC522()
 
 door = Gatekeeper('http://192.168.1.100/members/auth/')
 
+"""
+Something is weird about this library or maybe I'm not getting something.
+
+It seems from the old code that we do the following:
+
+a) make the PICC_REQIDL request
+b) ignore its return value
+c) do the anti-collision routine
+d) extract a UID and ignore other statuses...
+
+Going to start with this for now but it doesnt seem right...
+"""
 
 while True:
     (status, data) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL) 
@@ -34,8 +46,9 @@ while True:
             uid += hex(byte)[2:]
         door.authenticate(uid)
     else:
-        print("PICC_AntiColl error: {}".format(status))
-        break
+        #print("PICC_AntiColl error: {}".format(status))
+        #break
+        pass
     
     sleep(1)
     
