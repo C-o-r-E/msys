@@ -10,6 +10,7 @@ Gatekeeper will cache the results of the recent authentications.
 """
 import urllib.parse
 import urllib.request
+from time import perf_counter
 
 class Gatekeeper():
     """
