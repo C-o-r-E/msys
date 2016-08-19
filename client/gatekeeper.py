@@ -10,6 +10,7 @@ Gatekeeper will cache the results of the recent authentications.
 """
 import urllib.parse
 import urllib.request
+from urllib.error import URLERROR
 from time import perf_counter
 
 class Gatekeeper():
@@ -42,6 +43,10 @@ class Gatekeeper():
         req = urllib.request.Request(self.url, data)
         try:
             resp = urllib.request.urlopen(req, timeout=self.request_timeout)
+        except URLError:
+            print("TODO: log that the connection was rejected...")
+            print("TODO: Look in cache")
+            return False
         except timeout as err:
             print("TODO: Look in cache")
             return False
