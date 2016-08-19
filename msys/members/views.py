@@ -383,7 +383,8 @@ def editCard(request, card_id):
         if card_form.is_valid():
             edited_card = card_form.save(commit=False)
             actual_card = get_object_or_404(AccessCard, pk=card_id)
-            edited_card.unique_id = actual_card.unique_id
+            #commented out to allow modification of the ID
+            #edited_card.unique_id = actual_card.unique_id
             edited_card.pk = actual_card.pk
             edited_card.save()
             return cards(request)
