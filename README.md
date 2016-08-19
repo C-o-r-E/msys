@@ -95,6 +95,7 @@ python manage.py makemigrations members
 
 * jquery datepicker for certain forms
 * Client
+    * Drive card reading by interrupt
     * Test cases for latency
     * Design access cache
     * Protocol for transmitting access info

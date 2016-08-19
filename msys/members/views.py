@@ -8,7 +8,7 @@ import datetime
 from members.models import *
 from members.forms import *
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
@@ -518,6 +518,37 @@ def latency(request):
             sleep(nap_time)
 
     return HttpResponse("ok", content_type="text/plain")
+
+@csrf_exempt
+def weekly_access(request):
+    """
+    Deliver info on what access a given ID card grants
+    
+    Generate a JSON datastructure to be returned to the user
+    """
+    data = {}
+    if request.method == 'POST':
+        if 'id' in request.POST:
+            uID = request.POST['id']
+            
+            cards = AccessCard.objects.filter(unique_id=uID)
+            for the_card in cards:
+                access_groups = AccessGroup.objects.filter(card=the_card)
+                for the_group in access_groups:
+                    time_blocks = TimeBlock.objects.filter(group=the_group)
+                    for block in time_blocks:
+                        if block.day in data:
+                            temp = data[block.day]
+                            temp['start'] = min(block.start, temp['start'])
+                            temp['end'] = max(block.end, temp['end'])
+                            data[block.day] = temp
+                        else:
+                            data[block.day] = {'start': block.start, 'end': block.end}
+            
+            return JsonResponse(data)
+            
+    return HttpResponse("Nope", content_type="text/plain")
+
 @csrf_exempt
 def auth(request):
     """

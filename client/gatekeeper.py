@@ -17,19 +17,22 @@ class Gatekeeper():
     The Gatekeeper object is an interface to an MSYS server for authentication of IDs
     """
     
+    self.request_timeout = 2
+    
     def __init__(self, server_url):
-        self.url = server_url
+        self.auth_url = server_url + "auth/"
+        self.weekly_url = server_url + "weekly_access/"
 
 
     def authenticate(self, rfid):
         """
         Authenticate an ID
-        
+
         Returns True if the server allows access for the ID or if the server is unavailable,
         will return True if the cache indicates the ID had recent access
         """
         print("Auth id: [{}]".format(rfid))
-        
+
         values = {'id' : rfid}
         data = urllib.parse.urlencode(values)
         data = data.encode('utf-8')
@@ -37,10 +40,17 @@ class Gatekeeper():
         t1 = perf_counter()
 
         req = urllib.request.Request(self.url, data)
-        resp = urllib.request.urlopen(req)
+        try:
+            resp = urllib.request.urlopen(req, timeout=self.request_timeout)
+        except timeout as err:
+            print("TODO: Look in cache")
+            return False
 
         text = resp.read()
 
         t2 = perf_counter()
-        
+
         print("Auth got [{}] in {} sec".format(text, t2-t1))
+
+        if text == b'Granted':
+            return True

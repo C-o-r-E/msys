@@ -13,7 +13,7 @@ if sys.version_info[0] < 3:
 
 reader = MIFAREReader = MFRC522.MFRC522()
 
-door = Gatekeeper('http://192.168.1.100:8000/members/auth/')
+door = Gatekeeper('http://192.168.1.100:8000/members/')
 
 """
 Something is weird about this library or maybe I'm not getting something.
