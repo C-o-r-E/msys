@@ -10,17 +10,16 @@ Gatekeeper will cache the results of the recent authentications.
 """
 import urllib.parse
 import urllib.request
-from urllib.error import URLERROR
+from urllib.error import URLError
 from time import perf_counter
 
 class Gatekeeper():
     """
     The Gatekeeper object is an interface to an MSYS server for authentication of IDs
     """
-    
-    self.request_timeout = 2
-    
+        
     def __init__(self, server_url):
+        self.request_timeout = 2
         self.auth_url = server_url + "auth/"
         self.weekly_url = server_url + "weekly_access/"
 
@@ -40,7 +39,7 @@ class Gatekeeper():
 
         t1 = perf_counter()
 
-        req = urllib.request.Request(self.url, data)
+        req = urllib.request.Request(self.auth_url, data)
         try:
             resp = urllib.request.urlopen(req, timeout=self.request_timeout)
         except URLError:
