@@ -58,7 +58,7 @@ class Gatekeeper():
             print("TODO: handle file error")
             return
             
-        db_file.write(text)
+        db_file.write(str(text))
         db_file.close()
         
 
