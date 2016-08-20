@@ -63,7 +63,7 @@ class Gatekeeper():
 
     def update_cache(self, rfid):
         """
-        bleh
+        TODO: text here
         """
 
         values = {'id' : rfid}
@@ -109,8 +109,11 @@ class Gatekeeper():
         
         try:
             db_file = open(fname, 'r')
+            print('Opened file in cache [{}]'.format(fname))
             data = db_file.read()
+            return self.json_has_access_now(data)
         except FileNotFoundException:
+            print('Could not open [{}]'.format(fname))
             return False
         
 
@@ -134,11 +137,11 @@ class Gatekeeper():
             resp = urllib.request.urlopen(req, timeout=self.request_timeout)
         except URLError:
             print("TODO: log that the connection was rejected...")
-            print("TODO: Look in cache")
-            return False
+            cached = self.auth_from_cache(rfid)
+            return cached
         except timeout as err:
-            print("TODO: Look in cache")
-            return False
+            cached = auth_from_cache(rfid)
+            return cached
 
         text = resp.read()
 
