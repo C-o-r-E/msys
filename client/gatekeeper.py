@@ -8,10 +8,13 @@ and just like a friendly castle guard, will be able to remember people that have
 
 Gatekeeper will cache the results of the recent authentications.
 """
+import json
 import urllib.parse
 import urllib.request
 from urllib.error import URLError
 from time import perf_counter
+import os
+
 
 class Gatekeeper():
     """
@@ -22,7 +25,42 @@ class Gatekeeper():
         self.request_timeout = 2
         self.auth_url = server_url + "auth/"
         self.weekly_url = server_url + "weekly_access/"
+        
+    def update_cache(self, rfid):
+        """
+        bleh
+        """
 
+        values = {'id' : rfid}
+        data = urllib.parse.urlencode(values)
+        data = data.encode('utf-8')
+        req = urllib.request.Request(self.weekly_url, data)
+        
+        try:
+            resp = urllib.request.urlopen(req, timeout=self.request_timeout)
+        except URLError:
+            print("Weekly TODO: log that the connection was rejected...")
+            return
+            
+        except timeout as err:
+            print("Weekly: timeout")
+            return
+            
+        text = resp.read()
+        
+        #save the file
+        base = os.path.dirname(os.path.abspath(__file__))
+        db_path = "{}/db/{}.json".format(base, rfid)
+        
+        try:
+            db_file = open(db_path, 'w')
+        except:
+            print("TODO: handle file error")
+            return
+            
+        db_file.write(text)
+        db_file.close()
+        
 
     def authenticate(self, rfid):
         """

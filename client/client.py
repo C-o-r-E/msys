@@ -28,6 +28,19 @@ d) extract a UID and ignore other statuses...
 Going to start with this for now but it doesnt seem right...
 """
 
+def request_access(uid):
+    """
+    very sleepy
+    """
+    
+    if door.authenticate(uid):
+        #open
+        door.update_cache(uid)
+        
+    else:
+        #we might want to inform the user that they were rejected
+        pass
+
 while True:
     (status, data) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL) 
     if status == MIFAREReader.MI_OK:
