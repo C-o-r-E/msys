@@ -14,6 +14,7 @@ import urllib.request
 from urllib.error import URLError
 from time import perf_counter
 import os
+import datetime
 
 
 class Gatekeeper():
@@ -25,7 +26,41 @@ class Gatekeeper():
         self.request_timeout = 2
         self.auth_url = server_url + "auth/"
         self.weekly_url = server_url + "weekly_access/"
+
+    def json_has_access_now(self, json_str):
+        """
+        Check the data in provided json string to see if it should have access now
         
+        Returns True if the data indicates that access should be provided at the current
+        time. Returns False if the current time is outside of start and end times for 
+        the current day. Returns False if there is a formatting error.
+        """
+        
+        day2day = {'mon': 0,
+                   'tues': 1,
+                   'wed': 2,
+                   'thurs': 3,
+                   'fri': 4,
+                   'sat': 5,
+                   'sun': 6
+                  }
+
+        try:
+            today = datetime.date.today.weekday()
+            cur_time = datetime.datetime.now().time()
+            data = json.loads(json_str)
+            for day, times in data.items():
+                if day == day2day[today]:
+                    start_t = datetime.datetime.strptime(times['start'], '%H:%M:%S').time()
+                    end_t = datetime.datetime.strptime(times['end'], '%H:%M:%S').time()
+                    if start_t <= cur_time and end_t >= cur_time:
+                        return True
+            
+        except ValueError:
+            return False
+            
+        return False
+
     def update_cache(self, rfid):
         """
         bleh
@@ -60,6 +95,23 @@ class Gatekeeper():
             
         db_file.write(str(text))
         db_file.close()
+
+    def auth_from_cache(self, rfid):
+        """
+        Check the local cache to see if we remember past access info
+        
+        Returns True if the id has access at this day/time according to the chached info
+        """
+        
+        #can we open the file
+        base = os.path.dirname(os.path.abspath(__file__))
+        fname = "{}/db/{}.json".format(base, rfid)
+        
+        try:
+            db_file = open(fname, 'r')
+            data = db_file.read()
+        except FileNotFoundException:
+            return False
         
 
     def authenticate(self, rfid):

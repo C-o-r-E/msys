@@ -34,7 +34,9 @@ def request_access(uid):
     """
     
     if door.authenticate(uid):
-        #open
+        #first open the door
+        print("TODO: open door via GPIO")
+        #then update the cache
         door.update_cache(uid)
         
     else:
