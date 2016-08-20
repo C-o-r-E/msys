@@ -57,7 +57,7 @@ while True:
         uid = ''
         for byte in data[:-1]:
             uid += hex(byte)[2:]
-        door.authenticate(uid)
+        request_access(uid)
     else:
         #print("PICC_AntiColl error: {}".format(status))
         #break
