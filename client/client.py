@@ -41,6 +41,7 @@ def request_access(uid):
         
     else:
         #we might want to inform the user that they were rejected
+        print('ID does not have access now')
         pass
 
 while True:

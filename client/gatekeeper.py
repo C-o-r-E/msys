@@ -46,7 +46,7 @@ class Gatekeeper():
                   }
 
         try:
-            today = datetime.date.today.weekday()
+            today = datetime.date.today().weekday()
             cur_time = datetime.datetime.now().time()
             data = json.loads(json_str)
             for day, times in data.items():
@@ -111,8 +111,9 @@ class Gatekeeper():
             db_file = open(fname, 'r')
             print('Opened file in cache [{}]'.format(fname))
             data = db_file.read()
+            db_file.close()
             return self.json_has_access_now(data)
-        except FileNotFoundException:
+        except FileNotFoundError:
             print('Could not open [{}]'.format(fname))
             return False
         
