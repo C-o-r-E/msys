@@ -27,7 +27,7 @@ class Gatekeeper():
     CACHE_STALE_T = 345600 # number of seconds in 4 days
 
     def __init__(self, server_url):
-        self.request_timeout = REQUEST_TIMEOUT
+        self.request_timeout = self.REQUEST_TIMEOUT
         self.auth_url = server_url + "auth/"
         self.weekly_url = server_url + "weekly_access/"
 
@@ -120,7 +120,7 @@ class Gatekeeper():
         try:
             mtime = os.path.getmtime(fname)
             delta_t = time.time() - mtime
-            if delta_t < CACHE_STALE_T:
+            if delta_t > self.CACHE_STALE_T:
                 return False
         
             db_file = open(fname, 'r')
