@@ -50,7 +50,7 @@ class Gatekeeper():
             cur_time = datetime.datetime.now().time()
             data = json.loads(json_str)
             for day, times in data.items():
-                if day == day2day[today]:
+                if today == day2day[day]:
                     start_t = datetime.datetime.strptime(times['start'], '%H:%M:%S').time()
                     end_t = datetime.datetime.strptime(times['end'], '%H:%M:%S').time()
                     print("{} <= {} and {} >= {}".format(start_t, cur_time, end_t, cur_time))
