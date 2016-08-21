@@ -15,27 +15,31 @@ from urllib.error import URLError
 from time import perf_counter
 import os
 import datetime
+import time
 
 
 class Gatekeeper():
     """
     The Gatekeeper object is an interface to an MSYS server for authentication of IDs
     """
-        
+    
+    REQUEST_TIMEOUT = 2
+    CACHE_STALE_T = 345600 # number of seconds in 4 days
+
     def __init__(self, server_url):
-        self.request_timeout = 2
+        self.request_timeout = REQUEST_TIMEOUT
         self.auth_url = server_url + "auth/"
         self.weekly_url = server_url + "weekly_access/"
 
     def json_has_access_now(self, json_str):
         """
         Check the data in provided json string to see if it should have access now
-        
+
         Returns True if the data indicates that access should be provided at the current
         time. Returns False if the current time is outside of start and end times for 
         the current day. Returns False if there is a formatting error.
         """
-        
+
         day2day = {'mon': 0,
                    'tues': 1,
                    'wed': 2,
@@ -67,24 +71,26 @@ class Gatekeeper():
 
     def update_cache(self, rfid):
         """
-        TODO: text here
+        Update our local store of access info for the given RFID
+        
+        Asks the server for the most up to date access info. Overwrites the previous stored data.
         """
 
         values = {'id' : rfid}
         data = urllib.parse.urlencode(values)
         data = data.encode('utf-8')
         req = urllib.request.Request(self.weekly_url, data)
-        
+
         try:
             resp = urllib.request.urlopen(req, timeout=self.request_timeout)
         except URLError:
             print("Weekly TODO: log that the connection was rejected...")
             return
-            
+
         except timeout as err:
             print("Weekly: timeout")
             return
-            
+
         text = resp.read()
         
         #save the file
@@ -112,6 +118,11 @@ class Gatekeeper():
         fname = "{}/db/{}.json".format(base, rfid)
         
         try:
+            mtime = os.path.getmtime(fname)
+            delta_t = time.time() - mtime
+            if delta_t < CACHE_STALE_T:
+                return False
+        
             db_file = open(fname, 'r')
             print('Opened file in cache [{}]'.format(fname))
             data = db_file.read()

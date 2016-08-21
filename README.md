@@ -91,14 +91,13 @@ python manage.py makemigrations members
 * client docs
 
 
-### TODO - Dev
+### Roadmap - Dev
 
 * jquery datepicker for certain forms
 * Client
-    * Drive card reading by interrupt
+    * Drive card reading by interrupt (if possible with hardware)
     * Test cases for latency
-    * Design access cache
-    * Protocol for transmitting access info
+    * Measure how "stale" our cache data is
 * Update instance on Morgianna
 * Stripe API integration
 * Logging!!
