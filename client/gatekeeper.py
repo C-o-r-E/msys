@@ -48,8 +48,10 @@ class Gatekeeper():
         try:
             today = datetime.date.today().weekday()
             cur_time = datetime.datetime.now().time()
-            data = json.loads(json_str)
+            data = json.loads(str(json_str))
+            print("data = {}\n\n".format(data))
             for day, times in data.items():
+                print("day = [{}] day2day: [{}]".format(today, day2day[day]))
                 if today == day2day[day]:
                     start_t = datetime.datetime.strptime(times['start'], '%H:%M:%S').time()
                     end_t = datetime.datetime.strptime(times['end'], '%H:%M:%S').time()
@@ -58,6 +60,7 @@ class Gatekeeper():
                         return True
             
         except ValueError:
+            print("ValueError!!!one1! \njson_str = {}".format(json_str))
             return False
             
         return False
