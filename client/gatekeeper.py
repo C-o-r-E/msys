@@ -53,6 +53,7 @@ class Gatekeeper():
                 if day == day2day[today]:
                     start_t = datetime.datetime.strptime(times['start'], '%H:%M:%S').time()
                     end_t = datetime.datetime.strptime(times['end'], '%H:%M:%S').time()
+                    print("{} <= {} and {} >= {}".format(start_t, cur_time, end_t, cur_time))
                     if start_t <= cur_time and end_t >= cur_time:
                         return True
             
