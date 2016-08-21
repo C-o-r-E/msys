@@ -92,12 +92,12 @@ class Gatekeeper():
         db_path = "{}/db/{}.json".format(base, rfid)
         
         try:
-            db_file = open(db_path, 'w')
+            db_file = open(db_path, 'wb')
         except:
             print("TODO: handle file error")
             return
             
-        db_file.write(str(text))
+        db_file.write(text)
         db_file.close()
 
     def auth_from_cache(self, rfid):
