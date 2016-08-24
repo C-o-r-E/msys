@@ -1,10 +1,20 @@
 # MSYS
 
+<a class="mk-toclify" id="table-of-contents"></a>
+
+# Table of Contents
+
+- [About](#about)
+- [Server Installation](#server-installation)
+    - [Get Django](#get-django)
+- [TODO docs](#todo-docs)
+
+
 ## About
 
 Msys is a member management and access control system.
 
-## Installation (Server)
+## Server Installation
 
 ### Environment
 
@@ -82,7 +92,7 @@ python manage.py makemigrations members
 
 
 
-### TODO - Docs
+# TODO docs
 
 * Set up the database
 * Set up the webserver
@@ -91,13 +101,12 @@ python manage.py makemigrations members
 * client docs
 
 
-### Roadmap - Dev
+# Roadmap dev
 
 * jquery datepicker for certain forms
 * Client
     * Drive card reading by interrupt (if possible with hardware)
     * Test cases for latency
-    * Measure how "stale" our cache data is
 * Update instance on Morgianna
 * Stripe API integration
 * Logging!!
