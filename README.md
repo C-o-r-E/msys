@@ -6,7 +6,14 @@
 
 - [About](#about)
 - [Server Installation](#server-installation)
+    - [Environment](#environment)
     - [Get Django](#get-django)
+    - [Using PIP](#using-pip)
+    - [Get PIP](#get-pip)
+    - [Clone the repo](#clone-the-repo)
+    - [Run the server in devel mode](#run-the-server-in-devel-mode)
+    - [Set up the database](#set-up-the-database)
+    - [Import data](#import-data)
 - [TODO docs](#todo-docs)
 
 
@@ -20,8 +27,8 @@ Msys is a member management and access control system.
 
 Msys is developed on Linux but it could probably run on a number of other systems. Certain packages are required in any case:
 
-	 * Python 2.x
- 	 * Django 1.7
+	 * Python 3.x
+ 	 * Django 1.9
 
 A webserver and database will also be required. In this guide we will focus on the following ones:
 
@@ -89,20 +96,24 @@ Once the superuser is created, we need to create the database tables required fo
 python manage.py makemigrations members
 ```
 
+### Import data
 
+This section is for importing the memberlist used by Helios (google sheet). It expects the sheet with member information to be exported to a CSV file. The script will attempt to open the file "members.csv" and populate the database with both member and membership information.
 
+```
+python add_all_members.py
+```
 
 # TODO docs
 
-* Set up the database
 * Set up the webserver
 * Set up wsgi
-* import members data
 * client docs
 
 
 # Roadmap dev
 
+* fix CSS for dropdowns
 * jquery datepicker for certain forms
 * Client
     * Drive card reading by interrupt (if possible with hardware)
