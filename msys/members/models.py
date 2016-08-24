@@ -8,6 +8,7 @@ The classes defined here are essential to Django's ORM magic
 import datetime
 from django.db import models
 from django.forms import ModelForm
+from django.forms import Select, SelectMultiple,  TextInput
 
 
 class MemberType(models.Model):
@@ -254,6 +255,8 @@ class MemberForm(ModelForm):
             'birth_date': 'Birthdate (YYYY-MM-DD)'
         }
 
+        widgets = {'type': Select(attrs={'class': 'form-control'}),}
+
 class MembershipForm(ModelForm):
     class Meta:
         model = Membership
@@ -266,6 +269,8 @@ class CardForm(ModelForm):
         model = AccessCard
         fields = ['member',
                   'unique_id']
+        widgets = {'member': Select(attrs={'class': 'form-control'}),
+                   'unique_id': TextInput(attrs={'class': 'form-control'}),}
 
 class BlockForm(ModelForm):
     class Meta:

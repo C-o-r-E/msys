@@ -113,11 +113,12 @@ python add_all_members.py
 
 # Roadmap dev
 
-* fix CSS for dropdowns
+* ability to edit memberships
 * jquery datepicker for certain forms
 * Client
     * Drive card reading by interrupt (if possible with hardware)
     * Test cases for latency
+    * Use Real GPIO to open latch
 * Update instance on Morgianna
 * Stripe API integration
 * Logging!!

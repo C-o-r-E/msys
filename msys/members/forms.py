@@ -15,4 +15,5 @@ class AddGroupToCardForm(forms.Form):
 		self.fields['groups'] = forms.MultipleChoiceField(
 			choices=[(o.id, str(o)) for o in AccessGroup.objects.all()]
 			)
+		self.fields['groups'].widget.attrs.update({'class': 'form-control'})
 
