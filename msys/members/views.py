@@ -454,52 +454,6 @@ def tblks(request):
     return render(request, 'members/time_blocks.html', {'block_list' : block_list, 'logged_in' : logged_in})
 
 
-def blocks(request):
-    """
-    Get a list of AccessBlocks (OBSOLETE)
-
-    TODO: remove
-    """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
-    block_list = AccessBlock.objects.all()
-
-    return render(request, 'members/access_blocks.html', {'block_list': block_list, 'logged_in': logged_in})
-
-
-
-def addBlock(request):
-    """
-    Create a new AccessBlock
-    """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
-    if request.method == 'POST':
-        b_form = BlockForm(request.POST)
-        if b_form.is_valid():
-            new_block = b_form.save(commit=False)
-            new_block.save()
-            info = 'Created new Access Block'
-
-
-            b_list = AccessBlock.objects.all()
-            return render(request, 'members/main.html',
-                          {'block_list': b_list,
-                           'msg_info': info,
-                           'logged_in': logged_in, })
-
-    else:
-        b_form = BlockForm()
-
-    logged_in = True
-
-    
-    return render(request, 'members/add_block.html', {'block_form': b_form, 'logged_in': logged_in})
-
 @csrf_exempt
 def latency(request):
     """
