@@ -18,6 +18,7 @@ def cleanup(signal, frame):
     lock()
     GPIO.cleanup()
     print("done!")
+    sys.exit(0)
 
 
 if sys.version_info[0] < 3:
@@ -53,7 +54,9 @@ def request_access(uid):
     
     if door.authenticate(uid):
         #first open the door
-        print("TODO: open door via GPIO")
+        unlock()
+        sleep(8)
+        lock()
         #then update the cache
         door.update_cache(uid)
         
