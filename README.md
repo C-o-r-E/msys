@@ -173,7 +173,9 @@ sudo python3 client.py
 
 * Client (gatekeeper)
     * Drive card reading by interrupt (if possible with hardware)
-    * Test cases   
+    * Test cases
+    * Red LED for access denied
+    * investigate new revision of board   
     
 * Client (Desktop)
     * Compile test code with libnfc
