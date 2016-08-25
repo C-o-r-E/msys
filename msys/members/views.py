@@ -84,13 +84,11 @@ def memberDetails(request, member_id):
     logged_in = True
     mem = get_object_or_404(Member, pk=member_id)
 
-    access_list = AccessBlock.objects.filter(member=mem)
     cards = AccessCard.objects.filter(member=mem)
 
     return render(request,
                   'members/member_details.html',
                   {'member': mem,
-                   'access_list': access_list,
                    'access_cards': cards,
                    'logged_in': logged_in}
                  )
@@ -111,12 +109,12 @@ def memberDetailsByRFID(request, rfid):
     card = get_object_or_404(AccessCard, unique_id=rfid)
     mem = card.member
 
-    access_list = AccessBlock.objects.filter(member=mem)
+    cards = AccessCard.objects.filter(member=mem)
 
     return render(request,
                   'members/member_details.html',
                   {'member': mem,
-                   'access_list': access_list,
+                   'access_cards': cards,
                    'logged_in': logged_in}
                  )
 

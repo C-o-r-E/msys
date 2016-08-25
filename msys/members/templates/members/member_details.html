@@ -155,15 +155,6 @@
 <a class="btn btn-default" href="{% url 'addMembershipForMember' member.pk %}">Create Membership</a>
 
 
-{% if access_list %}
-<h1>Access Times</h1>
-{% for access_block in access_list %}
-<p>{{access_block}}</p>
-{% endfor %}
-
-{% endif %} {# if access_list #}
-
-
 {% if access_cards %}
 <h1>Access Cards</h1>
 {% for card in access_cards %}
