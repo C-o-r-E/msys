@@ -258,7 +258,7 @@ class MemberForm(ModelForm):
         widgets = {'type': Select(attrs={'class': 'form-control'}),
                    'first_name': TextInput(attrs={'class': 'form-control'}),
                    'last_name': TextInput(attrs={'class': 'form-control'}),
-                   'birth_date': DateInput(attrs={'class': 'form-control'}),
+                   'birth_date': DateInput(attrs={'class': 'form-control datepicker'}),
                    'address': TextInput(attrs={'class': 'form-control'}),
                    'city': TextInput(attrs={'class': 'form-control'}),
                    'postal_code': TextInput(attrs={'class': 'form-control'}),
@@ -276,8 +276,8 @@ class MembershipForm(ModelForm):
                   'start_date', 'expire_date',
                   'stripe_subscription_code']
         widgets = {'member': Select(attrs={'class': 'form-control'}),
-                   'start_date': DateInput(attrs={'class': 'form-control'}),
-                   'expire_date': DateInput(attrs={'class': 'form-control'}),
+                   'start_date': DateInput(attrs={'class': 'form-control datepicker'}),
+                   'expire_date': DateInput(attrs={'class': 'form-control datepicker'}),
                    'stripe_subscription_code': TextInput(attrs={'class': 'form-control'}),
                   }
 
