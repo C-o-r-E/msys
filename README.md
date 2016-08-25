@@ -168,15 +168,12 @@ sudo python3 client.py
 # Roadmap dev
 
 * Server
-    * ability to edit memberships
-    * jquery datepicker for certain forms
     * Stripe API integration
     * Logging!!
 
 * Client (gatekeeper)
     * Drive card reading by interrupt (if possible with hardware)
-    * Test cases
-    * Use Real GPIO to open latch    
+    * Test cases   
     
 * Client (Desktop)
     * Compile test code with libnfc

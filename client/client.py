@@ -2,13 +2,31 @@ import RPi.GPIO as GPIO
 import MFRC522
 import signal
 import sys
+import signal
 from time import sleep
 from gatekeeper import Gatekeeper
+
+
+def unlock():
+    GPIO.output(11, 1)
+
+def lock():
+    GPIO.output(11, 0)
+    
+def cleanup(signal, frame):
+    print("cleaning up...")
+    lock()
+    GPIO.cleanup()
+    print("done!")
 
 
 if sys.version_info[0] < 3:
     raise "Python 3.x required to run"
 
+signal.signal(signal.SIGINT, cleanup)
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(11, GPIO.OUT)
 
 
 reader = MIFAREReader = MFRC522.MFRC522()
@@ -30,7 +48,7 @@ Going to start with this for now but it doesnt seem right...
 
 def request_access(uid):
     """
-    very sleepy
+    TODO: write something useful
     """
     
     if door.authenticate(uid):
