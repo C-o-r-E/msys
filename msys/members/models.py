@@ -8,7 +8,7 @@ The classes defined here are essential to Django's ORM magic
 import datetime
 from django.db import models
 from django.forms import ModelForm
-from django.forms import Select, SelectMultiple,  TextInput
+from django.forms import Select, SelectMultiple, TextInput, DateInput
 
 
 class MemberType(models.Model):
@@ -255,7 +255,19 @@ class MemberForm(ModelForm):
             'birth_date': 'Birthdate (YYYY-MM-DD)'
         }
 
-        widgets = {'type': Select(attrs={'class': 'form-control'}),}
+        widgets = {'type': Select(attrs={'class': 'form-control'}),
+                   'first_name': TextInput(attrs={'class': 'form-control'}),
+                   'last_name': TextInput(attrs={'class': 'form-control'}),
+                   'birth_date': DateInput(attrs={'class': 'form-control'}),
+                   'address': TextInput(attrs={'class': 'form-control'}),
+                   'city': TextInput(attrs={'class': 'form-control'}),
+                   'postal_code': TextInput(attrs={'class': 'form-control'}),
+                   'phone_number': TextInput(attrs={'class': 'form-control'}),
+                   'email': TextInput(attrs={'class': 'form-control'}),
+                   'emergency_contact': TextInput(attrs={'class': 'form-control'}),
+                   'emergency_phone_number': TextInput(attrs={'class': 'form-control'}),
+                   'stripe_customer_code': TextInput(attrs={'class': 'form-control'}),
+        }
 
 class MembershipForm(ModelForm):
     class Meta:
@@ -263,6 +275,11 @@ class MembershipForm(ModelForm):
         fields = ['member',
                   'start_date', 'expire_date',
                   'stripe_subscription_code']
+        widgets = {'member': Select(attrs={'class': 'form-control'}),
+                   'start_date': DateInput(attrs={'class': 'form-control'}),
+                   'expire_date': DateInput(attrs={'class': 'form-control'}),
+                   'stripe_subscription_code': TextInput(attrs={'class': 'form-control'}),
+                  }
 
 class CardForm(ModelForm):
     class Meta:

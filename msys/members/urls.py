@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^memberships/by-member/(?P<member_id>\d+)/$', views.memberships, name='membershipsByMember'),
     url(r'^memberships/add/$', views.addMembership, name='addMembership'),
     url(r'^memberships/add/for-member/(?P<member_id>\d+)/$', views.addMembership, name='addMembershipForMember'),
+    url(r'^memberships/edit/(?P<m_ship>\d+)/$', views.editMembership, name='editMembership'),
     url(r'^cards/$', views.cards, name='cardList'),
     url(r'^cards/add/$', views.addCard, name='addCard'),
     url(r'^cards/details/(?P<card_id>\d+)/$', views.cardDetails, name='cardDetails'),

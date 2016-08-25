@@ -221,7 +221,28 @@ def addMembership(request, member_id=None):
 
     return render(request, 'members/add_membership.html', {'ms_form': ms_form, 'logged_in': logged_in})
 
+def editMembership(request, m_ship):
+    """ Edit a membership """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
 
+    logged_in = True
+    if request.method == 'POST':
+        ms_form = MembershipForm(request.POST)
+        if ms_form.is_valid():
+            edited_ms = ms_form.save(commit=False)
+            actual_ms = get_object_or_404(Membership, pk=m_ship)
+            edited_ms.pk = actual_ms.pk
+            edited_ms.save()
+            return memberships(request)
+    else:
+        ship = get_object_or_404(Membership, pk=m_ship)
+        ms_form = MembershipForm(instance=ship)
+
+
+    return render(request,
+                  'members/editMembership.html',
+                  {'ship': ship, 'ms_form': ms_form, 'logged_in': logged_in})
 
 def cards(request):
     """Render list of AccessCard objects"""
