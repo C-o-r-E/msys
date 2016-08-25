@@ -14,7 +14,14 @@
     - [Run the server in devel mode](#run-the-server-in-devel-mode)
     - [Set up the database](#set-up-the-database)
     - [Import data](#import-data)
+- [Client Installation](#client-installation)
+    - [Updates](#updates)
+    - [System deps](#system-deps)
+    - [Python deps](#python-deps)
+    - [Get client](#get-client)
+    - [Run Client](#run-client)
 - [TODO docs](#todo-docs)
+- [Roadmap dev](#roadmap-dev)
 
 
 ## About
@@ -137,22 +144,41 @@ sudo pip3 install RPi.GPIO
 
 ```
 
+### Get client
+
+```
+git clone https://github.com/C-o-r-E/msys.git
+```
+
+### Run Client
+
+```
+cd msys/client/
+sudo python3 client.py
+```
+
+
 # TODO docs
 
 * Set up the webserver
 * Set up wsgi
-* client docs
+
 
 
 # Roadmap dev
 
-* ability to edit memberships
-* jquery datepicker for certain forms
-* Client
+* Server
+    * ability to edit memberships
+    * jquery datepicker for certain forms
+    * Stripe API integration
+    * Logging!!
+
+* Client (gatekeeper)
     * Drive card reading by interrupt (if possible with hardware)
-    * Test cases for latency
-    * Use Real GPIO to open latch
-* Update instance on Morgianna
-* Stripe API integration
-* Logging!!
+    * Test cases
+    * Use Real GPIO to open latch    
     
+* Client (Desktop)
+    * Compile test code with libnfc
+    * Deploy code to Service Desk Mac
+    * Polish the application
