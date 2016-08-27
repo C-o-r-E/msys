@@ -168,7 +168,6 @@ sudo python3 client.py
 # Roadmap dev
 
 * Server
-    * Logging!!
     * Stripe API integration
     * Ability to delete membership
     * manage rentals (shelves, spaces)
