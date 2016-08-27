@@ -90,6 +90,11 @@
 			</ul>
           </li>
 		</ul>
+		
+		<ul class="nav navbar-nav">
+		    <li><a href="{% url 'showLog' %}">Event Log</a></li>
+		</ul>
+		
 		<ul class="nav navbar-nav navbar-right">
 		  {% if logged_in %}
           <li><a href="{% url 'userLogout' %}">Logout</a></li>

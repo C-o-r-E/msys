@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^cards/edit/(?P<card_id>\d+)/$', views.editCard, name='editCard'),
     url(r'^blks/$', views.tblks, name='blklst'),
     url(r'^groups/$', views.groups, name='groupList'),
+    url(r'^logs/$', views.show_log, name='showLog'),
     url(r'^login/$', views.user_login, name='userLogin'),
     url(r'^logout/$', views.user_logout, name='userLogout'),
     url(r'latency/$', views.latency, name='latency'),

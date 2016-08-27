@@ -168,8 +168,10 @@ sudo python3 client.py
 # Roadmap dev
 
 * Server
-    * Stripe API integration
     * Logging!!
+    * Stripe API integration
+    * Ability to delete membership
+    * manage rentals (shelves, spaces)
 
 * Client (gatekeeper)
     * Drive card reading by interrupt (if possible with hardware)
@@ -178,6 +180,6 @@ sudo python3 client.py
     * investigate new revision of board   
     
 * Client (Desktop)
-    * Compile test code with libnfc
+    * Build some kind of GUI
     * Deploy code to Service Desk Mac
     * Polish the application

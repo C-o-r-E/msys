@@ -135,7 +135,26 @@ def editDetails(request, member_id):
             edited_member.first_seen_date = actual_member.first_seen_date
             edited_member.last_seen_date = actual_member.first_seen_date
             edited_member.save()
-            #return HttpResponseRedirect('../')
+            
+            log_str = "{} edited member: {} with fields [".format(request.user.username,
+                                                           actual_member)
+            log_str += "{} -> {}, ".format(actual_member.number, edited_member.number)
+            log_str += "{} -> {}, ".format(actual_member.type, edited_member.type)
+            log_str += "{} -> {}, ".format(actual_member.first_name, edited_member.first_name)
+            log_str += "{} -> {}, ".format(actual_member.last_name, edited_member.last_name)
+
+            log_str += "{} -> {}, ".format(actual_member.address, edited_member.address)
+            log_str += "{} -> {}, ".format(actual_member.city, edited_member.city)
+            log_str += "{} -> {}, ".format(actual_member.postal_code, edited_member.postal_code)
+            log_str += "{} -> {}, ".format(actual_member.phone_number, edited_member.phone_number)
+            log_str += "{} -> {}, ".format(actual_member.email, edited_member.email)
+            log_str += "{} -> {}, ".format(actual_member.emergency_contact, edited_member.emergency_contact)
+            log_str += "{} -> {}, ".format(actual_member.emergency_phone_number, edited_member.emergency_phone_number)
+            log_str += "{} -> {}, ".format(actual_member.stripe_customer_code, edited_member.stripe_customer_code)
+            
+            log_str += "]"
+            LogEvent.log_now(log_str)
+            
             return members(request)
 
     else:
@@ -152,6 +171,8 @@ def addMember(request):
     """Add a new Member"""
     if not request.user.is_authenticated():
         return render(request, 'members/home.html', {})
+        
+    logged_in = True
 
     if request.method == 'POST':
         mem_form = MemberForm(request.POST)
@@ -161,12 +182,23 @@ def addMember(request):
             new_member.first_seen_date = datetime.date.today()
             new_member.last_seen_date = datetime.date.today()
             new_member.save()
-            return HttpResponseRedirect('../')
+            
+            notes = "Created a new member: {}".format(new_member)
+            
+            log_str = "{} created a new member: {}".format(request.user.username,
+                                                           new_member)
+            LogEvent.log_now(log_str)
+            
+            member_list = Member.objects.all()
+            
+            return render(request,
+                   'members/members.html',
+                   {'member_list': member_list,
+                   'msg_info': notes,
+                   'logged_in': logged_in})
 
     else:
         mem_form = MemberForm()
-
-    logged_in = True
 
 
     return render(request, 'members/add.html', {'mem_form': mem_form, 'logged_in': logged_in})
@@ -204,6 +236,10 @@ def addMembership(request, member_id=None):
             new_membership = ms_form.save(commit=False)
             new_membership.save()
             info = 'Created new membership'
+            
+            log_str = "{} created a new memberhip: {}".format(request.user.username,
+                                                           new_membership)
+            LogEvent.log_now(log_str)
 
 
             m_list = Membership.objects.all()
@@ -234,6 +270,11 @@ def editMembership(request, m_ship):
             actual_ms = get_object_or_404(Membership, pk=m_ship)
             edited_ms.pk = actual_ms.pk
             edited_ms.save()
+            
+            log_str = "{} modified a membership: {} -> {}".format(request.user.username,
+                                                           actual_ms, edited_ms)
+            LogEvent.log_now(log_str)
+            
             return memberships(request)
     else:
         ship = get_object_or_404(Membership, pk=m_ship)
@@ -365,10 +406,17 @@ def cardAssign(request, card_id):
         card.accessgroup_set.clear()
 
         #3 link the card with the groups specified by user
+        lg_txt = ''
         for grp in r_groups:
             card.accessgroup_set.add(grp)
+            lg_txt += str(grp) + ', '
 
         notes = 'Updated AccessGroups associated with Card ' + str(card)
+        
+        log_str = "{} set access groups for card {} to [ {}]".format(request.user.username,
+                                                                     card,
+                                                                     lg_txt)
+        LogEvent.log_now(log_str)
 
         groups = card.accessgroup_set.all()
 
@@ -406,6 +454,12 @@ def editCard(request, card_id):
             #edited_card.unique_id = actual_card.unique_id
             edited_card.pk = actual_card.pk
             edited_card.save()
+            
+            log_str = "{} changed card: {} -> {}".format(request.user.username,
+                                                         actual_card,
+                                                         edited_card)
+            LogEvent.log_now(log_str)
+            
             return cards(request)
 
     else:
@@ -431,9 +485,11 @@ def addCard(request):
         if c_form.is_valid():
             newCard = c_form.save(commit=False)
             newCard.save()
+            
+            log_str = "{} created a new card: {}".format(request.user.username, newCard)
+            LogEvent.log_now(log_str)
+            
             info = 'Created new Access Card'
-
-
             c_list = AccessCard.objects.all()
             return render(request, 'members/main.html',
                           {'card_list': c_list,
@@ -472,6 +528,20 @@ def tblks(request):
 
     return render(request, 'members/time_blocks.html', {'block_list' : block_list, 'logged_in' : logged_in})
 
+
+def show_log(request):
+    """
+    Display log entries
+    """
+    
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    log_list = LogEvent.objects.order_by('date').order_by('time').reverse()
+
+    return render(request, 'members/show_log.html', {'log_list' : log_list, 'logged_in' : logged_in})
+    
 
 @csrf_exempt
 def latency(request):
