@@ -168,10 +168,6 @@ sudo python3 client.py
 # Roadmap dev
 
 * Server
-    * Check Card (for service desk)
-        * add link to member from card details
-        * add unknown card view
-        * ability to create new card from unknown card view
     * Stripe API integration
     * Ability to delete membership
     * manage rentals (shelves, spaces)
@@ -183,6 +179,5 @@ sudo python3 client.py
     * investigate new revision of board   
     
 * Client (Desktop)
-    * Build some kind of GUI
     * Deploy code to Service Desk Mac
     * Polish the application
