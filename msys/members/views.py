@@ -295,6 +295,32 @@ def cards(request):
 
     return render(request, 'members/access_cards.html', {'card_list': card_list, 'logged_in': logged_in})
 
+def checkCard(request, card_rfid):
+    """
+    Find a card by its uid and display its details.
+    
+    Will also present the option to create a new card
+    """
+
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+
+    try:
+        card = AccessCard.objects.get(unique_id=card_rfid)
+        
+        return cardDetails(request, card.pk)
+    except AccessCard.DoesNotExist:
+        data = {'unique_id': card_rfid}
+        c_form = CardForm(initial=data)
+
+        notes = "Unrecognised card [{}].".format(card_rfid)
+        notes += "Use the form below if you would like to create a new one"
+
+        return render(request, 'members/add_card.html', {'card_form': c_form,
+                                                         'msg_info': notes,
+                                                         'logged_in': logged_in})
 
 def cardDetails(request, card_id):
     """
