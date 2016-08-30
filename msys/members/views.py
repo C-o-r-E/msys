@@ -514,6 +514,16 @@ def addCard(request):
         c_form = CardForm(request.POST)
         if c_form.is_valid():
             newCard = c_form.save(commit=False)
+            #find out if we already have a card with the same ID
+            sameCards = AccessCard.objects.filter(unique_id=newCard.unique_id)
+            if len(sameCards) > 0:
+                #already exists
+                msg_err = "A card with that ID already exists"
+                return render(request, 'members/add_card.html',
+                              {'card_form': c_form,
+                               'msg_err': msg_err,
+                               'logged_in': logged_in, }) 
+            
             newCard.unique_id = newCard.unique_id.replace(' ', '').lower()
             newCard.save()
             
