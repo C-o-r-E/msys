@@ -579,7 +579,7 @@ def show_log(request):
         return render(request, 'members/home.html', {})
 
     logged_in = True
-    log_list = LogEvent.objects.order_by('date').order_by('time').reverse()
+    log_list = LogEvent.objects.all().order_by('-pk')
 
     return render(request, 'members/show_log.html', {'log_list' : log_list, 'logged_in' : logged_in})
     
