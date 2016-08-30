@@ -105,7 +105,9 @@ def memberDetailsByRFID(request, rfid):
         return render(request, 'members/home.html', {})
 
     logged_in = True
-
+    
+    
+    rfid = rfid.replace(' ', '').lower()
     card = get_object_or_404(AccessCard, unique_id=rfid)
     mem = card.member
 
@@ -306,6 +308,8 @@ def checkCard(request, card_rfid):
         return render(request, 'members/home.html', {})
 
     logged_in = True
+    
+    card_rfid = card_rfid.replace(' ', '').lower()
 
     try:
         card = AccessCard.objects.get(unique_id=card_rfid)
@@ -510,6 +514,7 @@ def addCard(request):
         c_form = CardForm(request.POST)
         if c_form.is_valid():
             newCard = c_form.save(commit=False)
+            newCard.unique_id = newCard.unique_id.replace(' ', '').lower()
             newCard.save()
             
             log_str = "{} created a new card: {}".format(request.user.username, newCard)
