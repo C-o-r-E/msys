@@ -25,7 +25,7 @@
 		Owner
 	  </td>
 	  <td>
-		{{ card.member }}
+		<a href="{% url 'memberDetails' card.member.pk %}">{{ card.member }}</a>
 	  </td>
 	</tr>
 
