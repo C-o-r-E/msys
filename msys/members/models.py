@@ -262,7 +262,31 @@ class LogEvent(models.Model):
         ret = "{} {} || {}".format(self.date, self.time, self.text)
         return ret
 
-    ############### Forms #############
+
+class LogAccessRequest(models.Model):
+    """
+    Record of access requests made to the system
+    """
+    date = models.DateField()
+    time = models.TimeField()
+    text = models.TextField()
+    
+    @staticmethod
+    def log_now(txt):
+    
+        log = LogAccessRequest()
+        log.date = datetime.date.today()
+        log.time = datetime.datetime.now().time()
+        
+        log.text = txt
+        log.save()
+    
+    def __str__(self):
+        ret = "{} {} || {}".format(self.date, self.time, self.text)
+        return ret
+    
+
+############### Forms #############
 
 class MemberForm(ModelForm):
     class Meta:

@@ -570,7 +570,7 @@ def tblks(request):
     return render(request, 'members/time_blocks.html', {'block_list' : block_list, 'logged_in' : logged_in})
 
 
-def show_log(request):
+def event_log(request):
     """
     Display log entries
     """
@@ -581,7 +581,20 @@ def show_log(request):
     logged_in = True
     log_list = LogEvent.objects.all().order_by('-pk')
 
-    return render(request, 'members/show_log.html', {'log_list' : log_list, 'logged_in' : logged_in})
+    return render(request, 'members/event_log.html', {'log_list' : log_list, 'logged_in' : logged_in})
+
+def access_log(request):
+    """
+    Display log entries
+    """
+    
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    log_list = LogAccessRequest.objects.all().order_by('-pk')
+
+    return render(request, 'members/access_log.html', {'log_list' : log_list, 'logged_in' : logged_in})
     
 
 @csrf_exempt
@@ -648,7 +661,9 @@ def auth(request):
             cards = AccessCard.objects.filter(unique_id=uID)
             if len(cards) < 1:
                 #we didnt find any cards matching the ID
-                return HttpResponse("Denied", content_type="text/plain")
+                log_str = "Denied access for ID: {}".format(uID)
+                LogAccessRequest.log_now(log_str)
+                #return HttpResponse("Denied", content_type="text/plain")
             else:
                 #one or more cards found
                 granted = False
@@ -658,7 +673,10 @@ def auth(request):
                         break
 
                 if granted:
+                    log_str = "Granted access for ID: {}".format(uID)
+                    LogAccessRequest.log_now(log_str)
                     return HttpResponse("Granted", content_type="text/plain")
 
+    
     response = HttpResponse("Denied", content_type="text/plain")
     return response
