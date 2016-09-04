@@ -661,7 +661,7 @@ def auth(request):
             cards = AccessCard.objects.filter(unique_id=uID)
             if len(cards) < 1:
                 #we didnt find any cards matching the ID
-                log_str = "Denied access for ID: {}".format(uID)
+                log_str = "Denied access for ID: {} [card not found]".format(uID)
                 LogAccessRequest.log_now(log_str)
                 #return HttpResponse("Denied", content_type="text/plain")
             else:
@@ -669,13 +669,12 @@ def auth(request):
                 granted = False
                 for card in cards:
                     if card.has_access_now():
-                        granted = True
-                        break
-
-                if granted:
-                    log_str = "Granted access for ID: {}".format(uID)
-                    LogAccessRequest.log_now(log_str)
-                    return HttpResponse("Granted", content_type="text/plain")
+                        log_str = "Granted access for card {}".format(card)
+                        LogAccessRequest.log_now(log_str)
+                        return HttpResponse("Granted", content_type="text/plain")
+                    else:
+                        log_str = "Denied access for card: {} [no access at this time]".format(card)
+                        LogAccessRequest.log_now(log_str)
 
     
     response = HttpResponse("Denied", content_type="text/plain")
