@@ -1,8 +1,11 @@
+#!/usr/bin/python3
+
 import RPi.GPIO as GPIO
 import MFRC522
 import signal
 import sys
 import signal
+import json
 from time import sleep
 from gatekeeper import Gatekeeper
 
@@ -31,8 +34,24 @@ signal.signal(signal.SIGINT, cleanup)
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(11, GPIO.OUT)
 
-
 reader = MIFAREReader = MFRC522.MFRC522()
+
+#attempt opening config file
+base = os.path.dirname(os.path.abspath(__file__))
+cfg_path = "{}/config_msys_client.json".format(base)
+
+try:
+    f = open(cfg_path)
+    data = json.load(f)
+    f.close()
+    if 'door_open_time' in data:
+        CONFIG_DOOR_OPEN_TIME = data['door_open_time']
+    if 'base_url' in data:
+        CONFIG_BASE_URL = data['base_url']
+except FileNotFoundError e:
+    print("error opening file: [{}]".format(e)
+    print("using default settings")
+
 
 door = Gatekeeper(CONFIG_BASE_URL)
 
