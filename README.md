@@ -173,11 +173,10 @@ sudo python3 client.py
     * manage rentals (shelves, spaces)
 
 * Client (gatekeeper)
-    * Drive card reading by interrupt (if possible with hardware)
     * Test cases
     * Red LED for access denied
     * investigate new revision of board   
     
 * Client (Desktop)
-    * Deploy code to Service Desk Mac
+    * Test with 5v FTDI
     * Polish the application

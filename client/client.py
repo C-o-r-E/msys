@@ -6,6 +6,8 @@ import signal
 from time import sleep
 from gatekeeper import Gatekeeper
 
+CONFIG_DOOR_OPEN_TIME = 2
+CONFIG_BASE_URL = 'http://morg.123core.net/members/'
 
 def unlock():
     GPIO.output(11, 1)
@@ -32,7 +34,7 @@ GPIO.setup(11, GPIO.OUT)
 
 reader = MIFAREReader = MFRC522.MFRC522()
 
-door = Gatekeeper('http://morg.123core.net/members/')
+door = Gatekeeper(CONFIG_BASE_URL)
 
 """
 Something is weird about this library or maybe I'm not getting something.
@@ -55,7 +57,7 @@ def request_access(uid):
     if door.authenticate(uid):
         #first open the door
         unlock()
-        sleep(8)
+        sleep(CONFIG_DOOR_OPEN_TIME)
         lock()
         #then update the cache
         door.update_cache(uid)
