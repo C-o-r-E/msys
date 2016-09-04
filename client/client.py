@@ -48,7 +48,7 @@ try:
         CONFIG_DOOR_OPEN_TIME = data['door_open_time']
     if 'base_url' in data:
         CONFIG_BASE_URL = data['base_url']
-except FileNotFoundError e:
+except FileNotFoundError as e:
     print("error opening file: [{}]".format(e)
     print("using default settings")
 
