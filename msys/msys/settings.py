@@ -23,6 +23,8 @@ DEBUG = True
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
+SESSION_COOKIE_AGE = 2 * 60 * 60
+
 ALLOWED_HOSTS = ['morg.123core.net', 'localhost']
 
 
