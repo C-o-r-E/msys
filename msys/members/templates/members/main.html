@@ -11,7 +11,11 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
   <script>
   $(document).ready(function() {
-      $('.datepicker').datepicker();
+      $('.datepicker').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "2014:2099"
+      });
   });
   </script>
   
