@@ -102,6 +102,8 @@ while True:
     if status == MIFAREReader.MI_OK:
         uid = ''
         for byte in data[:-1]:
+            if byte < 16:
+                uid += '0'
             uid += hex(byte)[2:]
         request_access(uid)
     else:
