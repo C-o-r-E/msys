@@ -159,6 +159,7 @@ def editDetails(request, member_id):
             
             return members(request)
         else: #form not valid
+            logged_in = True
             member = None
 
 
