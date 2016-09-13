@@ -160,7 +160,8 @@ def editDetails(request, member_id):
             return members(request)
         else: #form not valid
             logged_in = True
-            member = None
+            member = get_object_or_404(Member, pk=member_id)
+            
 
 
     else:
