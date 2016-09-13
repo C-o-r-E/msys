@@ -158,6 +158,9 @@ def editDetails(request, member_id):
             LogEvent.log_now(log_str)
             
             return members(request)
+        else: #form not valid
+            member = None
+
 
     else:
         logged_in = True
