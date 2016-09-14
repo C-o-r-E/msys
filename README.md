@@ -171,8 +171,8 @@ sudo python3 client.py
 
 * Server
     * Stripe API integration
-    * Ability to delete membership
     * manage rentals (shelves, spaces)
+    * Https
 
 * Client (gatekeeper)
     * Test cases

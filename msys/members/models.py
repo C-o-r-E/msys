@@ -297,7 +297,7 @@ class MemberForm(ModelForm):
                   'emergency_contact', 'emergency_phone_number',
                   'stripe_customer_code']
         labels = {
-            'birth_date': 'Birthdate (YYYY-MM-DD)'
+            'birth_date': 'Birthdate (MM/DD/YYYY)'
         }
 
         widgets = {'type': Select(attrs={'class': 'form-control'}),
@@ -325,6 +325,9 @@ class MembershipForm(ModelForm):
                    'expire_date': DateInput(attrs={'class': 'form-control datepicker'}),
                    'stripe_subscription_code': TextInput(attrs={'class': 'form-control'}),
                   }
+        labels = {'start_date': 'Start Date (MM/DD/YYYY):',
+                  'expire_date': 'Expire Date (MM/DD/YYYY):',
+                }
 
 class CardForm(ModelForm):
     class Meta:

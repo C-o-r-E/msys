@@ -158,6 +158,11 @@ def editDetails(request, member_id):
             LogEvent.log_now(log_str)
             
             return members(request)
+        else: #form not valid
+            logged_in = True
+            member = get_object_or_404(Member, pk=member_id)
+            
+
 
     else:
         logged_in = True

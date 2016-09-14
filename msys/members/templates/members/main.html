@@ -11,7 +11,11 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
   <script>
   $(document).ready(function() {
-      $('.datepicker').datepicker();
+      $('.datepicker').datepicker({
+        changeMonth: true,
+        changeYear: true,
+        yearRange: "1914:2099"
+      });
   });
   </script>
   
@@ -96,7 +100,11 @@
 			</ul>
           </li>
 		</ul>
-		
+
+    <ul class="nav navbar-nav">
+      <li><a href="http://heliosmakerspace.ca/staff/">Staff Material</a></li>
+		</ul>
+
 		<ul class="nav navbar-nav navbar-right">
 		  {% if logged_in %}
           <li><a href="{% url 'userLogout' %}">Logout</a></li>
