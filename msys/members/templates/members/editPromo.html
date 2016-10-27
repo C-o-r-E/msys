@@ -1,0 +1,17 @@
+{% extends "members/main.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<h1>Edit Promotion</h1>
+
+<form class="form-horizontal" role="form" action="{% url 'editPromo' promo.pk %}" method="post"> {% csrf_token %}
+  {% for field in promo_form %}
+  <div class="form-group">
+	 {{ field.errors }}
+	 {{ field.label_tag }} {{ field }}
+  </div>
+	 {% endfor %}
+	 <input type="submit" value="Submit" />
+</form>
+
+{% endblock %}

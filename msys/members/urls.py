@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^memberships/edit/(?P<m_ship>\d+)/$', views.editMembership, name='editMembership'),
     
     url(r'^promos/$', views.promos, name='promoList'),
+    url(r'^promos/edit/(?P<promo_id>\d+)/$', views.editPromo, name='editPromo'),
     
     url(r'^cards/$', views.cards, name='cardList'),
     url(r'^cards/add/$', views.addCard, name='addCard'),

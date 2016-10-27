@@ -301,7 +301,39 @@ def promos(request):
     promo_list = Promotion.objects.all()
     
     return render(request, 'members/promos.html', {'promo_list': promo_list, 'logged_in': logged_in})
-    
+
+def editPromo(request, promo_id):
+    """
+    Edit details of Promotion
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    if request.method == 'POST':
+        promo_form = PromoForm(request.POST)
+        if promo_form.is_valid():
+            edited_promo = promo_form.save(commit=False)
+            actual_promo = get_object_or_404(Promotion, pk=promo_id)
+            edited_promo.pk = actual_promo.pk
+            edited_promo.save()
+            
+            log_str = "{} changed promotion: [{} qty:{}] -> [{} qty:{}]".format(
+                                                         request.user.username,
+                                                         actual_promo,
+                                                         actual_promo.quantity,
+                                                         edited_promo,
+                                                         edited_promo.quantity)
+            LogEvent.log_now(log_str)
+            
+            return promos(request)
+
+    else:
+        logged_in = True
+        promo = get_object_or_404(Promotion, pk=promo_id)
+        promo_form = PromoForm(instance=promo)
+
+
+    return render(request, 'members/editPromo.html', {'promo': promo, 'promo_form': promo_form, 'logged_in': logged_in})
 
 def cards(request):
     """Render list of AccessCard objects"""

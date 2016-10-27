@@ -8,7 +8,7 @@ The classes defined here are essential to Django's ORM magic
 import datetime
 from django.db import models
 from django.forms import ModelForm
-from django.forms import Select, SelectMultiple, TextInput, DateInput
+from django.forms import Select, SelectMultiple, TextInput, DateInput, NumberInput
 
 
 class MemberType(models.Model):
@@ -120,7 +120,7 @@ class Promotion(models.Model):
     quantity = models.IntegerField()
     
     def __str__(self):
-        return str(name)
+        return str(self.name)
 
 class Promo_item(models.Model):
     """
@@ -134,7 +134,8 @@ class Promo_item(models.Model):
     total = models.IntegerField()
     
     def __str__(self):
-        ret = "promo: {} ({}) {}/{}".format(promo, member, used, total)
+        ret = "promo: {} ({}) {}/{}".format(self.promo, self.member, self.used, self.total)
+        return ret
 
 class Promo_sub(models.Model):
     """
@@ -144,6 +145,8 @@ class Promo_sub(models.Model):
     promo = models.ForeignKey(Promotion)
     membership = models.ForeignKey(Membership)
     
+    def __str__(self):
+        ret = "{} <-> {}".format(self.promo, self.membership)
 
 class AccessCard(models.Model):
     """
@@ -362,6 +365,13 @@ class MembershipForm(ModelForm):
         labels = {'start_date': 'Start Date (MM/DD/YYYY):',
                   'expire_date': 'Expire Date (MM/DD/YYYY):',
                 }
+
+class PromoForm(ModelForm):
+    class Meta:
+        model = Promotion
+        fields = ['name', 'quantity']
+        widgets = {'name': TextInput(attrs={'class': 'form-control'}),
+                   'quantity': NumberInput(attrs={'class': 'form-control'}), }
 
 class CardForm(ModelForm):
     class Meta:

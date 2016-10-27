@@ -17,7 +17,7 @@
   <tbody>
     {% for p in promo_list %}
     <tr>
-	  <td><a href="#">{{p.name}}</a></td>
+	  <td><a href="{% url 'editPromo' p.pk %}">{{p.name}}</a></td>
       <td>{{p.quantity}}</td>
     </tr>
     {% endfor %}
