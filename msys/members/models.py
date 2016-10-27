@@ -111,6 +111,40 @@ class Membership(models.Model):
 
         return ret
 
+class Promotion(models.Model):
+    """
+    Class representing a type or classification of promotion that was offered.
+    """
+    
+    name = models.CharField(max_length=200)
+    quantity = models.IntegerField()
+    
+    def __str__(self):
+        return str(name)
+
+class Promo_item(models.Model):
+    """
+    Class representing the a "coupon" or some kind of promotional item. It could be
+    a one time membership, special status, or multiple use tickets.
+    """
+    
+    promo = models.ForeignKey(Promotion)
+    member = models.ForeignKey(Member)
+    used = models.IntegerField()
+    total = models.IntegerField()
+    
+    def __str__(self):
+        ret = "promo: {} ({}) {}/{}".format(promo, member, used, total)
+
+class Promo_sub(models.Model):
+    """
+    Class to indicate which memberships are created from or associated with promotions
+    """
+    
+    promo = models.ForeignKey(Promotion)
+    membership = models.ForeignKey(Membership)
+    
+
 class AccessCard(models.Model):
     """
     Class representing the card (RFID or unique token) that Members may have
