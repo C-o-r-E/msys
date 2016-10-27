@@ -292,6 +292,17 @@ def editMembership(request, m_ship):
                   'members/editMembership.html',
                   {'ship': ship, 'ms_form': ms_form, 'logged_in': logged_in})
 
+def promos(request):
+    """ Render list of Promotion objects """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    promo_list = Promotion.objects.all()
+    
+    return render(request, 'members/promos.html', {'promo_list': promo_list, 'logged_in': logged_in})
+    
+
 def cards(request):
     """Render list of AccessCard objects"""
     if not request.user.is_authenticated():
