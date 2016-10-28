@@ -335,6 +335,36 @@ def editPromo(request, promo_id):
 
     return render(request, 'members/editPromo.html', {'promo': promo, 'promo_form': promo_form, 'logged_in': logged_in})
 
+def addPromo(request):
+    """
+    Add new Promotion
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    if request.method == 'POST':
+        promo_form = PromoForm(request.POST)
+        if promo_form.is_valid():
+            new_promo = promo_form.save(commit=False)
+            pname = str(new_promo.name)
+            if pname.strip() == "":
+                new_promo.name = "Unlabeled Promotion"
+            new_promo.save()
+            
+            log_str = "{} created promotion: [{} qty:{}]".format(request.user.username,
+                                                         new_promo,
+                                                         new_promo.quantity)
+            LogEvent.log_now(log_str)
+            
+            return promos(request)
+
+    else:
+        logged_in = True
+        promo_form = PromoForm()
+
+
+    return render(request, 'members/editPromo.html', {'promo_form': promo_form, 'logged_in': logged_in})
+
 def cards(request):
     """Render list of AccessCard objects"""
     if not request.user.is_authenticated():
