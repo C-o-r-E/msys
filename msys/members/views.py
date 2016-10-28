@@ -365,6 +365,20 @@ def addPromo(request):
 
     return render(request, 'members/editPromo.html', {'promo_form': promo_form, 'logged_in': logged_in})
 
+def promoItems(request, promo_id):
+    """
+    Get a list of promo items
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    promo = get_object_or_404(Promotion, pk=promo_id)
+    
+    items = promo.promo_item_set.all()
+
+    return render(request, 'members/promoItems.html', {'promo': promo, 'items': items, 'logged_in': logged_in})
+
 def cards(request):
     """Render list of AccessCard objects"""
     if not request.user.is_authenticated():

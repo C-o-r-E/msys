@@ -12,13 +12,15 @@
     <tr>
       <th>Promotion</th>
       <th>Default Quantity</th>
+      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
     {% for p in promo_list %}
     <tr>
-	  <td><a href="{% url 'editPromo' p.pk %}">{{p.name}}</a></td>
+	  <td><a href="{% url 'promoItems' p.pk %}">{{p.name}}</a></td>
       <td>{{p.quantity}}</td>
+      <td><a href="{% url 'editPromo' p.pk %}" class="btn btn-primary btn-xs">Edit</a></td>
     </tr>
     {% endfor %}
   </tbody>
