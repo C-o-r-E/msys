@@ -373,6 +373,15 @@ class PromoForm(ModelForm):
         widgets = {'name': TextInput(attrs={'class': 'form-control'}),
                    'quantity': NumberInput(attrs={'class': 'form-control'}), }
 
+class PromoItemForm(ModelForm):
+    class Meta:
+        model = Promo_item
+        fields = ['promo', 'member', 'used', 'total']
+        widgets = {'promo': Select(attrs={'class': 'form-control'}),
+                   'member': Select(attrs={'class': 'form-control'}),
+                   'used': NumberInput(attrs={'class': 'form-control'}),
+                   'total': NumberInput(attrs={'class': 'form-control'})}
+
 class CardForm(ModelForm):
     class Meta:
         model = AccessCard

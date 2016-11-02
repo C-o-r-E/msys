@@ -1,0 +1,24 @@
+{% extends "members/main.html" %}
+{% load staticfiles %}
+{% block content %}
+
+{% if promo_item %}
+<h1>Edit Promo Item</h1>
+
+<form class="form-horizontal" role="form" action="{% url 'editPromoItem' promo_item.pk %}" method="post"> {% csrf_token %}
+{% else %}
+<h1>Add Promo Item</h1>
+
+<form class="form-horizontal" role="form" action="{% url 'addPromoItem' %}" method="post"> {% csrf_token %}
+{% endif %}
+
+  {% for field in promo_form %}
+  <div class="form-group">
+	 {{ field.errors }}
+	 {{ field.label_tag }} {{ field }}
+  </div>
+	 {% endfor %}
+	 <input type="submit" value="Submit" />
+</form>
+
+{% endblock %}
