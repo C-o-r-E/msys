@@ -143,6 +143,7 @@ class Promo_sub(models.Model):
     """
     
     promo = models.ForeignKey(Promotion)
+    #promo_item = models.ForeignKey(Promo_Item)
     membership = models.ForeignKey(Membership)
     
     def __str__(self):

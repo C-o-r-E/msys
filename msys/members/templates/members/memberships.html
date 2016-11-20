@@ -15,8 +15,8 @@
   <thead>
     <tr>
       <th>ID #</th>
-      <th>Member First Name</th>
-      <th>Member Last Name</th>
+      <th>Member Name</th>
+      <th>Promo</th>
       <th>Stripe Subscription ID</th>
 	  <th>Start Date</th>
 	  <th>End Date</th>
@@ -26,8 +26,12 @@
     {% for m in membership_list %}
     <tr>
       <td><a href="{% url 'editMembership' m.pk%}">#{{m.pk}}</a></td>
-      <td>{{m.member.first_name}}</td>
-      <td>{{m.member.last_name}}</td>
+      <td><a href="{% url 'memberDetails' m.member.pk%}">{{m.member.first_name}} {{m.member.last_name}}</a></td>
+      <td>
+		{% for p in m.promo_sub_set.all %}
+		<a href="{% url 'promoItems' p.promo.pk%}">{{p.promo}}</a>
+		{% endfor %}
+	  </td>
       <td>{{m.stripe_subscription_code}}</td>
       <td>{{m.start_date}}</td>
 	  <td>{{m.expire_date}}</td>
