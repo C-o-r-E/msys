@@ -24,7 +24,7 @@
 	  <td>
 	    <a href="{% url 'editPromoItem' t.pk %}" class="btn btn-primary btn-xs">Edit</a>
 	    <a href="#" class="btn btn-primary btn-xs">List</a>
-	    <a href="#" class ="btn btn-primary btn-xs">Redeem</a> 
+	    <a href="{% url 'redeemPromoItem' t.pk %}" class ="btn btn-primary btn-xs">Redeem</a> 
 	  </td>
       <td><a href="{% url 'memberDetails' t.member.pk %}">{{t.member.first_name}} {{t.member.last_name}}</a></td>
       <td>{{t.used}}</td>

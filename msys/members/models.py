@@ -147,6 +147,7 @@ class Promo_sub(models.Model):
     
     def __str__(self):
         ret = "{} <-> {}".format(self.promo, self.membership)
+        return ret
 
 class AccessCard(models.Model):
     """

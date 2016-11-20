@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^promos/items/(?P<promo_id>\d+)/$', views.promoItems, name='promoItems'),
     url(r'^promos/items/add/$', views.addPromoItem, name='addPromoItem'),
     url(r'^promos/items/edit/(?P<pi_id>\d+)/$', views.editPromoItem, name='editPromoItem'),
+    url(r'^promos/items/redeem/(?P<pi_id>\d+)/$', views.redeemPromoItem, name='redeemPromoItem'),
     
     url(r'^cards/$', views.cards, name='cardList'),
     url(r'^cards/add/$', views.addCard, name='addCard'),

@@ -437,6 +437,44 @@ def editPromoItem(request, pi_id):
 
     return render(request, 'members/editPromoItem.html', {'promo_item': pi, 'promo_form': pi_form, 'logged_in': logged_in})
 
+def redeemPromoItem(request, pi_id):
+    """
+    Use a promo item to create a membership
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    pi = get_object_or_404(Promo_item, pk=pi_id)
+    
+    if pi.used < pi.total:
+        pi.used += 1
+        pi.save()
+        
+        ms = Membership(member=pi.member,
+                        start_date=datetime.datetime.today().date(),
+                        expire_date=datetime.datetime.today().date())
+        ms.save()
+        
+        ps = Promo_sub(promo=pi.promo, membership=ms)
+        ps.save()
+        
+        log_str = "{} redeemed promo item: [{}]".format(
+                                                         request.user.username,
+                                                         pi)
+        LogEvent.log_now(log_str)
+        
+        return editMembership(request, ms.pk)
+        
+    else:
+        promo = get_object_or_404(Promotion, pk=pi.promo.pk)
+        items = promo.promo_item_set.all()
+        msg_err = "Item [{}] has no quantity remaining".format(pi)
+        return render(request, 'members/promoItems.html', {'promo': promo,
+                                                           'items': items,
+                                                           'msg_err': msg_err,
+                                                           'logged_in': logged_in})
+
 def cards(request):
     """Render list of AccessCard objects"""
     if not request.user.is_authenticated():
