@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^promos/add/$', views.addPromo, name='addPromo'),
     url(r'^promos/items/(?P<promo_id>\d+)/$', views.promoItems, name='promoItems'),
     url(r'^promos/items/add/$', views.addPromoItem, name='addPromoItem'),
+    url(r'^promos/items/add/(?P<promo_id>\d+)/$', views.addPromoItem_fromPromo, name='addPromoItemFromPromo'),
     url(r'^promos/items/edit/(?P<pi_id>\d+)/$', views.editPromoItem, name='editPromoItem'),
     url(r'^promos/items/redeem/(?P<pi_id>\d+)/$', views.redeemPromoItem, name='redeemPromoItem'),
     

@@ -2,23 +2,31 @@
 {% load staticfiles %}
 {% block content %}
 
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
 {% if promo_item %}
-<h1>Edit Promo Item</h1>
+	<h3 class="panel-title">Edit Promo Item</h3>
+  </div>
 
-<form class="form-horizontal" role="form" action="{% url 'editPromoItem' promo_item.pk %}" method="post"> {% csrf_token %}
+  <div class="panel-body">
+	<form class="form-horizontal" role="form" action="{% url 'editPromoItem' promo_item.pk %}" method="post"> {% csrf_token %}
 {% else %}
-<h1>Add Promo Item</h1>
+	<h3 class="panel-title">Add Promo Item</h3>
+  </div>
 
-<form class="form-horizontal" role="form" action="{% url 'addPromoItem' %}" method="post"> {% csrf_token %}
+  <div class="panel-body">
+	<form class="form-horizontal" role="form" action="{% url 'addPromoItem' %}" method="post"> {% csrf_token %}
 {% endif %}
 
-  {% for field in promo_form %}
-  <div class="form-group">
-	 {{ field.errors }}
-	 {{ field.label_tag }} {{ field }}
+	  {% for field in promo_form %}
+	  <div class="form-group">
+		{{ field.errors }}
+		{{ field.label_tag }} {{ field }}
+	  </div>
+	  {% endfor %}
+	  <input type="submit" value="Submit" />
+	</form>
   </div>
-	 {% endfor %}
-	 <input type="submit" value="Submit" />
-</form>
-
+</div>
 {% endblock %}

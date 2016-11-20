@@ -405,6 +405,24 @@ def addPromoItem(request):
 
     return render(request, 'members/editPromoItem.html', {'promo_form': pi, 'logged_in': logged_in})
 
+def addPromoItem_fromPromo(request, promo_id):
+    """
+    Add new Promotion Item (instance of promotion) based on a Promo 
+
+    This allows us to fill in some details for the user
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+
+    promotion = get_object_or_404(Promotion, pk=promo_id)
+    #item = Promo_item(promo=Promotion, used=0, total=promotion.quantity)
+    data = {'promo': promo_id, 'used': 0, 'total': promotion.quantity}
+    pi = PromoItemForm(initial=data)
+
+    return render(request, 'members/editPromoItem.html', {'promo_form': pi, 'logged_in': logged_in})
+
 def editPromoItem(request, pi_id):
     """
     Edit details of Promo Item
@@ -414,6 +432,7 @@ def editPromoItem(request, pi_id):
 
     if request.method == 'POST':
         pi_form = PromoItemForm(request.POST)
+        print("got pi: {}", pi_form)
         if pi_form.is_valid():
             edited_pi = pi_form.save(commit=False)
             actual_pi = get_object_or_404(Promo_item, pk=pi_id)

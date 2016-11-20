@@ -6,11 +6,14 @@
   <h1>List of Promotions</h1>
 </div>
 
+<a class="btn btn-primary" href="{% url 'addPromo' %}">Create New Promotion</a>
+
 {% if promo_list %}
 <table class="table table-striped table-hover">
   <thead>
     <tr>
       <th>Promotion</th>
+	  <th>Total Instances</th>
       <th>Default Quantity</th>
       <th>Actions</th>
     </tr>
@@ -19,6 +22,7 @@
     {% for p in promo_list %}
     <tr>
 	  <td><a href="{% url 'promoItems' p.pk %}">{{p.name}}</a></td>
+	  <td>{{p.promo_item_set.count}}</td>
       <td>{{p.quantity}}</td>
       <td><a href="{% url 'editPromo' p.pk %}" class="btn btn-primary btn-xs">Edit</a></td>
     </tr>
