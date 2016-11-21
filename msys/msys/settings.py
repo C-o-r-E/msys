@@ -25,7 +25,7 @@ DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 SESSION_COOKIE_AGE = 2 * 60 * 60
 
-ALLOWED_HOSTS = ['morg.123core.net', 'localhost']
+ALLOWED_HOSTS = ['msys.heliosmakerspace.ca', 'morg.123core.net', 'localhost', '127.0.0.1']
 
 
 # Application definition

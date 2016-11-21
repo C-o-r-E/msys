@@ -1,0 +1,15 @@
+*~
+
+*.old
+*.back
+*.csv
+*.sqlite3
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+msys/key.txt
+msys/msys/local_settings.py
+msys/members/migrations/

@@ -8,7 +8,7 @@ The classes defined here are essential to Django's ORM magic
 import datetime
 from django.db import models
 from django.forms import ModelForm
-from django.forms import Select, SelectMultiple, TextInput, DateInput
+from django.forms import Select, SelectMultiple, TextInput, DateInput, NumberInput
 
 
 class MemberType(models.Model):
@@ -109,6 +109,45 @@ class Membership(models.Model):
             delta = self.expire_date - datetime.date.today()
             ret += ' (' + str(delta.days) + ' remaining)'
 
+        return ret
+
+class Promotion(models.Model):
+    """
+    Class representing a type or classification of promotion that was offered.
+    """
+    
+    name = models.CharField(max_length=200)
+    quantity = models.IntegerField()
+    
+    def __str__(self):
+        return str(self.name)
+
+class Promo_item(models.Model):
+    """
+    Class representing the a "coupon" or some kind of promotional item. It could be
+    a one time membership, special status, or multiple use tickets.
+    """
+    
+    promo = models.ForeignKey(Promotion)
+    member = models.ForeignKey(Member)
+    used = models.IntegerField()
+    total = models.IntegerField()
+    
+    def __str__(self):
+        ret = "promo: {} ({}) {}/{}".format(self.promo, self.member, self.used, self.total)
+        return ret
+
+class Promo_sub(models.Model):
+    """
+    Class to indicate which memberships are created from or associated with promotions
+    """
+    
+    promo = models.ForeignKey(Promotion)
+    #promo_item = models.ForeignKey(Promo_Item)
+    membership = models.ForeignKey(Membership)
+    
+    def __str__(self):
+        ret = "{} <-> {}".format(self.promo, self.membership)
         return ret
 
 class AccessCard(models.Model):
@@ -328,6 +367,22 @@ class MembershipForm(ModelForm):
         labels = {'start_date': 'Start Date (MM/DD/YYYY):',
                   'expire_date': 'Expire Date (MM/DD/YYYY):',
                 }
+
+class PromoForm(ModelForm):
+    class Meta:
+        model = Promotion
+        fields = ['name', 'quantity']
+        widgets = {'name': TextInput(attrs={'class': 'form-control'}),
+                   'quantity': NumberInput(attrs={'class': 'form-control'}), }
+
+class PromoItemForm(ModelForm):
+    class Meta:
+        model = Promo_item
+        fields = ['promo', 'member', 'used', 'total']
+        widgets = {'promo': Select(attrs={'class': 'form-control'}),
+                   'member': Select(attrs={'class': 'form-control'}),
+                   'used': NumberInput(attrs={'class': 'form-control'}),
+                   'total': NumberInput(attrs={'class': 'form-control'})}
 
 class CardForm(ModelForm):
     class Meta:

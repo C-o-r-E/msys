@@ -1,0 +1,36 @@
+{% extends "members/main.html" %}
+{% load staticfiles %}
+{% block content %}
+
+
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    {% if promo %}
+    <h3 class="panel-title">Edit Promotion</h3>
+	
+  </div>
+  <div class="panel-body">
+    <form class="form-horizontal" role="form" action="{% url 'editPromo' promo.pk %}" method="post"> {% csrf_token %}
+      {% else %}
+      <h3 class="panel-title">Create a new Promotion</h3>
+	  
+  </div>
+  <div class="panel-body">
+    <form class="form-horizontal" role="form" action="{% url 'addPromo' %}" method="post"> {% csrf_token %}
+	  {% endif %}
+	  
+	  
+	  {% for field in promo_form %}
+	  <div class="form-group">
+		{{ field.errors }}
+		{{ field.label_tag }} {{ field }}
+	  </div>
+	  {% endfor %}
+	  <input type="submit" value="Submit" />
+	</form>
+  </div>
+</div>
+
+{% endblock %}
+

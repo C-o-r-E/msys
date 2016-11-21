@@ -292,6 +292,207 @@ def editMembership(request, m_ship):
                   'members/editMembership.html',
                   {'ship': ship, 'ms_form': ms_form, 'logged_in': logged_in})
 
+def promos(request):
+    """ Render list of Promotion objects """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    promo_list = Promotion.objects.all()
+    
+    return render(request, 'members/promos.html', {'promo_list': promo_list, 'logged_in': logged_in})
+
+def editPromo(request, promo_id):
+    """
+    Edit details of Promotion
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    if request.method == 'POST':
+        promo_form = PromoForm(request.POST)
+        if promo_form.is_valid():
+            edited_promo = promo_form.save(commit=False)
+            actual_promo = get_object_or_404(Promotion, pk=promo_id)
+            edited_promo.pk = actual_promo.pk
+            edited_promo.save()
+            
+            log_str = "{} changed promotion: [{} qty:{}] -> [{} qty:{}]".format(
+                                                         request.user.username,
+                                                         actual_promo,
+                                                         actual_promo.quantity,
+                                                         edited_promo,
+                                                         edited_promo.quantity)
+            LogEvent.log_now(log_str)
+            
+            return promos(request)
+
+    else:
+        logged_in = True
+        promo = get_object_or_404(Promotion, pk=promo_id)
+        promo_form = PromoForm(instance=promo)
+
+
+    return render(request, 'members/editPromo.html', {'promo': promo, 'promo_form': promo_form, 'logged_in': logged_in})
+
+def addPromo(request):
+    """
+    Add new Promotion
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    if request.method == 'POST':
+        promo_form = PromoForm(request.POST)
+        if promo_form.is_valid():
+            new_promo = promo_form.save(commit=False)
+            pname = str(new_promo.name)
+            if pname.strip() == "":
+                new_promo.name = "Unlabeled Promotion"
+            new_promo.save()
+            
+            log_str = "{} created promotion: [{} qty:{}]".format(request.user.username,
+                                                         new_promo,
+                                                         new_promo.quantity)
+            LogEvent.log_now(log_str)
+            
+            return promos(request)
+
+    else:
+        logged_in = True
+        promo_form = PromoForm()
+
+
+    return render(request, 'members/editPromo.html', {'promo_form': promo_form, 'logged_in': logged_in})
+
+def promoItems(request, promo_id):
+    """
+    Get a list of promo items
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    promo = get_object_or_404(Promotion, pk=promo_id)
+    
+    items = promo.promo_item_set.all()
+
+    return render(request, 'members/promoItems.html', {'promo': promo, 'items': items, 'logged_in': logged_in})
+
+def addPromoItem(request):
+    """
+    Add new Promotion Item (instance of promotion)
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    if request.method == 'POST':
+        pi_form = PromoItemForm(request.POST)
+        if pi_form.is_valid():
+            new_pi = pi_form.save(commit=False)
+            new_pi.save()
+            
+            log_str = "{} created promo item: [{}]".format(request.user.username,
+                                                         new_pi)
+            LogEvent.log_now(log_str)
+            
+            return promoItems(request, new_pi.promo.pk)
+
+    else:
+        logged_in = True
+        pi = PromoItemForm()
+
+
+    return render(request, 'members/editPromoItem.html', {'promo_form': pi, 'logged_in': logged_in})
+
+def addPromoItem_fromPromo(request, promo_id):
+    """
+    Add new Promotion Item (instance of promotion) based on a Promo 
+
+    This allows us to fill in some details for the user
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+
+    promotion = get_object_or_404(Promotion, pk=promo_id)
+    #item = Promo_item(promo=Promotion, used=0, total=promotion.quantity)
+    data = {'promo': promo_id, 'used': 0, 'total': promotion.quantity}
+    pi = PromoItemForm(initial=data)
+
+    return render(request, 'members/editPromoItem.html', {'promo_form': pi, 'logged_in': logged_in})
+
+def editPromoItem(request, pi_id):
+    """
+    Edit details of Promo Item
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    if request.method == 'POST':
+        pi_form = PromoItemForm(request.POST)
+        if pi_form.is_valid():
+            edited_pi = pi_form.save(commit=False)
+            actual_pi = get_object_or_404(Promo_item, pk=pi_id)
+            edited_pi.pk = actual_pi.pk
+            print("edited = {}".format(edited_pi))
+            edited_pi.save()
+            
+            log_str = "{} changed promo item: [{}] -> [{}]".format(
+                                                         request.user.username,
+                                                         actual_pi,
+                                                         edited_pi)
+            LogEvent.log_now(log_str)
+            
+            return promoItems(request, edited_pi.promo.pk)
+
+    else:
+        logged_in = True
+        pi = get_object_or_404(Promo_item, pk=pi_id)
+        pi_form = PromoItemForm(instance=pi)
+
+
+    return render(request, 'members/editPromoItem.html', {'promo_item': pi, 'promo_form': pi_form, 'logged_in': logged_in})
+
+def redeemPromoItem(request, pi_id):
+    """
+    Use a promo item to create a membership
+    """
+    if not request.user.is_authenticated():
+        return render(request, 'members/home.html', {})
+
+    logged_in = True
+    pi = get_object_or_404(Promo_item, pk=pi_id)
+    
+    if pi.used < pi.total:
+        pi.used += 1
+        pi.save()
+        
+        ms = Membership(member=pi.member,
+                        start_date=datetime.datetime.today().date(),
+                        expire_date=datetime.datetime.today().date())
+        ms.save()
+        
+        ps = Promo_sub(promo=pi.promo, membership=ms)
+        ps.save()
+        
+        log_str = "{} redeemed promo item: [{}]".format(
+                                                         request.user.username,
+                                                         pi)
+        LogEvent.log_now(log_str)
+        
+        return editMembership(request, ms.pk)
+        
+    else:
+        promo = get_object_or_404(Promotion, pk=pi.promo.pk)
+        items = promo.promo_item_set.all()
+        msg_err = "Item [{}] has no quantity remaining".format(pi)
+        return render(request, 'members/promoItems.html', {'promo': promo,
+                                                           'items': items,
+                                                           'msg_err': msg_err,
+                                                           'logged_in': logged_in})
+
 def cards(request):
     """Render list of AccessCard objects"""
     if not request.user.is_authenticated():
