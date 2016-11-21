@@ -432,7 +432,6 @@ def editPromoItem(request, pi_id):
 
     if request.method == 'POST':
         pi_form = PromoItemForm(request.POST)
-        print("got pi: {}", pi_form)
         if pi_form.is_valid():
             edited_pi = pi_form.save(commit=False)
             actual_pi = get_object_or_404(Promo_item, pk=pi_id)
