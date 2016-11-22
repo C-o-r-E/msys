@@ -13,19 +13,19 @@ from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from time import sleep
-"""
-def ensure_login(in_fn):
 
-    #This is a decorator to make sure user is logged in
+def login_required(wrapped):
+    """
+    This is a decorator to make sure user is logged in
+    """
 
-
-    def wrapper():
-        if not request.user.is_authenticated():
-            return render(request, 'members/home.html', {})
-        return in_fn()
+    def wrapper(*args, **kwargs):
+        if not args[0].user.is_authenticated():
+            return render(args[0], 'members/home.html', {})
+        return wrapped(*args, **kwargs)
 
     return wrapper
-"""
+
 
 def user_logout(request):
     """Log out the user"""
@@ -57,12 +57,8 @@ def user_login(request):
 
     return render(request, 'members/login.html', {'notifications':notes, 'logged_in':logged_in})
 
+@login_required
 def members(request):
-    """Simply render a list of members"""
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     show_active = False
     member_list = Member.objects.all()
     
@@ -74,14 +70,11 @@ def members(request):
                   'members/members.html',
                   {'member_list': member_list,
                    'show_active': show_active,
-                   'logged_in': logged_in})
+                   'logged_in': True})
 
+@login_required
 def memberDetails(request, member_id):
     """Show details about a specific Member"""
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     mem = get_object_or_404(Member, pk=member_id)
 
     cards = AccessCard.objects.filter(member=mem)
@@ -90,9 +83,10 @@ def memberDetails(request, member_id):
                   'members/member_details.html',
                   {'member': mem,
                    'access_cards': cards,
-                   'logged_in': logged_in}
+                   'logged_in': True}
                  )
 
+@login_required
 def memberDetailsByRFID(request, rfid):
     """
     Get some details about a specific member
@@ -101,12 +95,6 @@ def memberDetailsByRFID(request, rfid):
 
     rfid -- a unique id related to a Member via AccessCard object
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
-    
-    
     rfid = rfid.replace(' ', '').lower()
     card = get_object_or_404(AccessCard, unique_id=rfid)
     mem = card.member
@@ -117,15 +105,14 @@ def memberDetailsByRFID(request, rfid):
                   'members/member_details.html',
                   {'member': mem,
                    'access_cards': cards,
-                   'logged_in': logged_in}
+                   'logged_in': True}
                  )
 
+@login_required
 def editDetails(request, member_id):
     """
     For editing information about a Member
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
 
     if request.method == 'POST':
         mem_form = MemberForm(request.POST)
@@ -159,27 +146,19 @@ def editDetails(request, member_id):
             
             return members(request)
         else: #form not valid
-            logged_in = True
             member = get_object_or_404(Member, pk=member_id)
-            
-
 
     else:
-        logged_in = True
         member = get_object_or_404(Member, pk=member_id)
         mem_form = MemberForm(instance=member)
 
-
     return render(request,
                   'members/editDetails.html',
-                  {'member': member, 'member_form': mem_form, 'logged_in': logged_in})
+                  {'member': member, 'member_form': mem_form, 'logged_in': True})
 
+@login_required
 def addMember(request):
     """Add a new Member"""
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-        
-    logged_in = True
 
     if request.method == 'POST':
         mem_form = MemberForm(request.POST)
@@ -201,23 +180,17 @@ def addMember(request):
             return render(request,
                    'members/members.html',
                    {'member_list': member_list,
-                   'msg_info': notes,
-                   'logged_in': logged_in})
+                    'msg_info': notes,
+                    'logged_in': True})
 
     else:
         mem_form = MemberForm()
 
+    return render(request, 'members/add.html', {'mem_form': mem_form, 'logged_in': True})
 
-    return render(request, 'members/add.html', {'mem_form': mem_form, 'logged_in': logged_in})
-
-
+@login_required
 def memberships(request, member_id=None):
-    """Render a list of Memberships"""
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
-    
+    """Render a list of Memberships"""    
     if member_id:
         m_list = Membership.objects.filter(member=member_id)
     else:
@@ -229,14 +202,11 @@ def memberships(request, member_id=None):
             elif request.GET['show'] == 'active':
                 m_list = Membership.objects.filter(expire_date__gte=datetime.datetime.today())
 
-    return render(request, 'members/memberships.html', {'membership_list': m_list, 'logged_in': logged_in})
+    return render(request, 'members/memberships.html', {'membership_list': m_list, 'logged_in': True})
 
+@login_required
 def addMembership(request, member_id=None):
     """Create a new Membership"""
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     if request.method == 'POST':
         ms_form = MembershipForm(request.POST)
         if ms_form.is_valid():
@@ -248,28 +218,22 @@ def addMembership(request, member_id=None):
                                                            new_membership)
             LogEvent.log_now(log_str)
 
-
             m_list = Membership.objects.all()
             return render(request, 'members/main.html',
                           {'membership_list': m_list,
                            'msg_info': info,
-                           'logged_in': logged_in, })
+                           'logged_in': True, })
 
     else:
         ms_form = MembershipForm()
         if member_id:
             ms_form = MembershipForm(initial={'member':member_id})
-    logged_in = True
-
 
     return render(request, 'members/add_membership.html', {'ms_form': ms_form, 'logged_in': logged_in})
 
+@login_required
 def editMembership(request, m_ship):
     """ Edit a membership """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     if request.method == 'POST':
         ms_form = MembershipForm(request.POST)
         if ms_form.is_valid():
@@ -290,25 +254,19 @@ def editMembership(request, m_ship):
 
     return render(request,
                   'members/editMembership.html',
-                  {'ship': ship, 'ms_form': ms_form, 'logged_in': logged_in})
+                  {'ship': ship, 'ms_form': ms_form, 'logged_in': True})
 
+@login_required
 def promos(request):
     """ Render list of Promotion objects """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
+    promo_list = Promotion.objects.all()    
+    return render(request, 'members/promos.html', {'promo_list': promo_list, 'logged_in': True})
 
-    logged_in = True
-    promo_list = Promotion.objects.all()
-    
-    return render(request, 'members/promos.html', {'promo_list': promo_list, 'logged_in': logged_in})
-
+@login_required
 def editPromo(request, promo_id):
     """
     Edit details of Promotion
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
     if request.method == 'POST':
         promo_form = PromoForm(request.POST)
         if promo_form.is_valid():
@@ -328,20 +286,17 @@ def editPromo(request, promo_id):
             return promos(request)
 
     else:
-        logged_in = True
         promo = get_object_or_404(Promotion, pk=promo_id)
         promo_form = PromoForm(instance=promo)
 
+    return render(request, 'members/editPromo.html',
+                  {'promo': promo, 'promo_form': promo_form, 'logged_in': True})
 
-    return render(request, 'members/editPromo.html', {'promo': promo, 'promo_form': promo_form, 'logged_in': logged_in})
-
+@login_required
 def addPromo(request):
     """
     Add new Promotion
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
     if request.method == 'POST':
         promo_form = PromoForm(request.POST)
         if promo_form.is_valid():
@@ -359,33 +314,24 @@ def addPromo(request):
             return promos(request)
 
     else:
-        logged_in = True
         promo_form = PromoForm()
 
+    return render(request, 'members/editPromo.html', {'promo_form': promo_form, 'logged_in': True})
 
-    return render(request, 'members/editPromo.html', {'promo_form': promo_form, 'logged_in': logged_in})
-
+@login_required
 def promoItems(request, promo_id):
     """
     Get a list of promo items
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
-    promo = get_object_or_404(Promotion, pk=promo_id)
-    
+    promo = get_object_or_404(Promotion, pk=promo_id)    
     items = promo.promo_item_set.all()
+    return render(request, 'members/promoItems.html', {'promo': promo, 'items': items, 'logged_in': True})
 
-    return render(request, 'members/promoItems.html', {'promo': promo, 'items': items, 'logged_in': logged_in})
-
+@login_required
 def addPromoItem(request):
     """
     Add new Promotion Item (instance of promotion)
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
     if request.method == 'POST':
         pi_form = PromoItemForm(request.POST)
         if pi_form.is_valid():
@@ -399,37 +345,29 @@ def addPromoItem(request):
             return promoItems(request, new_pi.promo.pk)
 
     else:
-        logged_in = True
         pi = PromoItemForm()
 
+    return render(request, 'members/editPromoItem.html', {'promo_form': pi, 'logged_in': True})
 
-    return render(request, 'members/editPromoItem.html', {'promo_form': pi, 'logged_in': logged_in})
-
+@login_required
 def addPromoItem_fromPromo(request, promo_id):
     """
     Add new Promotion Item (instance of promotion) based on a Promo 
 
     This allows us to fill in some details for the user
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
-
     promotion = get_object_or_404(Promotion, pk=promo_id)
     #item = Promo_item(promo=Promotion, used=0, total=promotion.quantity)
     data = {'promo': promo_id, 'used': 0, 'total': promotion.quantity}
     pi = PromoItemForm(initial=data)
 
-    return render(request, 'members/editPromoItem.html', {'promo_form': pi, 'logged_in': logged_in})
+    return render(request, 'members/editPromoItem.html', {'promo_form': pi, 'logged_in': True})
 
+@login_required
 def editPromoItem(request, pi_id):
     """
     Edit details of Promo Item
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
     if request.method == 'POST':
         pi_form = PromoItemForm(request.POST)
         if pi_form.is_valid():
@@ -448,21 +386,17 @@ def editPromoItem(request, pi_id):
             return promoItems(request, edited_pi.promo.pk)
 
     else:
-        logged_in = True
         pi = get_object_or_404(Promo_item, pk=pi_id)
         pi_form = PromoItemForm(instance=pi)
 
+    return render(request, 'members/editPromoItem.html',
+                  {'promo_item': pi, 'promo_form': pi_form, 'logged_in': True})
 
-    return render(request, 'members/editPromoItem.html', {'promo_item': pi, 'promo_form': pi_form, 'logged_in': logged_in})
-
+@login_required
 def redeemPromoItem(request, pi_id):
     """
     Use a promo item to create a membership
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     pi = get_object_or_404(Promo_item, pk=pi_id)
     
     if pi.used < pi.total:
@@ -491,30 +425,22 @@ def redeemPromoItem(request, pi_id):
         return render(request, 'members/promoItems.html', {'promo': promo,
                                                            'items': items,
                                                            'msg_err': msg_err,
-                                                           'logged_in': logged_in})
+                                                           'logged_in': True})
 
+@login_required
 def cards(request):
     """Render list of AccessCard objects"""
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     card_list = AccessCard.objects.all()
+    return render(request, 'members/access_cards.html', {'card_list': card_list,
+                                                         'logged_in': True})
 
-    return render(request, 'members/access_cards.html', {'card_list': card_list, 'logged_in': logged_in})
-
+@login_required
 def checkCard(request, card_rfid):
     """
     Find a card by its uid and display its details.
     
     Will also present the option to create a new card
     """
-
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
-    
     card_rfid = card_rfid.replace(' ', '').lower()
 
     try:
@@ -530,8 +456,9 @@ def checkCard(request, card_rfid):
 
         return render(request, 'members/add_card.html', {'card_form': c_form,
                                                          'msg_info': notes,
-                                                         'logged_in': logged_in})
+                                                         'logged_in': True})
 
+@login_required
 def cardDetails(request, card_id):
     """
     Get details about an AccessCard
@@ -543,10 +470,6 @@ def cardDetails(request, card_id):
     table will show the user which times the card provides access and which
     times it does not. This may be a slow and expensive opteration.
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     card = get_object_or_404(AccessCard, pk=card_id)
 
     group_list = card.accessgroup_set.all()
@@ -578,7 +501,6 @@ def cardDetails(request, card_id):
 
             data is a list of 24 lists.
             """
-
             #first we get the datetime object with today's info
             today = datetime.datetime.today()
 
@@ -586,7 +508,6 @@ def cardDetails(request, card_id):
             t_cal = []
             for thing in range(24):
                 t_cal.append([])
-
 
             #at this point we should have a list of empty lists. One for each of the next 7 days.
 
@@ -619,16 +540,13 @@ def cardDetails(request, card_id):
                   {'card': card,
                    'groups': group_list,
                    't_cal': t_cal,
-                   'logged_in': logged_in})
+                   'logged_in': True})
 
+@login_required
 def cardAssign(request, card_id):
     """
     Assign one or more AccessGroups to a card.
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     card = get_object_or_404(AccessCard, pk=card_id)
 
     if request.method == 'POST':
@@ -661,7 +579,7 @@ def cardAssign(request, card_id):
                       {'card': card,
                        'groups': groups,
                        'msg_info': notes,
-                       'logged_in': logged_in})
+                       'logged_in': True})
 
     else:
         form = AddGroupToCardForm()
@@ -672,15 +590,12 @@ def cardAssign(request, card_id):
                       'members/card_assign.html',
                       {'card': card,
                        'form': form,
-                       'logged_in': logged_in})
+                       'logged_in': True})
 
 def editCard(request, card_id):
     """
     Edit details of AccessCard
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
     if request.method == 'POST':
         card_form = CardForm(request.POST)
         if card_form.is_valid():
@@ -699,23 +614,19 @@ def editCard(request, card_id):
             return cards(request)
 
     else:
-        logged_in = True
         card = get_object_or_404(AccessCard, pk=card_id)
         card_form = CardForm(instance=card)
 
 
-    return render(request, 'members/editCard.html', {'card': card, 'card_form': card_form, 'logged_in': logged_in})
+    return render(request, 'members/editCard.html', {'card': card,
+                                                     'card_form': card_form,
+                                                     'logged_in': True})
 
-
-
+@login_required
 def addCard(request):
     """
     Create a new AccessCard
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     if request.method == 'POST':
         c_form = CardForm(request.POST)
         if c_form.is_valid():
@@ -728,7 +639,7 @@ def addCard(request):
                 return render(request, 'members/add_card.html',
                               {'card_form': c_form,
                                'msg_err': msg_err,
-                               'logged_in': logged_in, }) 
+                               'logged_in': True }) 
             
             newCard.unique_id = newCard.unique_id.replace(' ', '').lower()
             newCard.save()
@@ -741,67 +652,48 @@ def addCard(request):
             return render(request, 'members/main.html',
                           {'card_list': c_list,
                            'msg_info': info,
-                           'logged_in': logged_in, })
+                           'logged_in': True })
 
     else:
         c_form = CardForm()
 
-    logged_in = True
+    return render(request, 'members/add_card.html', {'card_form': c_form, 'logged_in': True})
 
-
-    return render(request, 'members/add_card.html', {'card_form': c_form, 'logged_in': logged_in})
-
+@login_required
 def groups(request):
     """
     Get a list of AccessGroups
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     groups = AccessGroup.objects.all()
+    return render(request, 'members/access_groups.html', {'group_list': groups,
+                                                          'logged_in': True})
 
-    return render(request, 'members/access_groups.html', {'group_list' : groups, 'logged_in' : logged_in})
-
+@login_required
 def tblks(request):
     """
     Get a list of TimeBlocks
     """
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     block_list = TimeBlock.objects.all()
+    return render(request, 'members/time_blocks.html', {'block_list': block_list,
+                                                        'logged_in': True})
 
-    return render(request, 'members/time_blocks.html', {'block_list' : block_list, 'logged_in' : logged_in})
-
-
+@login_required
 def event_log(request):
     """
     Display log entries
     """
-    
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     log_list = LogEvent.objects.all().order_by('-pk')
+    return render(request, 'members/event_log.html', {'log_list': log_list,
+                                                      'logged_in': True})
 
-    return render(request, 'members/event_log.html', {'log_list' : log_list, 'logged_in' : logged_in})
-
+@login_required
 def access_log(request):
     """
     Display log entries
     """
-    
-    if not request.user.is_authenticated():
-        return render(request, 'members/home.html', {})
-
-    logged_in = True
     log_list = LogAccessRequest.objects.all().order_by('-pk')
-
-    return render(request, 'members/access_log.html', {'log_list' : log_list, 'logged_in' : logged_in})
-    
+    return render(request, 'members/access_log.html', {'log_list': log_list,
+                                                       'logged_in': True})
 
 @csrf_exempt
 def latency(request):
