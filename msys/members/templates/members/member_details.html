@@ -2,161 +2,175 @@
 {% load staticfiles %}
 {% block content %}
 
-<div class="page-header">
-  <h1>Member Details</h1>
-</div>
 
 {% if member %}
 
-<table class="table table-condensed table-hover">
-  <tbody>
-	
-	<tr>
-	  <td>
-		Number
-	  </td>
-	  <td>
-		{{ member.number }}
-	  </td>
-	</tr>
+<div class="page-header">
+  <h1>{{member.first_name}} {{member.last_name}}</h1>
+</div>
 
-	<tr>
-	  <td>
-		First Name
-	  </td>
-	  <td>
-		{{ member.first_name }}
-	  </td>
-	</tr>
+<div class="well">
+  <a class="btn btn-default" href="{% url 'editDetails' member.pk %}">Edit Member Details</a>
+  <a class="btn btn-default" href="{% url 'membershipsByMember' member.pk %}">List Memberships</a>
+  <a class="btn btn-default" href="{% url 'addMembershipForMember' member.pk %}">Create Membership</a>
+</div>
 
-	<tr>
-	  <td>
-		Last Name
-	  </td>
-	  <td>
-		{{ member.last_name }}
-	  </td>
-	</tr>
+<div class="panel panel-primary">
+  <div class="panel-heading">
+	<h3 class="panel-title">Member Details</h3>
+  </div>
+  <div class="panel-body">
+	<table class="table table-striped table-hover">
+	  <tbody>
+		
+		<tr>
+		  <td>
+			Number
+		  </td>
+		  <td>
+			{{ member.number }}
+		  </td>
+		</tr>
 
-	<tr>
-	  <td>
-		Type
-	  </td>
-	  <td>
-		{{ member.type }}
-	  </td>
-	</tr>
+		<tr>
+		  <td>
+			First Name
+		  </td>
+		  <td>
+			{{ member.first_name }}
+		  </td>
+		</tr>
 
-	<tr>
-	  <td>
-		Birth Date
-	  </td>
-	  <td>
-		{{ member.birth_date }}
-	  </td>
-	</tr>
+		<tr>
+		  <td>
+			Last Name
+		  </td>
+		  <td>
+			{{ member.last_name }}
+		  </td>
+		</tr>
 
-	<tr>
-	  <td>
-		First Seen
-	  </td>
-	  <td>
-		{{ member.first_seen_date }}
-	  </td>
-	</tr>
+		<tr>
+		  <td>
+			Type
+		  </td>
+		  <td>
+			{{ member.type }}
+		  </td>
+		</tr>
 
-	<tr>
-	  <td>
-		Last Seen
-	  </td>
-	  <td>
-		{{ member.last_seen_date }}
-	  </td>
-	</tr>
+		<tr>
+		  <td>
+			Birth Date
+		  </td>
+		  <td>
+			{{ member.birth_date }}
+		  </td>
+		</tr>
 
-	<tr>
-	  <td>
-		Address
-	  </td>
-	  <td>
-		{{ member.address }}
-	  </td>
-	</tr>
+		<tr>
+		  <td>
+			First Seen
+		  </td>
+		  <td>
+			{{ member.first_seen_date }}
+		  </td>
+		</tr>
 
-	<tr>
-	  <td>
-		City
-	  </td>
-	  <td>
-		{{ member.city }}
-	  </td>
-	</tr>  
+		<tr>
+		  <td>
+			Last Seen
+		  </td>
+		  <td>
+			{{ member.last_seen_date }}
+		  </td>
+		</tr>
 
-	<tr>
-	  <td>
-		Postal Code
-	  </td>
-	  <td>
-		{{ member.postal_code }}
-	  </td>
-	</tr>
+		<tr>
+		  <td>
+			Address
+		  </td>
+		  <td>
+			{{ member.address }}
+		  </td>
+		</tr>
 
-	<tr>
-	  <td>
-		Phone Number
-	  </td>
-	  <td>
-		{{ member.phone_number }}
-	  </td>
-	</tr>
+		<tr>
+		  <td>
+			City
+		  </td>
+		  <td>
+			{{ member.city }}
+		  </td>
+		</tr>  
 
-	<tr>
-	  <td>
-		Email
-	  </td>
-	  <td>
-		{{ member.email }}
-	  </td>
-	</tr>
+		<tr>
+		  <td>
+			Postal Code
+		  </td>
+		  <td>
+			{{ member.postal_code }}
+		  </td>
+		</tr>
 
-	<tr>
-	  <td>
-		Emergency Contact
-	  </td>
-	  <td>
-		{{ member.emergency_contact }}
-	  </td>
-	</tr>
+		<tr>
+		  <td>
+			Phone Number
+		  </td>
+		  <td>
+			{{ member.phone_number }}
+		  </td>
+		</tr>
 
-	<tr>
-	  <td>
-		Emergency Phone Number
-	  </td>
-	  <td>
-		{{ member.emergency_phone_number }}
-	  </td>
-	</tr>
-	
-	<tr>
-	    <td>Stripe Customer ID</td>
-	    <td>{{member.stripe_customer_code}}</td>
-	<tr>
-	
+		<tr>
+		  <td>
+			Email
+		  </td>
+		  <td>
+			{{ member.email }}
+		  </td>
+		</tr>
 
-  </tbody>
-</table>
+		<tr>
+		  <td>
+			Emergency Contact
+		  </td>
+		  <td>
+			{{ member.emergency_contact }}
+		  </td>
+		</tr>
 
-<a class="btn btn-default" href="{% url 'editDetails' member.pk %}">Edit Member Details</a>
-<a class="btn btn-default" href="{% url 'membershipsByMember' member.pk %}">List Memberships</a>
-<a class="btn btn-default" href="{% url 'addMembershipForMember' member.pk %}">Create Membership</a>
+		<tr>
+		  <td>
+			Emergency Phone Number
+		  </td>
+		  <td>
+			{{ member.emergency_phone_number }}
+		  </td>
+		</tr>
+		
+		<tr>
+	      <td>Stripe Customer ID</td>
+	      <td>{{member.stripe_customer_code}}</td>
+		<tr>
+		  
 
-
+	  </tbody>
+	</table>
+  </div>
+</div>
 {% if access_cards %}
-<h1>Access Cards</h1>
+<div class="panel panel-primary">
+  <div class="panel-heading">
+	<h3 class="panel-title">Access Cards</h3>
+  </div>
+  <div class="panel-body">
+
 {% for card in access_cards %}
 <p><a href="{% url 'cardDetails' card.pk %}">{{card}}</a></p>
 {% endfor %}
-
+  </div>
+</div>
 {% endif %} {# if access_card #}
 
 {% else %}

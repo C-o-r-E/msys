@@ -18,14 +18,12 @@ def login_required(wrapped):
     """
     This is a decorator to make sure user is logged in
     """
-
     def wrapper(*args, **kwargs):
         if not args[0].user.is_authenticated():
             return render(args[0], 'members/home.html', {})
         return wrapped(*args, **kwargs)
 
     return wrapper
-
 
 def user_logout(request):
     """Log out the user"""
@@ -229,7 +227,7 @@ def addMembership(request, member_id=None):
         if member_id:
             ms_form = MembershipForm(initial={'member':member_id})
 
-    return render(request, 'members/add_membership.html', {'ms_form': ms_form, 'logged_in': logged_in})
+    return render(request, 'members/add_membership.html', {'ms_form': ms_form, 'logged_in': True})
 
 @login_required
 def editMembership(request, m_ship):
