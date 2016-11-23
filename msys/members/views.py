@@ -7,6 +7,7 @@ This is where the main logic happens behind the scenes.
 import datetime
 from members.models import *
 from members.forms import *
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.contrib.auth import authenticate, login, logout
@@ -680,7 +681,17 @@ def event_log(request):
     """
     Display log entries
     """
-    log_list = LogEvent.objects.all().order_by('-pk')
+    logs = LogEvent.objects.all().order_by('-pk')
+    paginator = Paginator(logs, 25)
+
+    page = request.GET.get('page')
+    try:
+        log_list = paginator.page(page)
+    except PageNotAnInteger:
+        log_list = paginator.page(1)
+    except EmptyPage:
+        log_list = paginator.page(paginator.num_pages)
+        
     return render(request, 'members/event_log.html', {'log_list': log_list,
                                                       'logged_in': True})
 
@@ -689,7 +700,17 @@ def access_log(request):
     """
     Display log entries
     """
-    log_list = LogAccessRequest.objects.all().order_by('-pk')
+    logs = LogAccessRequest.objects.all().order_by('-pk')
+    paginator = Paginator(logs, 25)
+
+    page = request.GET.get('page')
+    try:
+        log_list = paginator.page(page)
+    except PageNotAnInteger:
+        log_list = paginator.page(1)
+    except EmptyPage:
+        log_list = paginator.page(paginator.num_pages)
+        
     return render(request, 'members/access_log.html', {'log_list': log_list,
                                                        'logged_in': True})
 

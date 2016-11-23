@@ -9,6 +9,7 @@
 {% if member_list %}
 <div class="well">
   <a class="btn btn-primary" href="{% url 'memberList' %}?show_active=1">Indicate Active Memberships</a>
+  <a class="btn btn-success" href="{% url 'addMember' %}">Create New Member</a>
 </div>
 
 <div class="panel panel-primary">
@@ -49,7 +50,5 @@
   No members...
 </p>
 {% endif %}
-
-<a class="btn btn-default" href="{% url 'addMember' %}">Add new member</a>
 
 {% endblock %}
