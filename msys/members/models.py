@@ -324,7 +324,7 @@ class LogAccessRequest(models.Model):
         ret = "{} {} || {}".format(self.date, self.time, self.text)
         return ret
 
-class IncidentReport(models.model):
+class IncidentReport(models.Model):
     """
     Report of an incident that occured.
     """
@@ -335,8 +335,8 @@ class IncidentReport(models.model):
     report_date = models.DateField()
     report_time = models.TimeField()
 
-    effected_members = models.ManyToManyField(Member)
-    staff_on_duty = models.ManyToManyField(Member)
+    effected_members = models.ManyToManyField(Member, related_name="incident_effected")
+    staff_on_duty = models.ManyToManyField(Member, related_name="incident_witness")
 
     description = models.TextField()
     damage = models.TextField()
