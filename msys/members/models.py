@@ -8,7 +8,7 @@ The classes defined here are essential to Django's ORM magic
 import datetime
 from django.db import models
 from django.forms import ModelForm
-from django.forms import Select, SelectMultiple, TextInput, DateInput, NumberInput
+from django.forms import Select, SelectMultiple, TextInput, DateInput, NumberInput, TimeInput
 
 
 class MemberType(models.Model):
@@ -323,7 +323,48 @@ class LogAccessRequest(models.Model):
     def __str__(self):
         ret = "{} {} || {}".format(self.date, self.time, self.text)
         return ret
-    
+
+class IncidentReport(models.model):
+    """
+    Report of an incident that occured.
+    """
+
+    post_date = models.DateField()
+    post_time = models.TimeField()
+
+    report_date = models.DateField()
+    report_time = models.TimeField()
+
+    effected_members = models.ManyToManyField(Member)
+    staff_on_duty = models.ManyToManyField(Member)
+
+    description = models.TextField()
+    damage = models.TextField()
+    root_cause = models.TextField()
+    mitigation = models.TextField()
+    actions_taken = models.TextField()
+    actions_todo = models.TextField()
+
+    def __str__(self):
+        ret = "Incident Report: {} {}".format(self.post_date, self.post_time)
+        return ret;
+
+class IncidentReportForm(ModelForm):
+    class Meta:
+        model = IncidentReport
+        fields = ['report_date', 'report_time', 'effected_members', 'staff_on_duty',
+                  'description', 'damage', 'root_cause', 'mitigation', 'actions_taken', 'actions_todo']
+        widgets = {'report_date': DateInput(attrs={'class': 'form-control datepicker'}),
+                   'report_time': TimeInput(attrs={'class': 'form-control timepicker'}),
+                   'effected_members': Select(attrs={'class': 'form-control'}),
+                   'staff_on_duty': Select(attrs={'class': 'form-control'}),
+                   'description': TextInput(attrs={'class': 'form-control'}),
+                   'damage': TextInput(attrs={'class': 'form-control'}),
+                   'root_cause': TextInput(attrs={'class': 'form-control'}),
+                   'mitigation': TextInput(attrs={'class': 'form-control'}),
+                   'actions_required': TextInput(attrs={'class': 'form-control'}),
+                   'actions_todo': TextInput(attrs={'class': 'form-control'}),
+        }
 
 ############### Forms #############
 
