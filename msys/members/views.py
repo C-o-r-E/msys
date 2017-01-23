@@ -714,6 +714,75 @@ def access_log(request):
     return render(request, 'members/access_log.html', {'log_list': log_list,
                                                        'logged_in': True})
 
+@login_required
+def incidents(request):
+    """
+    Display a list of incident reports
+    """
+    reports = IncidentReport.objects.all().order_by('-pk')
+    paginator = Paginator(reports, 25)
+
+    page = request.GET.get('page')
+    try:
+        report_list = paginator.page(page)
+    except PageNotAnInteger:
+        report_list = paginator.page(1)
+    except EmptyPage:
+        report_list = paginator.page(paginator.num_pages)
+
+    return render(request, 'members/incident_list.html', {'report_list': report_list,
+                                                          'logged_in': True})
+
+@login_required
+def incidentReport(request):
+    """
+    Create a new incident report
+    """
+    if request.method == 'POST':
+        ir_form = IncidentReportForm(request.POST)
+        if ir_form.is_valid():
+            new_report = ir_form.save(commit=False)
+            new_report.save()
+            
+            log_str = "{} created incident report: [{}]".format(request.user.username,
+                                                                new_report)
+            LogEvent.log_now(log_str)
+            
+            return incidents(request)
+
+    else:
+        ir_form = IncidentReportForm()
+
+    return render(request, 'members/edit_incident.html', {'report_form': ir_form, 'logged_in': True})
+
+@login_required
+def editIncidentReport(request, ir_id):
+    """
+    Edit incident report
+    """
+    if request.method == 'POST':
+        ir_form = IncidentReportForm(request.POST)
+        if ir_form.is_valid():
+            edited_ir = ir_form.save(commit=False)
+            actual_ir = get_object_or_404(IncidentReport, pk=pi_id)
+            edited_ir.pk = actual_ir.pk
+            edited_ir.save()
+            
+            log_str = "{} changed incident report: [{}] -> [{}]".format(
+                                                         request.user.username,
+                                                         actual_ir,
+                                                         edited_ir)
+            LogEvent.log_now(log_str)
+            
+            return incidents(request)
+
+    else:
+        ir = get_object_or_404(IncidentReport, pk=ir_id)
+        ir_form = IncidentReportForm(instance=ir)
+
+    return render(request, 'members/edit_incident.html',
+                  {'report': ir, 'report_form': pi_form, 'logged_in': True})
+
 @csrf_exempt
 def latency(request):
     """
