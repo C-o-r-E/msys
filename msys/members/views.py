@@ -742,6 +742,8 @@ def incidentReport(request):
         ir_form = IncidentReportForm(request.POST)
         if ir_form.is_valid():
             new_report = ir_form.save(commit=False)
+            new_report.post_date = datetime.date.today()
+            new_report.post_time = datetime.datetime.now().time()
             new_report.save()
             
             log_str = "{} created incident report: [{}]".format(request.user.username,

@@ -8,7 +8,9 @@ The classes defined here are essential to Django's ORM magic
 import datetime
 from django.db import models
 from django.forms import ModelForm
-from django.forms import Select, SelectMultiple, TextInput, DateInput, NumberInput, TimeInput
+from django.forms import Select, SelectMultiple, TextInput
+from django.forms import DateInput, NumberInput, TimeInput
+from django.forms import CheckboxSelectMultiple
 
 
 class MemberType(models.Model):
@@ -356,8 +358,10 @@ class IncidentReportForm(ModelForm):
                   'description', 'damage', 'root_cause', 'mitigation', 'actions_taken', 'actions_todo']
         widgets = {'report_date': DateInput(attrs={'class': 'form-control datepicker'}),
                    'report_time': TimeInput(attrs={'class': 'form-control timepicker'}),
-                   'effected_members': Select(attrs={'class': 'form-control'}),
-                   'staff_on_duty': Select(attrs={'class': 'form-control'}),
+                   'effected_members': SelectMultiple(attrs={'class': 'form-control selectpicker',
+                                                             'data-style': 'btn-primary'}),
+                   'staff_on_duty': SelectMultiple(attrs={'class': 'form-control selectpicker',
+                                                          'data-style': 'btn-primary'}),
                    'description': TextInput(attrs={'class': 'form-control'}),
                    'damage': TextInput(attrs={'class': 'form-control'}),
                    'root_cause': TextInput(attrs={'class': 'form-control'}),
