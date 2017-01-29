@@ -38,7 +38,8 @@ urlpatterns = [
     
     url(r'^incidents/$', views.incidents, name='incidentList'),
     url(r'^incidents/report/$', views.incidentReport, name='incidentReport'),
-    url(r'^incidents/report/(?P<report_id>\d+)/$', views.editIncidentReport, name='editReport'),
+    url(r'^incidents/view/(?P<report_id>\d+)/$', views.viewIncident, name='viewIncident'),
+    url(r'^incidents/report/(?P<ir_id>\d+)/$', views.editIncidentReport, name='editReport'),
     
     url(r'^login/$', views.user_login, name='userLogin'),
     url(r'^logout/$', views.user_logout, name='userLogout'),

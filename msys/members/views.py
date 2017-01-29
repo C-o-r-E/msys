@@ -766,10 +766,22 @@ def editIncidentReport(request, ir_id):
         ir_form = IncidentReportForm(request.POST)
         if ir_form.is_valid():
             edited_ir = ir_form.save(commit=False)
-            actual_ir = get_object_or_404(IncidentReport, pk=pi_id)
+            actual_ir = get_object_or_404(IncidentReport, pk=ir_id)
             edited_ir.pk = actual_ir.pk
+            edited_ir.post_date = actual_ir.post_date
+            edited_ir.post_time = actual_ir.post_time
             edited_ir.save()
             
+            #deal with the many-to-many relationships
+            edited_ir.effected_members.clear()
+            for m in request.POST.getlist('effected_members'):
+                mem = Member.objects.get(pk=m)
+                edited_ir.effected_members.add(mem)
+            edited_ir.staff_on_duty.clear()
+            for m in request.POST.getlist('staff_on_duty'):
+                mem = Member.objects.get(pk=m)
+                edited_ir.staff_on_duty.add(mem)
+
             log_str = "{} changed incident report: [{}] -> [{}]".format(
                                                          request.user.username,
                                                          actual_ir,
@@ -783,7 +795,17 @@ def editIncidentReport(request, ir_id):
         ir_form = IncidentReportForm(instance=ir)
 
     return render(request, 'members/edit_incident.html',
-                  {'report': ir, 'report_form': pi_form, 'logged_in': True})
+                  {'report': ir, 'report_form': ir_form, 'logged_in': True})
+
+@login_required
+def viewIncident(request, report_id):
+    """
+    Read only display of report
+    """
+    report = get_object_or_404(IncidentReport, pk=report_id)
+
+    return render(request, 'members/report_details.html',
+                  {'report': report, 'logged_in': True})
 
 @csrf_exempt
 def latency(request):

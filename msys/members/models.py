@@ -10,7 +10,7 @@ from django.db import models
 from django.forms import ModelForm
 from django.forms import Select, SelectMultiple, TextInput
 from django.forms import DateInput, NumberInput, TimeInput
-from django.forms import CheckboxSelectMultiple
+from django.forms import CheckboxSelectMultiple, Textarea
 
 
 class MemberType(models.Model):
@@ -356,18 +356,32 @@ class IncidentReportForm(ModelForm):
         model = IncidentReport
         fields = ['report_date', 'report_time', 'effected_members', 'staff_on_duty',
                   'description', 'damage', 'root_cause', 'mitigation', 'actions_taken', 'actions_todo']
+
+        labels = {
+            'report_date': 'Date when the incident happened:',
+            'report_time': 'Time when incident occured (HH:MM:SS):',
+            'effected_members': 'Select the members who were involved in the incident (select multiple):',
+            'staff_on_duty': 'Select the staff members on duty at the time (select multiple):',
+            'description': 'Briefly describe the incident:',
+            'damage': 'List any/all resulting injury or damage:',
+            'root_cause': 'Describe what factors lead to this incident. Why doesn\'t it normally happen?',
+            'mitigation': 'What can be done to prevent this kind of incident:',
+            'actions_taken': 'What actions were taken in responce to this incident:',
+            'actions_todo': 'What actions still need to be done:',
+        }
+        
         widgets = {'report_date': DateInput(attrs={'class': 'form-control datepicker'}),
                    'report_time': TimeInput(attrs={'class': 'form-control timepicker'}),
                    'effected_members': SelectMultiple(attrs={'class': 'form-control selectpicker',
                                                              'data-style': 'btn-primary'}),
                    'staff_on_duty': SelectMultiple(attrs={'class': 'form-control selectpicker',
                                                           'data-style': 'btn-primary'}),
-                   'description': TextInput(attrs={'class': 'form-control'}),
-                   'damage': TextInput(attrs={'class': 'form-control'}),
-                   'root_cause': TextInput(attrs={'class': 'form-control'}),
-                   'mitigation': TextInput(attrs={'class': 'form-control'}),
-                   'actions_required': TextInput(attrs={'class': 'form-control'}),
-                   'actions_todo': TextInput(attrs={'class': 'form-control'}),
+                   'description': Textarea(attrs={'class': 'form-control'}),
+                   'damage': Textarea(attrs={'class': 'form-control'}),
+                   'root_cause': Textarea(attrs={'class': 'form-control'}),
+                   'mitigation': Textarea(attrs={'class': 'form-control'}),
+                   'actions_taken': Textarea(attrs={'class': 'form-control'}),
+                   'actions_todo': Textarea(attrs={'class': 'form-control'}),
         }
 
 ############### Forms #############

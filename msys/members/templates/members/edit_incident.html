@@ -10,7 +10,7 @@
   </div>
 
   <div class="panel-body">
-	<form class="form-horizontal" role="form" action="{% url 'editIncidentReport' report.pk %}" method="post"> {% csrf_token %}
+	<form class="form-horizontal" role="form" action="{% url 'editReport' report.pk %}" method="post"> {% csrf_token %}
 {% else %}
 	<h3 class="panel-title">New Report</h3>
   </div>

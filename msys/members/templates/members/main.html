@@ -11,13 +11,19 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script>
   $(document).ready(function() {
-      $('.datepicker').datepicker({
-        changeMonth: true,
-        changeYear: true,
-        yearRange: "1914:2099"
-      });
+    $('.datepicker').datepicker({
+      changeMonth: true,
+      changeYear: true,
+      yearRange: "1914:2099"
+    });
+  
+    $('.timepicker').timepicker({ 'timeFormat': 'H:i:s' });
+  
   });
   </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.10.0/jquery.timepicker.min.js"></script>
 
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
