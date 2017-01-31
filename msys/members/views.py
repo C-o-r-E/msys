@@ -745,6 +745,14 @@ def incidentReport(request):
             new_report.post_date = datetime.date.today()
             new_report.post_time = datetime.datetime.now().time()
             new_report.save()
+
+            #deal with the many-to-many relationships
+            for m in request.POST.getlist('effected_members'):
+                mem = Member.objects.get(pk=m)
+                new_report.effected_members.add(mem)
+            for m in request.POST.getlist('staff_on_duty'):
+                mem = Member.objects.get(pk=m)
+                new_report.staff_on_duty.add(mem)
             
             log_str = "{} created incident report: [{}]".format(request.user.username,
                                                                 new_report)
