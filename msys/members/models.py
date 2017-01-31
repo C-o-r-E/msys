@@ -348,7 +348,8 @@ class IncidentReport(models.Model):
     actions_todo = models.TextField()
 
     def __str__(self):
-        ret = "Incident Report: {} {}".format(self.post_date, self.post_time)
+        simple_time = str(self.post_time).split('.')[0]
+        ret = "Incident Report: {} {}".format(self.post_date, simple_time)
         return ret;
 
 class IncidentReportForm(ModelForm):

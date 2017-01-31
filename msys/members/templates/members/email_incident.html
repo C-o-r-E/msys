@@ -1,0 +1,21 @@
+{{user}} has created a new incident report.
+
+Members involved:
+
+{% for e in report.effected_members.all %}
+ * {{e.first_name}} {{e.last_name}}
+{% endfor %}
+
+Staff on duty:
+
+{% for e in report.staff_on_duty.all %}
+ * {{e.first_name}} {{e.last_name}}
+{% endfor %}
+
+Description:
+
+{{ report.description }}
+
+For more information, consult MSYS: http://msys.heliosmakerspace.ca/members/
+
+This is an automated notification.

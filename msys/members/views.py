@@ -7,11 +7,13 @@ This is where the main logic happens behind the scenes.
 import datetime
 from members.models import *
 from members.forms import *
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 from django.conf import settings
 from time import sleep
 
@@ -757,6 +759,16 @@ def incidentReport(request):
             log_str = "{} created incident report: [{}]".format(request.user.username,
                                                                 new_report)
             LogEvent.log_now(log_str)
+
+            email_body = render_to_string('members/email_incident.html',
+                                          {'user': request.user.username,
+                                           'report': new_report})
+            send_mail(str(new_report),
+                      email_body,
+                      'mr_saturn@heliosmakerspace.ca',
+                      ['council@heliosmakerspace.ca'],
+                      fail_silently=False,
+                      )
             
             return incidents(request)
 
