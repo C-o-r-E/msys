@@ -8,7 +8,9 @@ The classes defined here are essential to Django's ORM magic
 import datetime
 from django.db import models
 from django.forms import ModelForm
-from django.forms import Select, SelectMultiple, TextInput, DateInput, NumberInput
+from django.forms import Select, SelectMultiple, TextInput
+from django.forms import DateInput, NumberInput, TimeInput
+from django.forms import CheckboxSelectMultiple, Textarea
 
 
 class MemberType(models.Model):
@@ -323,7 +325,65 @@ class LogAccessRequest(models.Model):
     def __str__(self):
         ret = "{} {} || {}".format(self.date, self.time, self.text)
         return ret
-    
+
+class IncidentReport(models.Model):
+    """
+    Report of an incident that occured.
+    """
+
+    post_date = models.DateField()
+    post_time = models.TimeField()
+
+    report_date = models.DateField()
+    report_time = models.TimeField()
+
+    effected_members = models.ManyToManyField(Member, related_name="incident_effected")
+    staff_on_duty = models.ManyToManyField(Member, related_name="incident_witness")
+
+    description = models.TextField()
+    damage = models.TextField()
+    root_cause = models.TextField()
+    mitigation = models.TextField()
+    actions_taken = models.TextField()
+    actions_todo = models.TextField()
+
+    def __str__(self):
+        simple_time = str(self.post_time).split('.')[0]
+        ret = "Incident Report: {} {}".format(self.post_date, simple_time)
+        return ret;
+
+class IncidentReportForm(ModelForm):
+    class Meta:
+        model = IncidentReport
+        fields = ['report_date', 'report_time', 'effected_members', 'staff_on_duty',
+                  'description', 'damage', 'root_cause', 'mitigation', 'actions_taken', 'actions_todo']
+
+        labels = {
+            'report_date': 'Date when the incident happened:',
+            'report_time': 'Time when incident occured (HH:MM:SS):',
+            'effected_members': 'Select the members who were involved in the incident (select multiple):',
+            'staff_on_duty': 'Select the staff members on duty at the time (select multiple):',
+            'description': 'Briefly describe the incident:',
+            'damage': 'List any/all resulting injury or damage:',
+            'root_cause': 'Describe what factors lead to this incident. Why doesn\'t it normally happen?',
+            'mitigation': 'What can be done to prevent this kind of incident:',
+            'actions_taken': 'What actions were taken in responce to this incident:',
+            'actions_todo': 'What actions still need to be done:',
+        }
+        
+        widgets = {'report_date': DateInput(attrs={'class': 'form-control datepicker'}),
+                   'report_time': TimeInput(attrs={'class': 'form-control timepicker'}),
+                   'effected_members': SelectMultiple(attrs={'class': 'form-control selectpicker',
+                                                             'data-style': 'btn-primary'}),
+                   'staff_on_duty': SelectMultiple(attrs={'class': 'form-control selectpicker',
+                                                          'data-style': 'btn-primary'}),
+                   'description': Textarea(attrs={'class': 'form-control'}),
+                   'damage': Textarea(attrs={'class': 'form-control'}),
+                   'root_cause': Textarea(attrs={'class': 'form-control'}),
+                   'mitigation': Textarea(attrs={'class': 'form-control'}),
+                   'actions_taken': Textarea(attrs={'class': 'form-control'}),
+                   'actions_todo': Textarea(attrs={'class': 'form-control'}),
+        }
 
 ############### Forms #############
 

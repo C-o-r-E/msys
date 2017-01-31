@@ -1,0 +1,131 @@
+{% extends "members/main.html" %}
+{% load staticfiles %}
+{% block content %}
+
+
+{% if report %}
+
+<div class="page-header">
+  <h1>{{report}}</h1>
+</div>
+
+<div class="well">
+  <a class="btn btn-default" href="{% url 'editReport' report.pk %}">Edit Report</a>
+  <a class="btn btn-default" href="{% url 'incidentReport' %}">Create New Report</a>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+	<h3 class="panel-title">Report Details</h3>
+  </div>
+  <div class="panel-body">
+	<table class="table table-striped table-hover">
+	  <tbody>
+		
+		<tr>
+		  <td>
+			Report created
+		  </td>
+		  <td>
+			{{ report.post_date }} at {{ report.post_time }}
+		  </td>
+		</tr>
+
+		<tr>
+		  <td>
+			Date of Incident
+		  </td>
+		  <td>
+			{{ report.report_date }} at {{report.report_time}}
+		  </td>
+		</tr>
+
+	  </tbody>
+	</table>
+  </div>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+	<h3 class="panel-title">Effected Members</h3>
+  </div>
+  <div class="panel-body">
+	{% for e in report.effected_members.all %}
+	<p><a href="{% url 'memberDetails' e.pk %}">{{e.first_name}} {{e.last_name}}</a></p>
+	{% endfor %}
+  </div>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+	<h3 class="panel-title">Staff on duty</h3>
+  </div>
+  <div class="panel-body">
+	{% for e in report.staff_on_duty.all %}
+	<p><a href="{% url 'memberDetails' e.pk %}">{{e.first_name}} {{e.last_name}}</a></p>
+	{% endfor %}
+  </div>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+	<h3 class="panel-title">Description</h3>
+  </div>
+  <div class="panel-body">
+	<textarea class="form-control" rows="5" readonly>{{report.description}}</textarea>
+  </div>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+	<h3 class="panel-title">Damage</h3>
+  </div>
+  <div class="panel-body">
+	<textarea class="form-control" rows="5" readonly>{{report.damage}}</textarea>
+  </div>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+	<h3 class="panel-title">Root Cause</h3>
+  </div>
+  <div class="panel-body">
+	<textarea class="form-control" rows="5" readonly>{{report.root_cause}}</textarea>
+  </div>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+	<h3 class="panel-title">Mitigation</h3>
+  </div>
+  <div class="panel-body">
+	<textarea class="form-control" rows="5" readonly>{{report.mitigation}}</textarea>
+  </div>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+	<h3 class="panel-title">Actions Taken</h3>
+  </div>
+  <div class="panel-body">
+	<textarea class="form-control" rows="5" readonly>{{report.actions_taken}}</textarea>
+  </div>
+</div>
+
+<div class="panel panel-primary">
+  <div class="panel-heading">
+	<h3 class="panel-title">Actions Needed</h3>
+  </div>
+  <div class="panel-body">
+	<textarea class="form-control" rows="5" readonly>{{report.actions_todo}}</textarea>
+  </div>
+</div>
+
+{% else %}
+
+Member does not exist.
+
+{% endif %} {# if member #}
+
+{% endblock %}
+

@@ -7,11 +7,13 @@ This is where the main logic happens behind the scenes.
 import datetime
 from members.models import *
 from members.forms import *
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseForbidden, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.csrf import csrf_exempt
+from django.template.loader import render_to_string
 from django.conf import settings
 from time import sleep
 
@@ -713,6 +715,117 @@ def access_log(request):
         
     return render(request, 'members/access_log.html', {'log_list': log_list,
                                                        'logged_in': True})
+
+@login_required
+def incidents(request):
+    """
+    Display a list of incident reports
+    """
+    reports = IncidentReport.objects.all().order_by('-pk')
+    paginator = Paginator(reports, 25)
+
+    page = request.GET.get('page')
+    try:
+        report_list = paginator.page(page)
+    except PageNotAnInteger:
+        report_list = paginator.page(1)
+    except EmptyPage:
+        report_list = paginator.page(paginator.num_pages)
+
+    return render(request, 'members/incident_list.html', {'report_list': report_list,
+                                                          'logged_in': True})
+
+@login_required
+def incidentReport(request):
+    """
+    Create a new incident report
+    """
+    if request.method == 'POST':
+        ir_form = IncidentReportForm(request.POST)
+        if ir_form.is_valid():
+            new_report = ir_form.save(commit=False)
+            new_report.post_date = datetime.date.today()
+            new_report.post_time = datetime.datetime.now().time()
+            new_report.save()
+
+            #deal with the many-to-many relationships
+            for m in request.POST.getlist('effected_members'):
+                mem = Member.objects.get(pk=m)
+                new_report.effected_members.add(mem)
+            for m in request.POST.getlist('staff_on_duty'):
+                mem = Member.objects.get(pk=m)
+                new_report.staff_on_duty.add(mem)
+            
+            log_str = "{} created incident report: [{}]".format(request.user.username,
+                                                                new_report)
+            LogEvent.log_now(log_str)
+
+            email_body = render_to_string('members/email_incident.html',
+                                          {'user': request.user.username,
+                                           'report': new_report})
+            send_mail(str(new_report),
+                      email_body,
+                      'mr_saturn@heliosmakerspace.ca',
+                      ['council@heliosmakerspace.ca'],
+                      fail_silently=False,
+                      )
+            
+            return incidents(request)
+
+    else:
+        ir_form = IncidentReportForm()
+
+    return render(request, 'members/edit_incident.html', {'report_form': ir_form, 'logged_in': True})
+
+@login_required
+def editIncidentReport(request, ir_id):
+    """
+    Edit incident report
+    """
+    if request.method == 'POST':
+        ir_form = IncidentReportForm(request.POST)
+        if ir_form.is_valid():
+            edited_ir = ir_form.save(commit=False)
+            actual_ir = get_object_or_404(IncidentReport, pk=ir_id)
+            edited_ir.pk = actual_ir.pk
+            edited_ir.post_date = actual_ir.post_date
+            edited_ir.post_time = actual_ir.post_time
+            edited_ir.save()
+            
+            #deal with the many-to-many relationships
+            edited_ir.effected_members.clear()
+            for m in request.POST.getlist('effected_members'):
+                mem = Member.objects.get(pk=m)
+                edited_ir.effected_members.add(mem)
+            edited_ir.staff_on_duty.clear()
+            for m in request.POST.getlist('staff_on_duty'):
+                mem = Member.objects.get(pk=m)
+                edited_ir.staff_on_duty.add(mem)
+
+            log_str = "{} changed incident report: [{}] -> [{}]".format(
+                                                         request.user.username,
+                                                         actual_ir,
+                                                         edited_ir)
+            LogEvent.log_now(log_str)
+            
+            return incidents(request)
+
+    else:
+        ir = get_object_or_404(IncidentReport, pk=ir_id)
+        ir_form = IncidentReportForm(instance=ir)
+
+    return render(request, 'members/edit_incident.html',
+                  {'report': ir, 'report_form': ir_form, 'logged_in': True})
+
+@login_required
+def viewIncident(request, report_id):
+    """
+    Read only display of report
+    """
+    report = get_object_or_404(IncidentReport, pk=report_id)
+
+    return render(request, 'members/report_details.html',
+                  {'report': report, 'logged_in': True})
 
 @csrf_exempt
 def latency(request):
