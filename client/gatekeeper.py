@@ -28,6 +28,8 @@ class Gatekeeper():
 
     def __init__(self, server_url):
         self.request_timeout = self.REQUEST_TIMEOUT
+        if server_url[-1] != '/':
+            server_url += '/'
         self.auth_url = server_url + "auth/"
         self.weekly_url = server_url + "weekly_access/"
 
@@ -151,12 +153,14 @@ class Gatekeeper():
         req = urllib.request.Request(self.auth_url, data)
         try:
             resp = urllib.request.urlopen(req, timeout=self.request_timeout)
-        except URLError:
-            print("TODO: log that the connection was rejected...")
+        except URLError as err:
+            print("URLError: auth_url:[{}]".format(self.auth_url))
+            print("URLError: {}".format(err))
+            print("Falling back to local cache")
             cached = self.auth_from_cache(rfid)
             return cached
         except timeout as err:
-            cached = auth_from_cache(rfid)
+            cached = self.auth_from_cache(rfid)
             return cached
 
         text = resp.read()
