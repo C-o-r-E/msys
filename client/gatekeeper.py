@@ -24,7 +24,7 @@ class Gatekeeper():
     """
     
     REQUEST_TIMEOUT = 2
-    CACHE_STALE_T = 345600 # number of seconds in 4 days
+    CACHE_STALE_T = 604800 # number of seconds in 7 days
 
     def __init__(self, server_url):
         self.request_timeout = self.REQUEST_TIMEOUT
