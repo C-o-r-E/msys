@@ -94,7 +94,7 @@ class TestCache(unittest.TestCase):
 
             db_file = open(db_bad, 'w')
             #db_file.write(json.dumps(cls.neg_data))
-            json.dump(cls.pos_data, db_file)
+            json.dump(cls.neg_data, db_file)
             db_file.close()
         except Exception as err:
             print("Error writing test DB files")
