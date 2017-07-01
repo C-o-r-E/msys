@@ -58,16 +58,16 @@ class Member(models.Model):
     emergency_phone_number = models.CharField(max_length=200)
 
     stripe_customer_code = models.CharField(max_length=200, null=True, blank=True)
-    
+
     def has_active_membership(self):
         """
         Check to see if the Member has an active Membership
-        
+
         Returns True if there is at least one Membership associated with the Member
         that has not yet expired.
         """
         m_ships = Membership.objects.filter(member=self.pk)
-        
+
         for ship in m_ships:
             if ship.is_active():
                 return True
@@ -88,11 +88,11 @@ class Membership(models.Model):
     expire_date = models.DateField()
 
     stripe_subscription_code = models.CharField(max_length=200, null=True, blank=True)
-    
+
     def is_active(self):
         """
         Check if the membership has expired or not
-        
+
         Returns True if the membership start date is earlier than the current date and
         the membership end date is in the future.
         """
@@ -117,10 +117,10 @@ class Promotion(models.Model):
     """
     Class representing a type or classification of promotion that was offered.
     """
-    
+
     name = models.CharField(max_length=200)
     quantity = models.IntegerField()
-    
+
     def __str__(self):
         return str(self.name)
 
@@ -129,12 +129,12 @@ class Promo_item(models.Model):
     Class representing the a "coupon" or some kind of promotional item. It could be
     a one time membership, special status, or multiple use tickets.
     """
-    
+
     promo = models.ForeignKey(Promotion)
     member = models.ForeignKey(Member)
     used = models.IntegerField()
     total = models.IntegerField()
-    
+
     def __str__(self):
         ret = "promo: {} ({}) {}/{}".format(self.promo, self.member, self.used, self.total)
         return ret
@@ -143,11 +143,11 @@ class Promo_sub(models.Model):
     """
     Class to indicate which memberships are created from or associated with promotions
     """
-    
+
     promo = models.ForeignKey(Promotion)
     #promo_item = models.ForeignKey(Promo_Item)
     membership = models.ForeignKey(Membership)
-    
+
     def __str__(self):
         ret = "{} <-> {}".format(self.promo, self.membership)
         return ret
@@ -229,7 +229,7 @@ class TimeBlock(models.Model):
     """
     Represents a block of time during the week.
 
-    TimeBlocks are not aware of specific calendar dates. Instead this class represents a 
+    TimeBlocks are not aware of specific calendar dates. Instead this class represents a
     weekday and time that will come and go each week.
     """
     DAY_CHOICES = (
@@ -284,21 +284,21 @@ class LogEvent(models.Model):
     """
     Record of a change made to the system
     """
-    
+
     date = models.DateField()
     time = models.TimeField()
     text = models.TextField()
-    
+
     @staticmethod
     def log_now(txt):
-    
+
         log = LogEvent()
         log.date = datetime.date.today()
         log.time = datetime.datetime.now().time()
-        
+
         log.text = txt
         log.save()
-    
+
     def __str__(self):
         ret = "{} {} || {}".format(self.date, self.time, self.text)
         return ret
@@ -311,17 +311,17 @@ class LogAccessRequest(models.Model):
     date = models.DateField()
     time = models.TimeField()
     text = models.TextField()
-    
+
     @staticmethod
     def log_now(txt):
-    
+
         log = LogAccessRequest()
         log.date = datetime.date.today()
         log.time = datetime.datetime.now().time()
-        
+
         log.text = txt
         log.save()
-    
+
     def __str__(self):
         ret = "{} {} || {}".format(self.date, self.time, self.text)
         return ret
@@ -370,7 +370,7 @@ class IncidentReportForm(ModelForm):
             'actions_taken': 'What actions were taken in responce to this incident:',
             'actions_todo': 'What actions still need to be done:',
         }
-        
+
         widgets = {'report_date': DateInput(attrs={'class': 'form-control datepicker'}),
                    'report_time': TimeInput(attrs={'class': 'form-control timepicker'}),
                    'effected_members': SelectMultiple(attrs={'class': 'form-control selectpicker',
@@ -396,7 +396,8 @@ class MemberForm(ModelForm):
                   'emergency_contact', 'emergency_phone_number',
                   'stripe_customer_code']
         labels = {
-            'birth_date': 'Birthdate (MM/DD/YYYY)'
+            'birth_date': 'Birthdate (MM/DD/YYYY)',
+            'stripe_customer_code': 'Stripe customer code (Leave blank if none)'
         }
 
         widgets = {'type': Select(attrs={'class': 'form-control'}),
