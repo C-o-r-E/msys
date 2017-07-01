@@ -8,9 +8,12 @@ The main() entry point and sentinel are defined at the bottom of this file.
 
 import os
 import datetime
+from pathlib import Path
+
 import django
 from django.conf import settings
-from pathlib import Path
+from django.core.mail import EmailMessage
+
 
 class Maintenence:
     """
@@ -48,7 +51,7 @@ class Maintenence:
 
         self.mlog("base directory: {}".format(settings.BASE_DIR))
 
-        #fist see if we can find the db file
+        # fist see if we can find the db file
         db_URI = settings.DATABASES['default']['NAME']
         self.mlog("got db path from django settings: [{}]".format(db_URI))
 
@@ -57,7 +60,7 @@ class Maintenence:
             self.mlog("db file does not exist on file system!")
             return False
 
-        #now we will blindly ask the OS to copy our db and compress it
+        # now we will blindly ask the OS to copy our db and compress it
         ts = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
         backup_URI = settings.BASE_DIR + "/backup/db.{}.sqlite3".format(ts)
         cmd = "cp {} {}".format(db_URI, backup_URI)
@@ -65,6 +68,18 @@ class Maintenence:
 
         cmd = "xz {}".format(backup_URI)
         self._do_cmd(cmd)
+
+        # finally send an email with the backup
+        date = datetime.datetime.now().strftime("%Y-%m-%d")
+        email = EmailMessage(
+            subject="Database Backup for {}".format(date),
+            body="Please find attached the most recent backup of the MSYS database.",
+            from_email="mr_saturn@heliosmakerspace.ca",
+            to=["corey@heliosmakerspace.ca"]
+        )
+
+        email.attach_file("{}.xz".format(backup_URI))
+        email.send()
 
         return True
 
