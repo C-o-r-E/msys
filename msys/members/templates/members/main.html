@@ -3,10 +3,11 @@
 <head>
   <title>Helios Makerspace Member System</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Language" content="en">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
+
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  
+
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
   <script>
@@ -16,9 +17,9 @@
       changeYear: true,
       yearRange: "1914:2099"
     });
-  
+
     $('.timepicker').timepicker({ 'timeFormat': 'H:i:s' });
-  
+
   });
   </script>
 
@@ -28,7 +29,7 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
-  
+
   <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.css" %}" />
   <script type="text/javascript" src="{% static "js/bootstrap.js" %}"></script>
   <script lang="javascript">
@@ -74,12 +75,12 @@
 		</button>
 		<a class="navbar-brand" href="{% url 'memberList' %}">Helios Member System</a>
       </div>
-	  
+
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		<ul class="nav navbar-nav">
 		  <!--
 			  <li><a href="{% url 'memberList' %}">Members</a></li>
-		  <li><a href="{% url 'membershipList' %}">Memberships</a></li> 
+		  <li><a href="{% url 'membershipList' %}">Memberships</a></li>
 		  -->
 		  <li class="dropdown">
 			<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Member Control <span class="caret"></span></a>
@@ -143,7 +144,7 @@
 	</div>
   </div>
   {% endif %}
-  
+
   {% if msg_err %}
   <div class="panel panel-danger">
 	<div class="panel-heading">
@@ -154,7 +155,7 @@
 	</div>
   </div>
   {% endif %}
-  
+
   <div id="content" class="container">
 	{% block content %}<!--Error 418 I am a teapot-->{% endblock %}
   </div>
