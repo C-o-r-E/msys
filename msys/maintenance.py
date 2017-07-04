@@ -138,15 +138,6 @@ class Maintenence:
             if p_count == 0:
                 zombies.append(m)
 
-        for p in promo_ppl:
-            report += "\t{} \t ( ".format(p)
-            for s in p.promo_sub_set.all():
-                report += "{} ".format(s.promo.name)
-            report += " )\n"
-
-        for z in zombies:
-            report += "\t{}\n".format(z)
-
         report += "\n\n"
 
         # end general stats
@@ -159,10 +150,16 @@ class Maintenence:
         report += "Non-staff w/o Stripe with n > 1 active memberships: {}\n".format(len(multi_active))
         report += "Non-staff w/o Stripe with active promotion memberships: {}\n".format(len(promo_ppl))
         report += "Those memberships being:\n"
+        for p in promo_ppl:
+            report += "\t{} \t ( ".format(p)
+            for s in p.promo_sub_set.all():
+                report += "{} ".format(s.promo.name)
+            report += " )\n"
         report += "\nActive Non-staff w/o Stripe, no promotion (paid cash? zombies? action required?): {}\n".format(
             len(zombies))
         report += "Those members are:\n"
-
+        for z in zombies:
+            report += "\t{}\n".format(z)
 
         # Stripe related stats
 
