@@ -66,11 +66,11 @@ class Maintenence:
 
         # now we will blindly ask the OS to copy our db and compress it
         ts = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
-        backup_URI = settings.BASE_DIR + "/backup/db.{}.sqlite3".format(ts)
-        cmd = "cp {} {}".format(db_URI, backup_URI)
+        self.backup_URI = settings.BASE_DIR + "/backup/db.{}.sqlite3".format(ts)
+        cmd = "cp {} {}".format(db_URI, self.backup_URI)
         self._do_cmd(cmd)
 
-        cmd = "xz {}".format(backup_URI)
+        cmd = "xz {}".format(self.backup_URI)
         self._do_cmd(cmd)
 
         # finally send an email with the backup
@@ -82,7 +82,7 @@ class Maintenence:
             to=["corey@heliosmakerspace.ca"]
         )
 
-        email.attach_file("{}.xz".format(backup_URI))
+        email.attach_file("{}.xz".format(self.backup_URI))
         email.send()
 
         return True
@@ -209,9 +209,22 @@ class Maintenence:
         for z in up_data:
             report += "\t{}: [{}]\n".format(z.get("id"), z.get("plan").get("name"))
 
-        print(report) # remove this
-
         self.mlog("Generated report. Length = {}".format(len(report)))
+
+        # Send the email
+
+        ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        report_subject = "Automated Membership Report for {} [TEST]".format(ts)
+        self.mlog("sending email [{}]...".format(report_subject))
+        report_email = EmailMessage(
+            subject=report_subject,
+            body=report,
+            from_email='mr_saturn@heliosmakerspace.ca',
+            to=['corey@heliosmakerspace.ca'],
+        )
+
+        report_email.send()
+        self.mlog("sent!")
 
 
 ### end Maintenence class
@@ -223,7 +236,7 @@ def main():
     print("Starting maintenance....")
 
     m = Maintenence()
-    #m.do_db_backup()
+    m.do_db_backup()
     m.do_report()
 
     print("Maintenence complete!")
