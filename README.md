@@ -157,7 +157,7 @@ cd msys/client/
 sudo python3 client.py
 ```
 
-### 
+###
 
 
 # TODO docs
@@ -169,16 +169,18 @@ sudo python3 client.py
 
 # Roadmap dev
 
-* Server
-    * Stripe API integration
-    * manage rentals (shelves, spaces)
-    * Https
+### Server
+* Stripe API integration
+* Square integration?
+* manage rentals (shelves, spaces)
+* track training records (or member activities)
+* Https
 
-* Client (gatekeeper)
-    * Test cases
-    * Red LED for access denied
-    * investigate new revision of board   
-    
-* Client (Desktop)
-    * Test with 5v FTDI
-    * Polish the application
+### Client (gatekeeper)
+* Test cases
+* Red LED for access denied
+* investigate new revision of board   
+
+### Client (Desktop)
+* Test with 5v FTDI
+* Polish the application
