@@ -1,0 +1,8 @@
+[Unit]
+Description=Regular maintenance for MSYS
+
+[Service]
+Type=oneshot
+ExecStart=python3 /bin/msys_maintenance
+
+# note: /bin/msys_maintenance can be a symbolic link to the actual script
