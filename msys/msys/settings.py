@@ -19,7 +19,7 @@ with open('key.txt') as f:
     SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
