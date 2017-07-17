@@ -175,6 +175,8 @@ sudo python3 client.py
 * manage rentals (shelves, spaces)
 * track training records (or member activities)
 * Https
+* better log format
+* configuration settings
 
 ### Client (gatekeeper)
 * Test cases

@@ -396,10 +396,11 @@ class MemberForm(ModelForm):
                   'birth_date', 'address', 'city',
                   'postal_code', 'phone_number', 'email',
                   'emergency_contact', 'emergency_phone_number',
-                  'stripe_customer_code']
+                  'stripe_customer_code', 'brief_notes']
         labels = {
             'birth_date': 'Birthdate (MM/DD/YYYY)',
-            'stripe_customer_code': 'Stripe customer code (Leave blank if none)'
+            'stripe_customer_code': 'Stripe customer code (Leave blank if none)',
+            'brief_notes': 'Notes (keep it brief - 200 characters max)'
         }
 
         widgets = {'type': Select(attrs={'class': 'form-control'}),
@@ -414,6 +415,7 @@ class MemberForm(ModelForm):
                    'emergency_contact': TextInput(attrs={'class': 'form-control'}),
                    'emergency_phone_number': TextInput(attrs={'class': 'form-control'}),
                    'stripe_customer_code': TextInput(attrs={'class': 'form-control'}),
+                   'brief_notes': TextInput(attrs={'class': 'form-control'}),
         }
 
 class MembershipForm(ModelForm):

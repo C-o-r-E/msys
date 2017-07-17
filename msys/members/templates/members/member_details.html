@@ -22,7 +22,7 @@
   <div class="panel-body">
 	<table class="table table-striped table-hover">
 	  <tbody>
-		
+
 		<tr>
 		  <td>
 			Number
@@ -102,7 +102,7 @@
 		  <td>
 			{{ member.city }}
 		  </td>
-		</tr>  
+		</tr>
 
 		<tr>
 		  <td>
@@ -148,13 +148,16 @@
 			{{ member.emergency_phone_number }}
 		  </td>
 		</tr>
-		
+
 		<tr>
 	      <td>Stripe Customer ID</td>
 	      <td>{{member.stripe_customer_code}}</td>
 		<tr>
-		  
 
+        <tr>
+            <td>Notes</td>
+            <td>{% if member.brief_notes %} {{member.brief_notes}} {% else %} &nbsp; {% endif %}</td>
+        </tr>
 	  </tbody>
 	</table>
   </div>
@@ -180,4 +183,3 @@ Member does not exist.
 {% endif %} {# if member #}
 
 {% endblock %}
-
