@@ -62,7 +62,7 @@ def user_login(request):
 def members(request):
     show_active = False
     member_list = Member.objects.all()
-    
+
     if request.method == 'GET':
         if 'show_active' in request.GET:
             show_active = True
@@ -125,26 +125,26 @@ def editDetails(request, member_id):
             edited_member.first_seen_date = actual_member.first_seen_date
             edited_member.last_seen_date = actual_member.first_seen_date
             edited_member.save()
-            
+
+            attributes = ['number', 'type', 'first_name', 'last_name',
+                          'address', 'city', 'postal_code', 'email',
+                          'emergency_contact', 'emergency_phone_number',
+                          'stripe_customer_code', 'brief_notes',
+                          ]
+
             log_str = "{} edited member: {} with fields [".format(request.user.username,
                                                            actual_member)
-            log_str += "{} -> {}, ".format(actual_member.number, edited_member.number)
-            log_str += "{} -> {}, ".format(actual_member.type, edited_member.type)
-            log_str += "{} -> {}, ".format(actual_member.first_name, edited_member.first_name)
-            log_str += "{} -> {}, ".format(actual_member.last_name, edited_member.last_name)
 
-            log_str += "{} -> {}, ".format(actual_member.address, edited_member.address)
-            log_str += "{} -> {}, ".format(actual_member.city, edited_member.city)
-            log_str += "{} -> {}, ".format(actual_member.postal_code, edited_member.postal_code)
-            log_str += "{} -> {}, ".format(actual_member.phone_number, edited_member.phone_number)
-            log_str += "{} -> {}, ".format(actual_member.email, edited_member.email)
-            log_str += "{} -> {}, ".format(actual_member.emergency_contact, edited_member.emergency_contact)
-            log_str += "{} -> {}, ".format(actual_member.emergency_phone_number, edited_member.emergency_phone_number)
-            log_str += "{} -> {}, ".format(actual_member.stripe_customer_code, edited_member.stripe_customer_code)
-            
+            for a in attributes:
+                old = getattr(actual_member, a)
+                new = getattr(edited_member, a)
+
+                if old != new:
+                    log_str += "<{}: ({}) -> ({})>, ".format(a, old, new)
+
             log_str += "]"
             LogEvent.log_now(log_str)
-            
+
             return members(request)
         else: #form not valid
             member = get_object_or_404(Member, pk=member_id)
@@ -169,15 +169,15 @@ def addMember(request):
             new_member.first_seen_date = datetime.date.today()
             new_member.last_seen_date = datetime.date.today()
             new_member.save()
-            
+
             notes = "Created a new member: {}".format(new_member)
-            
+
             log_str = "{} created a new member: {}".format(request.user.username,
                                                            new_member)
             LogEvent.log_now(log_str)
-            
+
             member_list = Member.objects.all()
-            
+
             return render(request,
                    'members/members.html',
                    {'member_list': member_list,
@@ -191,7 +191,7 @@ def addMember(request):
 
 @login_required
 def memberships(request, member_id=None):
-    """Render a list of Memberships"""    
+    """Render a list of Memberships"""
     if member_id:
         m_list = Membership.objects.filter(member=member_id)
     else:
@@ -214,7 +214,7 @@ def addMembership(request, member_id=None):
             new_membership = ms_form.save(commit=False)
             new_membership.save()
             info = 'Created new membership'
-            
+
             log_str = "{} created a new memberhip: {}".format(request.user.username,
                                                            new_membership)
             LogEvent.log_now(log_str)
@@ -242,11 +242,11 @@ def editMembership(request, m_ship):
             actual_ms = get_object_or_404(Membership, pk=m_ship)
             edited_ms.pk = actual_ms.pk
             edited_ms.save()
-            
+
             log_str = "{} modified a membership: {} -> {}".format(request.user.username,
                                                            actual_ms, edited_ms)
             LogEvent.log_now(log_str)
-            
+
             return memberships(request)
     else:
         ship = get_object_or_404(Membership, pk=m_ship)
@@ -260,7 +260,7 @@ def editMembership(request, m_ship):
 @login_required
 def promos(request):
     """ Render list of Promotion objects """
-    promo_list = Promotion.objects.all()    
+    promo_list = Promotion.objects.all()
     return render(request, 'members/promos.html', {'promo_list': promo_list, 'logged_in': True})
 
 @login_required
@@ -275,7 +275,7 @@ def editPromo(request, promo_id):
             actual_promo = get_object_or_404(Promotion, pk=promo_id)
             edited_promo.pk = actual_promo.pk
             edited_promo.save()
-            
+
             log_str = "{} changed promotion: [{} qty:{}] -> [{} qty:{}]".format(
                                                          request.user.username,
                                                          actual_promo,
@@ -283,7 +283,7 @@ def editPromo(request, promo_id):
                                                          edited_promo,
                                                          edited_promo.quantity)
             LogEvent.log_now(log_str)
-            
+
             return promos(request)
 
     else:
@@ -306,12 +306,12 @@ def addPromo(request):
             if pname.strip() == "":
                 new_promo.name = "Unlabeled Promotion"
             new_promo.save()
-            
+
             log_str = "{} created promotion: [{} qty:{}]".format(request.user.username,
                                                          new_promo,
                                                          new_promo.quantity)
             LogEvent.log_now(log_str)
-            
+
             return promos(request)
 
     else:
@@ -324,7 +324,7 @@ def promoItems(request, promo_id):
     """
     Get a list of promo items
     """
-    promo = get_object_or_404(Promotion, pk=promo_id)    
+    promo = get_object_or_404(Promotion, pk=promo_id)
     items = promo.promo_item_set.all()
     return render(request, 'members/promoItems.html', {'promo': promo, 'items': items, 'logged_in': True})
 
@@ -338,11 +338,11 @@ def addPromoItem(request):
         if pi_form.is_valid():
             new_pi = pi_form.save(commit=False)
             new_pi.save()
-            
+
             log_str = "{} created promo item: [{}]".format(request.user.username,
                                                          new_pi)
             LogEvent.log_now(log_str)
-            
+
             return promoItems(request, new_pi.promo.pk)
 
     else:
@@ -353,7 +353,7 @@ def addPromoItem(request):
 @login_required
 def addPromoItem_fromPromo(request, promo_id):
     """
-    Add new Promotion Item (instance of promotion) based on a Promo 
+    Add new Promotion Item (instance of promotion) based on a Promo
 
     This allows us to fill in some details for the user
     """
@@ -377,13 +377,13 @@ def editPromoItem(request, pi_id):
             edited_pi.pk = actual_pi.pk
             print("edited = {}".format(edited_pi))
             edited_pi.save()
-            
+
             log_str = "{} changed promo item: [{}] -> [{}]".format(
                                                          request.user.username,
                                                          actual_pi,
                                                          edited_pi)
             LogEvent.log_now(log_str)
-            
+
             return promoItems(request, edited_pi.promo.pk)
 
     else:
@@ -399,26 +399,26 @@ def redeemPromoItem(request, pi_id):
     Use a promo item to create a membership
     """
     pi = get_object_or_404(Promo_item, pk=pi_id)
-    
+
     if pi.used < pi.total:
         pi.used += 1
         pi.save()
-        
+
         ms = Membership(member=pi.member,
                         start_date=datetime.datetime.today().date(),
                         expire_date=datetime.datetime.today().date())
         ms.save()
-        
+
         ps = Promo_sub(promo=pi.promo, membership=ms)
         ps.save()
-        
+
         log_str = "{} redeemed promo item: [{}]".format(
                                                          request.user.username,
                                                          pi)
         LogEvent.log_now(log_str)
-        
+
         return editMembership(request, ms.pk)
-        
+
     else:
         promo = get_object_or_404(Promotion, pk=pi.promo.pk)
         items = promo.promo_item_set.all()
@@ -439,14 +439,14 @@ def cards(request):
 def checkCard(request, card_rfid):
     """
     Find a card by its uid and display its details.
-    
+
     Will also present the option to create a new card
     """
     card_rfid = card_rfid.replace(' ', '').lower()
 
     try:
         card = AccessCard.objects.get(unique_id=card_rfid)
-        
+
         return cardDetails(request, card.pk)
     except AccessCard.DoesNotExist:
         data = {'unique_id': card_rfid}
@@ -567,7 +567,7 @@ def cardAssign(request, card_id):
             lg_txt += str(grp) + ', '
 
         notes = 'Updated AccessGroups associated with Card ' + str(card)
-        
+
         log_str = "{} set access groups for card {} to [ {}]".format(request.user.username,
                                                                      card,
                                                                      lg_txt)
@@ -606,12 +606,12 @@ def editCard(request, card_id):
             #edited_card.unique_id = actual_card.unique_id
             edited_card.pk = actual_card.pk
             edited_card.save()
-            
+
             log_str = "{} changed card: {} -> {}".format(request.user.username,
                                                          actual_card,
                                                          edited_card)
             LogEvent.log_now(log_str)
-            
+
             return cards(request)
 
     else:
@@ -640,14 +640,14 @@ def addCard(request):
                 return render(request, 'members/add_card.html',
                               {'card_form': c_form,
                                'msg_err': msg_err,
-                               'logged_in': True }) 
-            
+                               'logged_in': True })
+
             newCard.unique_id = newCard.unique_id.replace(' ', '').lower()
             newCard.save()
-            
+
             log_str = "{} created a new card: {}".format(request.user.username, newCard)
             LogEvent.log_now(log_str)
-            
+
             info = 'Created new Access Card'
             c_list = AccessCard.objects.all()
             return render(request, 'members/main.html',
@@ -693,7 +693,7 @@ def event_log(request):
         log_list = paginator.page(1)
     except EmptyPage:
         log_list = paginator.page(paginator.num_pages)
-        
+
     return render(request, 'members/event_log.html', {'log_list': log_list,
                                                       'logged_in': True})
 
@@ -712,7 +712,7 @@ def access_log(request):
         log_list = paginator.page(1)
     except EmptyPage:
         log_list = paginator.page(paginator.num_pages)
-        
+
     return render(request, 'members/access_log.html', {'log_list': log_list,
                                                        'logged_in': True})
 
@@ -755,7 +755,7 @@ def incidentReport(request):
             for m in request.POST.getlist('staff_on_duty'):
                 mem = Member.objects.get(pk=m)
                 new_report.staff_on_duty.add(mem)
-            
+
             log_str = "{} created incident report: [{}]".format(request.user.username,
                                                                 new_report)
             LogEvent.log_now(log_str)
@@ -769,7 +769,7 @@ def incidentReport(request):
                       ['council@heliosmakerspace.ca'],
                       fail_silently=False,
                       )
-            
+
             return incidents(request)
 
     else:
@@ -791,7 +791,7 @@ def editIncidentReport(request, ir_id):
             edited_ir.post_date = actual_ir.post_date
             edited_ir.post_time = actual_ir.post_time
             edited_ir.save()
-            
+
             #deal with the many-to-many relationships
             edited_ir.effected_members.clear()
             for m in request.POST.getlist('effected_members'):
@@ -807,7 +807,7 @@ def editIncidentReport(request, ir_id):
                                                          actual_ir,
                                                          edited_ir)
             LogEvent.log_now(log_str)
-            
+
             return incidents(request)
 
     else:
@@ -851,14 +851,14 @@ def latency(request):
 def weekly_access(request):
     """
     Deliver info on what access a given ID card grants
-    
+
     Generate a JSON datastructure to be returned to the user
     """
     data = {}
     if request.method == 'POST':
         if 'id' in request.POST:
             uID = request.POST['id']
-            
+
             cards = AccessCard.objects.filter(unique_id=uID)
             for the_card in cards:
                 access_groups = AccessGroup.objects.filter(card=the_card)
@@ -872,9 +872,9 @@ def weekly_access(request):
                             data[block.day] = temp
                         else:
                             data[block.day] = {'start': block.start, 'end': block.end}
-            
+
             return JsonResponse(data)
-            
+
     return HttpResponse("Nope", content_type="text/plain")
 
 @csrf_exempt
@@ -906,6 +906,6 @@ def auth(request):
                         log_str = "Denied access for card: {} [no access at this time]".format(card)
                         LogAccessRequest.log_now(log_str)
 
-    
+
     response = HttpResponse("Denied", content_type="text/plain")
     return response
