@@ -59,6 +59,8 @@ class Member(models.Model):
 
     stripe_customer_code = models.CharField(max_length=200, null=True, blank=True)
 
+    brief_notes = models.CharField(max_length=200, null=True, blank=True)
+
     def has_active_membership(self):
         """
         Check to see if the Member has an active Membership

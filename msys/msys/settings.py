@@ -19,7 +19,7 @@ with open('key.txt') as f:
     SECRET_KEY = f.read().strip()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
@@ -110,6 +110,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static_root")
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
+
 
 #secrets
 
