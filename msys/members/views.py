@@ -132,17 +132,19 @@ def editDetails(request, member_id):
                           'stripe_customer_code', 'brief_notes',
                           ]
 
-            log_str = "{} edited member: {} with fields [".format(request.user.username,
-                                                           actual_member)
+            diff_list = []
 
             for a in attributes:
                 old = getattr(actual_member, a)
                 new = getattr(edited_member, a)
 
                 if old != new:
-                    log_str += "<{}: ({}) -> ({})>, ".format(a, old, new)
+                    diff_list.append("<{}: ({}) -> ({})>".format(a, old, new))
 
-            log_str += "]"
+            log_str = "{} edited member: {} with fields [{}]".format(
+                request.user.username,
+                actual_member,
+                ",\n".join(diff_list))
             LogEvent.log_now(log_str)
 
             return members(request)
