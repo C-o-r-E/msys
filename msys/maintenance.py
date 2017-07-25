@@ -79,7 +79,7 @@ class Maintenence:
             subject="Database Backup for {}".format(date),
             body="Please find attached the most recent backup of the MSYS database.",
             from_email="mr_saturn@heliosmakerspace.ca",
-            to=["corey@heliosmakerspace.ca"]
+            to=['council@heliosmakerspace.ca', 'corey@heliosmakerspace.ca']#TODO: Pull from ORM config
         )
 
         email.attach_file("{}.xz".format(self.backup_URI))
@@ -164,7 +164,7 @@ class Maintenence:
         # Stripe related stats
 
         m_list = Member.objects.exclude(stripe_customer_code__exact='').exclude(stripe_customer_code__exact=None)
-        report += "Members with Stripe IDs: {}\n".format(len(m_list))
+        report += "\n\nMembers with Stripe IDs: {}\n".format(len(m_list))
 
         bad_lst = []
         bad_active = []
@@ -214,13 +214,13 @@ class Maintenence:
         # Send the email
 
         ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        report_subject = "Automated Membership Report for {} [TEST]".format(ts)
+        report_subject = "Automated Membership Report for {}".format(ts)
         self.mlog("sending email [{}]...".format(report_subject))
         report_email = EmailMessage(
             subject=report_subject,
             body=report,
             from_email='mr_saturn@heliosmakerspace.ca',
-            to=['corey@heliosmakerspace.ca'],
+            to=['council@heliosmakerspace.ca', 'corey@heliosmakerspace.ca'],
         )
 
         report_email.send()
