@@ -4,6 +4,7 @@
 *.back
 *.csv
 *.sqlite3
+*.xz
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
