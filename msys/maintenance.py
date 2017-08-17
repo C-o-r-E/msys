@@ -10,13 +10,14 @@ The main() entry point and sentinel are defined at the bottom of this file.
 import os
 import datetime
 from pathlib import Path
+from time import sleep
 
 import django
 from django.conf import settings
 from django.core.mail import EmailMessage
 
 import stripe
-from time import sleep
+
 
 
 class Maintenence:
@@ -34,7 +35,7 @@ class Maintenence:
         Maintenence log; Will output text via stdout and also keep an internal copy
         """
         ts = datetime.datetime.now().strftime("[%Y-%m-%d %H:%M:%S]: ")
-        line = ts + " ".join(map(str,args))
+        line = ts + " ".join(map(str, args))
         print(line, **kwargs)
         self.mlog_data += "\n" + line
 
@@ -107,36 +108,37 @@ class Maintenence:
         promo_ppl = [] #this is a list of membership objects
         zombies = []
 
-        for m in total_members:
-            if m.has_active_membership():
-                active_members.append(m)
+        for mem in total_members:
+            if mem.has_active_membership():
+                active_members.append(mem)
 
         staff_t = MemberType.objects.get(name="Staff")
 
-        for m in active_members:
-            if m.type != staff_t:
-                active_non_staff.append(m)
+        for mem in active_members:
+            if mem.type != staff_t:
+                active_non_staff.append(mem)
 
-        for m in active_non_staff:
-            if m.stripe_customer_code.startswith("cus") == False:
-                no_stripe.append(m)
+        for mem in active_non_staff:
+            code = mem.stripe_customer_code
+            if (code is not None) and (code.startswith("cus") is False):
+                no_stripe.append(mem)
 
-        for m in no_stripe:
+        for mem in no_stripe:
             m_count = 0
-            for ship in m.membership_set.all():
+            for ship in mem.membership_set.all():
                 if ship.is_active():
                     m_count += 1
             if m_count > 1:
-                multi_active.append(m)
+                multi_active.append(mem)
 
-        for m in no_stripe:
+        for mem in no_stripe:
             p_count = 0
-            for ship in m.membership_set.all():
+            for ship in mem.membership_set.all():
                 if ship.promo_sub_set.count() > 0 and ship.is_active():
                     promo_ppl.append(ship)
                     p_count += 1
             if p_count == 0:
-                zombies.append(m)
+                zombies.append(mem)
 
         report += "\n\n"
 
