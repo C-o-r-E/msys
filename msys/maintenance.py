@@ -18,7 +18,7 @@ from django.core.mail import EmailMessage
 
 import stripe
 
-from reports import get_plans_from_subs
+from reports import get_plans_from_subs, get_total_from_subs
 
 class Maintenence:
     """
@@ -151,7 +151,8 @@ class Maintenence:
         report += "Active non-staff without Stripe IDs: {}\n".format(len(no_stripe))
         report += "Non-staff w/o Stripe with n > 1 active memberships: {}\n".format(len(multi_active))
         report += "Non-staff w/o Stripe with active promotion memberships: {}\n".format(len(promo_ppl))
-        report += "Those memberships being:\n"
+        if not promo_ppl:
+            report += "Those memberships being:\n"
         for p in promo_ppl:
             report += "\t{} \t ( ".format(p)
             for s in p.promo_sub_set.all():
@@ -204,20 +205,15 @@ class Maintenence:
         # else:
         #     report += "\n\nThere are no invalid Stripe IDs.\n"
 
-
+        total_loss = 0.0
         report += "\n\nThe following subscriptions have 'unpaid' status. This usually means that Stripe was unable to charge the card associated with the subscriptions.\n"
         unpaid = stripe.Subscription.list(status="unpaid").to_dict()
         up_data = unpaid.get("data")
         for z in up_data:
             zd = z.to_dict()
             plans = get_plans_from_subs(zd)
+            total_loss += get_total_from_subs(zd)
             up_id = z.get("id")
-            # up_cnt = z.get("total_count")
-            # print(f"total count = {up_cnt}")
-            # up_plan = z.get("plan")
-            # up_plan_name = up_plan.get("name") 
-            # report += f"\t{up_id}: [{up_plan_name}]\n"
-            # #report += "\t{}: [{}]\n".format(z.get("id"), z.get("plan").get("name"))
             if len(plans) > 1:
                 report += f"\t{up_id}:\n"
                 for plan in plans:
@@ -226,7 +222,10 @@ class Maintenence:
                 report += f"\t{up_id}: [{plans[0]}]\n"
             elif len(plans) < 1:
                 report += "error getting plans\n"
-                
+
+        if up_data:
+            report += "\n Assuming the above unpaid subscriptions are not resolved;"
+            report += f"Helios will lose ${total_loss}"
 
         self.mlog("Generated report. Length = {}".format(len(report)))
 
