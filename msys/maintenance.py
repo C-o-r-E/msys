@@ -18,7 +18,7 @@ from django.core.mail import EmailMessage
 
 import stripe
 
-
+from reports import get_plans_from_subs
 
 class Maintenence:
     """
@@ -165,64 +165,82 @@ class Maintenence:
 
         # Stripe related stats
 
-        m_list = Member.objects.exclude(stripe_customer_code__exact='').exclude(stripe_customer_code__exact=None)
-        report += "\n\nMembers with Stripe IDs: {}\n".format(len(m_list))
+        # m_list = Member.objects.exclude(stripe_customer_code__exact='').exclude(stripe_customer_code__exact=None)
+        # report += "\n\nMembers with Stripe IDs: {}\n".format(len(m_list))
 
-        bad_lst = []
-        bad_active = []
-        err_lst = []
-        idx = 1
+        # bad_lst = []
+        # bad_active = []
+        # err_lst = []
+        # idx = 1
 
-        for mem in m_list:
-            sleep(0.1)
-            print("stripe q: {}/{}".format(idx, len(m_list)))
-            idx += 1
-            try:
-                cus = stripe.Customer.retrieve(mem.stripe_customer_code)
-                cus_d = cus.to_dict()
-                if cus_d['delinquent']:
-                    bad_lst.append(mem)
-                    if mem.has_active_membership():
-                        bad_active.append(mem)
+        # for mem in m_list:
+        #     sleep(0.1)
+        #     print("stripe q: {}/{}".format(idx, len(m_list)))
+        #     idx += 1
+        #     try:
+        #         cus = stripe.Customer.retrieve(mem.stripe_customer_code)
+        #         cus_d = cus.to_dict()
+        #         if cus_d['delinquent']:
+        #             bad_lst.append(mem)
+        #             if mem.has_active_membership():
+        #                 bad_active.append(mem)
 
-            except stripe.error.InvalidRequestError as e:
-                print("error on member {}: {}".format(mem, e))
-                err_lst.append({'member': mem, 'error': e})
-                pass
+        #     except stripe.error.InvalidRequestError as e:
+        #         print("error on member {}: {}".format(mem, e))
+        #         err_lst.append({'member': mem, 'error': e})
+        #         pass
 
-        if len(bad_active) > 0:
-            report += "\n\nThere are {} active delinquent members (failed payment on Stripe):\n".format(len(bad_active))
-            for m in bad_active:
-                report += "\t{} (#:{})\n".format(m, m.number)
-        else:
-            report += "\n\nThere are {} delinquent members ({} of which are active)\n".format(len(bad_lst), len(bad_active))
+        # if len(bad_active) > 0:
+        #     report += "\n\nThere are {} active delinquent members (failed payment on Stripe):\n".format(len(bad_active))
+        #     for m in bad_active:
+        #         report += "\t{} (#:{})\n".format(m, m.number)
+        # else:
+        #     report += "\n\nThere are {} delinquent members ({} of which are active)\n".format(len(bad_lst), len(bad_active))
 
-        if len(err_lst) > 0:
-            report += "\n\nThere are {} members that have invalid data (check Stripe ID):\n".format(len(err_lst))
-            for m in err_lst:
-                report += "\t{} (#:{}) {}\n".format(m['member'], m['member'].number, m['error'])
-        else:
-            report += "\n\nThere are no invalid Stripe IDs.\n"
+        # if len(err_lst) > 0:
+        #     report += "\n\nThere are {} members that have invalid data (check Stripe ID):\n".format(len(err_lst))
+        #     for m in err_lst:
+        #         report += "\t{} (#:{}) {}\n".format(m['member'], m['member'].number, m['error'])
+        # else:
+        #     report += "\n\nThere are no invalid Stripe IDs.\n"
 
 
         report += "\n\nThe following subscriptions have 'unpaid' status. This usually means that Stripe was unable to charge the card associated with the subscriptions.\n"
         unpaid = stripe.Subscription.list(status="unpaid").to_dict()
         up_data = unpaid.get("data")
         for z in up_data:
-            report += "\t{}: [{}]\n".format(z.get("id"), z.get("plan").get("name"))
+            zd = z.to_dict()
+            plans = get_plans_from_subs(zd)
+            up_id = z.get("id")
+            # up_cnt = z.get("total_count")
+            # print(f"total count = {up_cnt}")
+            # up_plan = z.get("plan")
+            # up_plan_name = up_plan.get("name") 
+            # report += f"\t{up_id}: [{up_plan_name}]\n"
+            # #report += "\t{}: [{}]\n".format(z.get("id"), z.get("plan").get("name"))
+            if len(plans) > 1:
+                report += f"\t{up_id}:\n"
+                for plan in plans:
+                    report += f"\t\t{plan}\n"
+            elif len(plans) == 1:
+                report += f"\t{up_id}: [{plans[0]}]\n"
+            elif len(plans) < 1:
+                report += "error getting plans\n"
+                
 
         self.mlog("Generated report. Length = {}".format(len(report)))
 
         # Send the email
 
         ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        report_subject = "Automated Membership Report for {}".format(ts)
+        report_subject = "[TEST]Automated Membership Report for {}".format(ts)
         self.mlog("sending email [{}]...".format(report_subject))
         report_email = EmailMessage(
             subject=report_subject,
             body=report,
             from_email='mr_saturn@heliosmakerspace.ca',
-            to=['council@heliosmakerspace.ca', 'corey@heliosmakerspace.ca'],
+            #to=['council@heliosmakerspace.ca', 'corey@heliosmakerspace.ca'],
+            to=['corey@heliosmakerspace.ca'],
         )
 
         report_email.send()
@@ -238,7 +256,7 @@ def main():
     print("Starting maintenance....")
 
     m = Maintenence()
-    m.do_db_backup()
+    #m.do_db_backup()
     m.do_report()
 
     print("Maintenence complete!")
