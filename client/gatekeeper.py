@@ -22,7 +22,7 @@ class Gatekeeper():
     """
     The Gatekeeper object is an interface to an MSYS server for authentication of IDs
     """
-    
+
     REQUEST_TIMEOUT = 2
     CACHE_STALE_T = 604800 # number of seconds in 7 days
 
@@ -38,7 +38,8 @@ class Gatekeeper():
         Check the data in provided json string to see if it should have access now
 
         Returns True if the data indicates that access should be provided at the current
-        time. Returns False if the current time is outside of start and end times for 
+        time. Returns False if the current time is outside of start and end times for
+        
         the current day. Returns False if there is a formatting error.
         """
 
@@ -64,17 +65,17 @@ class Gatekeeper():
                     print("{} <= {} and {} >= {}".format(start_t, cur_time, end_t, cur_time))
                     if start_t <= cur_time and end_t >= cur_time:
                         return True
-            
+
         except ValueError:
             print("ValueError!!!one1! \njson_str = {}".format(json_str))
             return False
-            
+
         return False
 
     def update_cache(self, rfid):
         """
         Update our local store of access info for the given RFID
-        
+
         Asks the server for the most up to date access info. Overwrites the previous stored data.
         """
 

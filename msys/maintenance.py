@@ -224,7 +224,7 @@ class Maintenence:
                 report += "error getting plans\n"
 
         if up_data:
-            report += "\n Assuming the above unpaid subscriptions are not resolved;"
+            report += "\n Assuming the above unpaid subscriptions are not resolved; "
             report += f"Helios can lose up to ${total_loss}"
 
         self.mlog("Generated report. Length = {}".format(len(report)))

@@ -1,10 +1,12 @@
 import unittest
-from gatekeeper import Gatekeeper
+
 from http.server import HTTPServer, BaseHTTPRequestHandler
-from multiprocessing import Process, Lock
+from multiprocessing import Process
 from time import sleep
 import json
 import os
+
+from gatekeeper import Gatekeeper
 
 class dummyserver(BaseHTTPRequestHandler):
 
@@ -24,7 +26,7 @@ class dummyserver(BaseHTTPRequestHandler):
         s.send_response(200)
         s.send_header("Content-type", "text/html")
         s.end_headers()
-        s.wfile.write(dummyserver.reply)        
+        s.wfile.write(dummyserver.reply)
 
 address = ('', 4125)
 
@@ -49,6 +51,13 @@ class TestAuth(unittest.TestCase):
 
     def test_neg_auth(self):
         dummyserver.reply = b"Denied"
+        self.p.start()
+        sleep(1)
+        ret = self.g.authenticate("beefcafe")
+        self.assertFalse(ret)
+
+    def test_err_auth(self):
+        dummyserver.reply = b"Internal Server Error"
         self.p.start()
         sleep(1)
         ret = self.g.authenticate("beefcafe")
