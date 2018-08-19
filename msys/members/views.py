@@ -17,6 +17,8 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from time import sleep
 
+import stripe
+
 def login_required(wrapped):
     """
     This is a decorator to make sure user is logged in
@@ -53,7 +55,7 @@ def user_login(request):
         else:
             notes = ["Invalid login"]
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         logged_in = True
 
     return render(request, 'members/login.html', {'notifications':notes, 'logged_in':logged_in})
@@ -80,10 +82,24 @@ def memberDetails(request, member_id):
 
     cards = AccessCard.objects.filter(member=mem)
 
+    stripe_info = None
+
+    if mem.stripe_customer_code:
+        stripe.api_key = settings.STRIPE_KEY
+        print(f"member has stripe code : [{mem.stripe_customer_code}]") #todo remove
+
+        sd = stripe.Customer.retrieve(mem.stripe_customer_code).to_dict()
+        stripe_info = {}
+        for key in ['id', 'account_balance',
+                    'created', 'delinquent', 'description',
+                    'email']:
+            stripe_info[key] = sd[key]
+
     return render(request,
                   'members/member_details.html',
                   {'member': mem,
                    'access_cards': cards,
+                   'stripe_info': stripe_info,
                    'logged_in': True}
                  )
 
