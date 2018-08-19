@@ -83,6 +83,7 @@ def memberDetails(request, member_id):
     cards = AccessCard.objects.filter(member=mem)
 
     stripe_info = None
+    subs = None
 
     if mem.stripe_customer_code:
         stripe.api_key = settings.STRIPE_KEY
@@ -94,12 +95,19 @@ def memberDetails(request, member_id):
                     'created', 'delinquent', 'description',
                     'email']:
             stripe_info[key] = sd[key]
+        if len(sd['subscriptions']['data']) > 0:
+            subs =  sd['subscriptions']['data'][0].to_dict()['items']['data']
+
+        # Corey Note: Right now there is too much going on in the template
+        # This really should be cleaned up so that any data manipulation happens here
+        
 
     return render(request,
                   'members/member_details.html',
                   {'member': mem,
                    'access_cards': cards,
                    'stripe_info': stripe_info,
+                   'subs': subs,
                    'logged_in': True}
                  )
 
