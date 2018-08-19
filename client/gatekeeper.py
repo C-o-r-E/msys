@@ -102,7 +102,7 @@ class Gatekeeper():
         try:
             db_file = open(db_path, 'wb')
         except:
-            print("TODO: handle file error")
+            print("error opening db file: ", db_path)
             return
             
         db_file.write(text)

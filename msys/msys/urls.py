@@ -21,7 +21,8 @@ from django.views.generic import RedirectView
 
 urlpatterns = [
     url(r'^/{0,1}$', RedirectView.as_view(url='members/')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
+    #url(r'^admin/', include(admin.site.urls)),
     url(r'members/', include('members.urls')),
 ]
 

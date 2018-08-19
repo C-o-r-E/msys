@@ -40,7 +40,7 @@ class Member(models.Model):
     In general, all the important info about each member is contained in this class.
     """
     number = models.IntegerField()
-    type = models.ForeignKey(MemberType)
+    type = models.ForeignKey(MemberType, models.PROTECT)
 
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
@@ -85,7 +85,7 @@ class Membership(models.Model):
 
     One member may have a history of expired memberships in the database.
     """
-    member = models.ForeignKey(Member)
+    member = models.ForeignKey(Member, models.PROTECT)
     start_date = models.DateField()
     expire_date = models.DateField()
 
@@ -132,8 +132,8 @@ class Promo_item(models.Model):
     a one time membership, special status, or multiple use tickets.
     """
 
-    promo = models.ForeignKey(Promotion)
-    member = models.ForeignKey(Member)
+    promo = models.ForeignKey(Promotion, models.PROTECT)
+    member = models.ForeignKey(Member, models.PROTECT)
     used = models.IntegerField()
     total = models.IntegerField()
 
@@ -146,9 +146,8 @@ class Promo_sub(models.Model):
     Class to indicate which memberships are created from or associated with promotions
     """
 
-    promo = models.ForeignKey(Promotion)
-    #promo_item = models.ForeignKey(Promo_Item)
-    membership = models.ForeignKey(Membership)
+    promo = models.ForeignKey(Promotion, models.PROTECT)
+    membership = models.ForeignKey(Membership, models.PROTECT)
 
     def __str__(self):
         ret = "{} <-> {}".format(self.promo, self.membership)
@@ -162,7 +161,7 @@ class AccessCard(models.Model):
 
     AccessCards can be associated with AccessGroups for providing access at groups of times.
     """
-    member = models.ForeignKey(Member)
+    member = models.ForeignKey(Member, models.PROTECT)
     unique_id = models.CharField(max_length=30)
 
     def numeric(self):
@@ -248,7 +247,7 @@ class TimeBlock(models.Model):
                            default='sat')
     start = models.TimeField(default=datetime.time.min)
     end = models.TimeField(default=datetime.time.max)
-    group = models.ForeignKey(AccessGroup)
+    group = models.ForeignKey(AccessGroup, models.PROTECT)
 
     def __str__(self):
         return '{} from {} to {}'.format(self.day, self.start, self.end)
@@ -270,7 +269,7 @@ class AccessBlock(models.Model):
         ('all', 'Every Day'),
     )
 
-    member = models.ForeignKey(Member)
+    member = models.ForeignKey(Member, models.PROTECT)
     day = models.CharField(max_length=8,
                            choices=DAY_CHOICES,
                            default='sat')

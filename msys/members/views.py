@@ -22,7 +22,7 @@ def login_required(wrapped):
     This is a decorator to make sure user is logged in
     """
     def wrapper(*args, **kwargs):
-        if not args[0].user.is_authenticated():
+        if not args[0].user.is_authenticated:
             return render(args[0], 'members/home.html', {})
         return wrapped(*args, **kwargs)
 
