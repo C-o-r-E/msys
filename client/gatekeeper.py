@@ -1,8 +1,8 @@
 """
 Gatekeeper
 
-Represents a node where authentication is needed to provide access. Something like an door 
-lock controlled by RFID card. Gatekeeper is a client of MSYS that primarily relies on the 
+Represents a node where authentication is needed to provide access. Something like a door
+lock controlled by RFID card. Gatekeeper is a client of MSYS that primarily relies on the
 server for making authentication decisions. However sometimes the server may be unavailable
 and just like a friendly castle guard, will be able to remember people that have been seen before.
 
@@ -39,7 +39,6 @@ class Gatekeeper():
 
         Returns True if the data indicates that access should be provided at the current
         time. Returns False if the current time is outside of start and end times for
-        
         the current day. Returns False if there is a formatting error.
         """
 
@@ -91,7 +90,7 @@ class Gatekeeper():
             return
 
         except timeout as err:
-            print("Weekly: timeout")
+            print("Timeout (weekly): ", err)
             return
 
         text = resp.read()
