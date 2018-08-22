@@ -462,7 +462,7 @@ def cards(request):
                                                          'logged_in': True})
 
 @login_required
-def checkCard(request, card_rfid):
+def confirmCard(request, card_rfid):
     """
     Find a card by its uid and display its details.
 
@@ -473,7 +473,7 @@ def checkCard(request, card_rfid):
     try:
         card = AccessCard.objects.get(unique_id=card_rfid)
 
-        return cardDetails(request, card.pk)
+        return request, card
     except AccessCard.DoesNotExist:
         data = {'unique_id': card_rfid}
         c_form = CardForm(initial=data)
@@ -484,6 +484,25 @@ def checkCard(request, card_rfid):
         return render(request, 'members/add_card.html', {'card_form': c_form,
                                                          'msg_info': notes,
                                                          'logged_in': True})
+
+@login_required
+def loginCard(request, card_rfid):
+    """
+    Saves card login on LogCardLogin, and displays basic user info
+    """
+    request, card = confirmCard(request, card_rfid)
+    member = get_object_or_404(Member, id=card.member.id)
+
+    log_info = "{} [ID: {}] logged in with card: {} [ID: {}]".format(member.first_name, member.id, card.numeric(), card.id)
+    LogCardLogin.log_now(log_info)
+
+    return render(request, 'members/card_login.html', {'card': card, 'member': member})
+    
+
+@login_required
+def checkCard(request, card_rfid):
+    request, card = confirmCard(request, card_rfid)
+    return cardDetails(request, card.pk)
 
 @login_required
 def cardDetails(request, card_id):
