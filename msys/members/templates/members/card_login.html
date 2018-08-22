@@ -1,0 +1,43 @@
+{% extends "members/main.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Card Login</h1>
+</div>
+
+{% if card %}
+
+<table class="table table-condensed table-hover">
+  <tbody>
+	
+	<tr>
+	  <td>
+		Card ID (RFID)
+	  </td>
+	  <td>
+		{{ card.unique_id }}
+	  </td>
+	</tr>
+    {% if member %}
+	<tr>
+	  <td>
+		Owner
+	  </td>
+	  <td>
+		{{ member.first_name }}
+	  </td>
+    </tr>
+    {% endif %}
+
+  </tbody>
+</table>
+
+{% else %}
+
+Card does not exist.
+
+{% endif %} {# if card #}
+
+{% endblock %}
+

@@ -490,17 +490,32 @@ def loginCard(request, card_rfid):
     """
     Saves card login on LogCardLogin, and displays basic user info
     """
-    request, card = confirmCard(request, card_rfid)
+    try:
+        request, card = confirmCard(request, card_rfid)
+    except ValueError:
+        request = confirmCard(request, card_rfid)
+        return request
     member = get_object_or_404(Member, id=card.member.id)
 
     log_info = "{} [ID: {}] logged in with card: {} [ID: {}]".format(member.first_name, member.id, card.numeric(), card.id)
     LogCardLogin.log_now(log_info)
 
     return render(request, 'members/card_login.html', {'card': card, 'member': member})
-    
+
+@login_required    
+def noCardCode(request):
+    """
+    Returns confirmCard() error message when no card RFID was supplied
+    """
+    return confirmCard(request, ' ')
 
 @login_required
 def checkCard(request, card_rfid):
+    try:
+        request, card = confirmCard(request, card_rfid)
+    except ValueError:
+        request = confirmCard(request, card_rfid)
+        return request
     request, card = confirmCard(request, card_rfid)
     return cardDetails(request, card.pk)
 
