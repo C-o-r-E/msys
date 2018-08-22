@@ -497,7 +497,7 @@ def loginCard(request, card_rfid):
         return request
     member = get_object_or_404(Member, id=card.member.id)
 
-    log_info = "{} [ID: {}] logged in with card: {} [ID: {}]".format(member.first_name, member.id, card.numeric(), card.id)
+    log_info = "Member: {} [ID: {}] logged in with the card: {} [ID: {}]".format(member.first_name, member.id, card.numeric(), card.id)
     LogCardLogin.log_now(log_info)
 
     return render(request, 'members/card_login.html', {'card': card, 'member': member})
@@ -774,6 +774,25 @@ def access_log(request):
         log_list = paginator.page(paginator.num_pages)
 
     return render(request, 'members/access_log.html', {'log_list': log_list,
+                                                       'logged_in': True})
+
+@login_required
+def logins_log(request):
+    """
+    Display log entries
+    """
+    logs = LogCardLogin.objects.all().order_by('-pk')
+    paginator = Paginator(logs, 25)
+
+    page = request.GET.get('page')
+    try:
+        log_list = paginator.page(page)
+    except PageNotAnInteger:
+        log_list = paginator.page(1)
+    except EmptyPage:
+        log_list = paginator.page(paginator.num_pages)
+
+    return render(request, 'members/login_logs.html', {'log_list': log_list,
                                                        'logged_in': True})
 
 @login_required

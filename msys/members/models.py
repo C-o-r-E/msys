@@ -345,13 +345,16 @@ class LogCardLogin(models.Model):
     """
     date = models.DateField()
     time = models.TimeField()
-    text = models.TextField
+    text = models.TextField()
 
     @staticmethod
-    def log_now(text):
+    def log_now(txt):
         log = LogCardLogin()
         log.date = datetime.date.today()
         log.time = datetime.datetime.now().time()
+
+        log.text = txt
+        log.save()
     
     def __str__(self):
         ret = "{} {} || {}".format(self.date, self.time, self.text)

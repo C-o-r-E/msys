@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^groups/$', views.groups, name='groupList'),
     url(r'^logs/events/$', views.event_log, name='eventLog'),
     url(r'^logs/access/$', views.access_log, name='accessLog'),
+    path('logs/logins/', views.logins_log, name='loginsLog'),
     
     url(r'^incidents/$', views.incidents, name='incidentList'),
     url(r'^incidents/report/$', views.incidentReport, name='incidentReport'),
