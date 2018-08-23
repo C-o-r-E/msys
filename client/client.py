@@ -11,7 +11,7 @@ from time import sleep
 from gatekeeper import Gatekeeper
 
 CONFIG_DOOR_OPEN_TIME = 2
-CONFIG_BASE_URL = 'http://morg.123core.net/members/'
+CONFIG_BASE_URL = 'http://msys.heliosmakerspace.ca/members/'
 
 def unlock():
     GPIO.output(11, 1)

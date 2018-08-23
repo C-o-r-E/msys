@@ -922,7 +922,6 @@ def auth(request):
                 #return HttpResponse("Denied", content_type="text/plain")
             else:
                 #one or more cards found
-                granted = False
                 for card in cards:
                     if card.has_access_now():
                         log_str = "Granted access for card {}".format(card)
