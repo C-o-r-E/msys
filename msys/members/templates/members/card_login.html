@@ -20,7 +20,10 @@
 
 {% if card %}
 
-<table class="table table-condensed table-hover">
+<table class="table table-condensed table-hover table-striped">
+	<thead>
+		<th>Member's information</th>
+	</thead>
   <tbody>
 	{% if member %}
 		<tr>
@@ -31,24 +34,6 @@
 			{{ member.first_name }}
 			</td>
 		</tr>
-	{% endif %}
-	<tr>
-	  <td>
-		Card ID (RFID)
-	  </td>
-	  <td>
-		{{ card.unique_id }}
-	  </td>
-	</tr>
-	{% if stripe_code %}
-	<tr>
-	  <td>
-		Stripe Customer Code
-	  </td>
-	  <td>
-		{{ stripe_code }}
-	  </td>
-  </tr>
 	{% endif %}
 	{% if email %}
 	<tr>
@@ -70,11 +55,22 @@
 	  </td>
   </tr>
 	{% endif %}
+	{% if member.brief_notes %}
+	<tr>
+			<td>
+			Notes
+			</td>
+			<td>
+			{{ member.brief_notes }}
+			</td>
+		</tr>
+	{% endif %}
 	{% if subs %}
 	<table class = "table table-striped">
 	  <thead>
 			<tr>
 				<th>Subscriptions</th>
+				<th>ID</th>
 			</tr>
 			</thead>
 	  <tbody>
