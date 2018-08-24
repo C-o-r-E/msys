@@ -3,14 +3,35 @@
 {% block content %}
 
 <div class="page-header">
-  <h1>Card Login</h1>
+	<h1>Card Login</h1>
+	{% if passed %}
+	<h2 style="color: green; font-size: 50px;">PASS</h2>
+	{% else %}
+	<h2 style="color: red; font-size: 50px;">DENIED</h2>
+	{% if msg %}
+	<tr>
+		<td>
+			{{ msg }}
+		</td>
+	</tr>
+	{% endif %}
+	{% endif %}
 </div>
 
 {% if card %}
 
 <table class="table table-condensed table-hover">
   <tbody>
-	
+	{% if member %}
+		<tr>
+			<td>
+			Owner
+			</td>
+			<td>
+			{{ member.first_name }}
+			</td>
+		</tr>
+	{% endif %}
 	<tr>
 	  <td>
 		Card ID (RFID)
@@ -19,16 +40,6 @@
 		{{ card.unique_id }}
 	  </td>
 	</tr>
-    {% if member %}
-	<tr>
-	  <td>
-		Owner
-	  </td>
-	  <td>
-		{{ member.first_name }}
-	  </td>
-  </tr>
-		{% endif %}
 	{% if stripe_code %}
 	<tr>
 	  <td>
@@ -39,15 +50,41 @@
 	  </td>
   </tr>
 	{% endif %}
-	{% if stripe_email %}
+	{% if email %}
 	<tr>
 	  <td>
 		Customer Email
 	  </td>
 	  <td>
-		{{ stripe_email }}
+		{{ email }}
 	  </td>
   </tr>
+	{% endif %}
+	{% if description %}
+	<tr>
+	  <td>
+		Description
+	  </td>
+	  <td>
+		{{ description }}
+	  </td>
+  </tr>
+	{% endif %}
+	{% if subs %}
+	<table class = "table table-striped">
+	  <thead>
+			<tr>
+				<th>Subscriptions</th>
+			</tr>
+			</thead>
+	  <tbody>
+			{% for name in subs %}
+			<tr>
+				<td>{{ name }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 	{% endif %}
   </tbody>
 </table>

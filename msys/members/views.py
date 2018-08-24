@@ -90,15 +90,19 @@ def memberDetails(request, member_id):
     if mem.stripe_customer_code:
         stripe.api_key = settings.STRIPE_KEY
         print(f"member has stripe code : [{mem.stripe_customer_code}]") #todo remove
-
-        sd = stripe.Customer.retrieve(mem.stripe_customer_code).to_dict()
-        stripe_info = {}
-        for key in ['id', 'account_balance',
-                    'created', 'delinquent', 'description',
-                    'email']:
-            stripe_info[key] = sd[key]
-        if len(sd['subscriptions']['data']) > 0:
-            subs =  sd['subscriptions']['data'][0].to_dict()['items']['data']
+        #Added just in case no stripe custumer with said code was found
+        try:
+            sd = stripe.Customer.retrieve(mem.stripe_customer_code).to_dict()
+            stripe_info = {}
+            for key in ['id', 'account_balance',
+                        'created', 'delinquent', 'description',
+                        'email']:
+                stripe_info[key] = sd[key]
+            if len(sd['subscriptions']['data']) > 0:
+                subs =  sd['subscriptions']['data'][0].to_dict()['items']['data']
+        except Exception as e:
+            print(e)
+            pass
 
         # Corey Note: Right now there is too much going on in the template
         # This really should be cleaned up so that any data manipulation happens here
@@ -492,6 +496,11 @@ def loginCard(request, card_rfid):
     """
     Saves card login on LogCardLogin, and displays basic user info
     """
+    CHECK_FOR_SUBSCRIPTION = "Monthly Student Recurrent Payment"
+    pass_status = False
+    msg = ' '
+
+    #Confirm card exists
     try:
         request, card = confirmCard(request, card_rfid)
     except ValueError:
@@ -499,24 +508,52 @@ def loginCard(request, card_rfid):
         return request
     member = get_object_or_404(Member, id=card.member.id)
 
-    log_info = "Member: {} [ID: {}] logged in with the card: {} [ID: {}]".format(member.first_name, member.id, card.numeric(), card.id)
-    LogCardLogin.log_now(log_info)
-
+    #Basic context for page rendering
     context ={'card': card, 
              'member': member
             }
-    
+
+    #Stripe related stuff
+    #Create manager obejct
     handler = manager.manager()
     if(member.stripe_customer_code == ''):
         cus_code = '  '
     else:
         cus_code = member.stripe_customer_code
     customer = handler.get_customer_object(cus_code)
+    #If customer exists on stripe platform
     if(customer):
-        stripe_context = { 'stripe_code': member.stripe_customer_code,
-                           'stripe_email': customer.email}
+        stripe_context = {}
+        for item in ['email', 'description']:
+            stripe_context[item] = customer[item]
         context.update(stripe_context)
-        print(customer)
+        subs = customer.subscriptions
+        
+        #Get all the subscription names and compare them with CHECK_FOR_SUBSCRIPTION
+        if(len(subs.data)):
+            sub_names = [] 
+            for data in subs.data:
+                n = data.to_dict()['items']['data'][0].to_dict()['plan']['name']
+                if n == CHECK_FOR_SUBSCRIPTION:
+                    pass_status = True
+                sub_names.append(n)
+                context.update({'subs': sub_names})
+            if(pass_status == False):
+                msg = "Membership '{}' not found. Could it be missing from stripe's database?".format(CHECK_FOR_SUBSCRIPTION)
+                context.update({'msg': msg})
+        print(pass_status)
+        context.update({'passed': pass_status})
+    else:
+        msg = "Member's ({}) customer code ({}) was not found in stripe's database. Could it be a connection problem?".format(member.first_name, cus_code)
+        context.update({'msg': msg})
+    
+    #Create log
+    if(pass_status):
+        log_info = "Member: {} [ID: {}] logged in with the card: {} [ID: {}]".format(member.first_name, member.id, card.numeric(), card.id)
+        LogCardLogin.log_now(log_info)
+    else:
+        log_info = "Member: {} [ID: {}] access denied with card: {} [ID: {}] ({})".format(member.first_name, member.id, card.numeric(), card.id, msg)
+        LogCardLogin.log_now(log_info)
 
     return render(request, 'members/card_login.html', context)
 
