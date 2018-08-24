@@ -17,6 +17,8 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from time import sleep
 
+from .stripe_handler import manager
+
 import stripe
 
 def login_required(wrapped):
@@ -500,7 +502,23 @@ def loginCard(request, card_rfid):
     log_info = "Member: {} [ID: {}] logged in with the card: {} [ID: {}]".format(member.first_name, member.id, card.numeric(), card.id)
     LogCardLogin.log_now(log_info)
 
-    return render(request, 'members/card_login.html', {'card': card, 'member': member})
+    context ={'card': card, 
+             'member': member
+            }
+    
+    handler = manager.manager()
+    if(member.stripe_customer_code == ''):
+        cus_code = '  '
+    else:
+        cus_code = member.stripe_customer_code
+    customer = handler.get_customer_object(cus_code)
+    if(customer):
+        stripe_context = { 'stripe_code': member.stripe_customer_code,
+                           'stripe_email': customer.email}
+        context.update(stripe_context)
+        print(customer)
+
+    return render(request, 'members/card_login.html', context)
 
 @login_required    
 def noCardCode(request):

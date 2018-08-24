@@ -27,9 +27,28 @@
 	  <td>
 		{{ member.first_name }}
 	  </td>
-    </tr>
-    {% endif %}
-
+  </tr>
+		{% endif %}
+	{% if stripe_code %}
+	<tr>
+	  <td>
+		Stripe Customer Code
+	  </td>
+	  <td>
+		{{ stripe_code }}
+	  </td>
+  </tr>
+	{% endif %}
+	{% if stripe_email %}
+	<tr>
+	  <td>
+		Customer Email
+	  </td>
+	  <td>
+		{{ stripe_email }}
+	  </td>
+  </tr>
+	{% endif %}
   </tbody>
 </table>
 
