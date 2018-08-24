@@ -78,9 +78,10 @@
 			</tr>
 			</thead>
 	  <tbody>
-			{% for name in subs %}
+			{% for sub in subs %}
 			<tr>
-				<td>{{ name }}</td>
+				<td>{{ sub.name }}</td>
+				<td>{{ sub.id }}</td>
 			</tr>
 			{% endfor %}
 		</tbody>
