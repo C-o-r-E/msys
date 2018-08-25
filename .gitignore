@@ -14,3 +14,6 @@ __pycache__/
 msys/key.txt
 msys/msys/local_settings.py
 msys/members/migrations/
+
+client/db/*.json
+client/config_endpoint.json

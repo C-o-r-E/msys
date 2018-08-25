@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 
+if sys.version_info[0] < 3:
+    raise "Python 3.x required to run"
+
 import RPi.GPIO as GPIO
-import MFRC522
+
 import signal
 import sys
 import signal
@@ -9,15 +12,20 @@ import json
 import os
 from time import sleep
 from gatekeeper import Gatekeeper
+import client_MFRC522
+
+from typing import NoReturn
 
 CONFIG_DOOR_OPEN_TIME = 2
 CONFIG_BASE_URL = 'http://msys.heliosmakerspace.ca/members/'
+CONFIG_PIN_LOCK = 11
+CONFIG_POLL_DELAY = 1
 
 def unlock():
-    GPIO.output(11, 1)
+    GPIO.output(CONFIG_PIN_LOCK, 1)
 
 def lock():
-    GPIO.output(11, 0)
+    GPIO.output(CONFIG_PIN_LOCK, 0)
     
 def cleanup(signal, frame):
     print("cleaning up...")
@@ -27,19 +35,16 @@ def cleanup(signal, frame):
     sys.exit(0)
 
 
-if sys.version_info[0] < 3:
-    raise "Python 3.x required to run"
-
 signal.signal(signal.SIGINT, cleanup)
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(11, GPIO.OUT)
+GPIO.setup(CONFIG_PIN_LOCK, GPIO.OUT)
 
-reader = MIFAREReader = MFRC522.MFRC522()
+
 
 #attempt opening config file
 base = os.path.dirname(os.path.abspath(__file__))
-cfg_path = "{}/config_msys_client.json".format(base)
+cfg_path = f"{base}/config_msys_client.json"
 
 try:
     f = open(cfg_path)
@@ -49,29 +54,21 @@ try:
         CONFIG_DOOR_OPEN_TIME = data['door_open_time']
     if 'base_url' in data:
         CONFIG_BASE_URL = data['base_url']
+    if 'gpio_lock' in data:
+        CONFIG_PIN_LOCK = data['gpio_lock']
+    if 'poll_delay' in data:
+        CONFIG_PIN_LOCK = data['poll_delay']
 except FileNotFoundError as e:
-    print("error opening file: [{}]".format(e))
+    print(f"error opening file: [{e}]"
     print("using default settings")
 
 
 door = Gatekeeper(CONFIG_BASE_URL)
 
-"""
-Something is weird about this library or maybe I'm not getting something.
 
-It seems from the old code that we do the following:
-
-a) make the PICC_REQIDL request
-b) ignore its return value
-c) do the anti-collision routine
-d) extract a UID and ignore other statuses...
-
-Going to start with this for now but it doesnt seem right...
-"""
-
-def request_access(uid):
+def request_access(uid: str): -> NoReturn
     """
-    TODO: write something useful
+    Attempt to authenticate a given uid then unlock the door if accesss is allowed
     """
     
     if door.authenticate(uid):
@@ -87,29 +84,4 @@ def request_access(uid):
         print('ID does not have access now')
         pass
 
-while True:
-    (status, data) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL) 
-    if status == MIFAREReader.MI_OK:
-        pass
-    else:
-        #print("PICC_REQIDL error: {}".format(status))
-        #break
-        pass #Need to look in to why an error is returned before being able to read the uid...
-
-
-
-    (status, data) = MIFAREReader.MFRC522_Anticoll()
-    if status == MIFAREReader.MI_OK:
-        uid = ''
-        for byte in data[:-1]:
-            if byte < 16:
-                uid += '0'
-            uid += hex(byte)[2:]
-        request_access(uid)
-    else:
-        #print("PICC_AntiColl error: {}".format(status))
-        #break
-        pass
-    
-    sleep(1)
-    
+handle_MFRC522_blocking(request_access, CONFIG_POLL_DELAY)

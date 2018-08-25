@@ -14,12 +14,7 @@
     - [Run the server in devel mode](#run-the-server-in-devel-mode)
     - [Set up the database](#set-up-the-database)
     - [Import data](#import-data)
-- [Client Installation](#client-installation)
-    - [Updates](#updates)
-    - [System deps](#system-deps)
-    - [Python deps](#python-deps)
-    - [Get client](#get-client)
-    - [Run Client](#run-client)
+- [Client](#client)
 - [TODO docs](#todo-docs)
 - [Roadmap dev](#roadmap-dev)
 
@@ -35,7 +30,7 @@ Msys is a member management and access control system.
 Msys is developed on Linux but it could probably run on a number of other systems. Certain packages are required in any case:
 
 	 * Python 3.x
- 	 * Django 1.9
+ 	 * Django 2.1
 
 A webserver and database will also be required. In this guide we will focus on the following ones:
 
@@ -111,53 +106,9 @@ This section is for importing the memberlist used by Helios (google sheet). It e
 python add_all_members.py
 ```
 
-## Client Installation
+## Client
 
-The following was tested on a RaspberryPi 2 running a fresh raspian image
-
-### Updates
-
-```
-sudo apt-get update
-
-sudo apt-get upgrade
-```
-
-### System deps
-
-```
-sudo apt-get install git python3 python3-pip
-```
-
-### Python deps
-
-```
-mkdir git
-
-cd git
-
-git clone https://github.com/C-o-r-E/SPI-Py.git
-
-sudo pip3 install SPI-Py/
-
-sudo pip3 install RPi.GPIO
-
-```
-
-### Get client
-
-```
-git clone https://github.com/C-o-r-E/msys.git
-```
-
-### Run Client
-
-```
-cd msys/client/
-sudo python3 client.py
-```
-
-###
+See [client/README.md]{client/README.md}
 
 
 # TODO docs
@@ -171,7 +122,6 @@ sudo python3 client.py
 
 ### Server
 * Stripe API integration
-* Square integration?
 * manage rentals (shelves, spaces)
 * track training records (or member activities)
 * Https
@@ -184,5 +134,4 @@ sudo python3 client.py
 * investigate new revision of board   
 
 ### Client (Desktop)
-* Test with 5v FTDI
-* Polish the application
+* Build something for RPi based kiosk
