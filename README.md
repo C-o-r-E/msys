@@ -108,7 +108,7 @@ python add_all_members.py
 
 ## Client
 
-See [client/README.md]{client/README.md}
+See [client/README.md](client/README.md)
 
 
 # TODO docs
