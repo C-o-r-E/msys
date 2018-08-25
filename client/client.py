@@ -60,7 +60,7 @@ try:
     if 'poll_delay' in data:
         CONFIG_PIN_LOCK = data['poll_delay']
 except FileNotFoundError as e:
-    print("error opening file: [{}]".format(e)
+    print("error opening file: [{}]".format(e))
     print("using default settings")
 
 
