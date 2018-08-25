@@ -1,12 +1,13 @@
 #!/usr/bin/python3
 
+import sys
+
 if sys.version_info[0] < 3:
     raise "Python 3.x required to run"
 
 import RPi.GPIO as GPIO
 
 import signal
-import sys
 import signal
 import json
 import os
@@ -44,7 +45,7 @@ GPIO.setup(CONFIG_PIN_LOCK, GPIO.OUT)
 
 #attempt opening config file
 base = os.path.dirname(os.path.abspath(__file__))
-cfg_path = f"{base}/config_msys_client.json"
+cfg_path = "{}/config_msys_client.json".format(base)
 
 try:
     f = open(cfg_path)
@@ -59,7 +60,7 @@ try:
     if 'poll_delay' in data:
         CONFIG_PIN_LOCK = data['poll_delay']
 except FileNotFoundError as e:
-    print(f"error opening file: [{e}]"
+    print("error opening file: [{}]".format(e)
     print("using default settings")
 
 
