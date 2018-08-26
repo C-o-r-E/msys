@@ -15,11 +15,12 @@ Going to start with this for now but it doesnt seem right...
 
 
 import MFRC522
-from typing import NoReturn, Callable
+from time import sleep
+from typing import Callable
 
 MIFAREReader = MFRC522.MFRC522()
 
-def handle_MFRC522_blocking(uid_callback: Callable[[str], NoReturn], poll_delay: int): -> NoReturn
+def handle_MFRC522_blocking(uid_callback: Callable[[str], None], poll_delay: int) -> None:
     while True:
         (status, data) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL) 
         if status == MIFAREReader.MI_OK:
@@ -38,7 +39,7 @@ def handle_MFRC522_blocking(uid_callback: Callable[[str], NoReturn], poll_delay:
                 if byte < 16:
                     uid += '0'
                 uid += hex(byte)[2:]
-            request_access(uid)
+            uid_callback(uid)
         else:
             #print("PICC_AntiColl error: {}".format(status))
             #break

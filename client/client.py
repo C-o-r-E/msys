@@ -15,8 +15,6 @@ from time import sleep
 from gatekeeper import Gatekeeper
 import client_MFRC522
 
-from typing import NoReturn
-
 CONFIG_DOOR_OPEN_TIME = 2
 CONFIG_BASE_URL = 'http://msys.heliosmakerspace.ca/members/'
 CONFIG_PIN_LOCK = 11
@@ -67,7 +65,7 @@ except FileNotFoundError as e:
 door = Gatekeeper(CONFIG_BASE_URL)
 
 
-def request_access(uid: str): -> NoReturn
+def request_access(uid: str) -> None:
     """
     Attempt to authenticate a given uid then unlock the door if accesss is allowed
     """
@@ -85,4 +83,4 @@ def request_access(uid: str): -> NoReturn
         print('ID does not have access now')
         pass
 
-handle_MFRC522_blocking(request_access, CONFIG_POLL_DELAY)
+client_MFRC522.handle_MFRC522_blocking(request_access, CONFIG_POLL_DELAY)
