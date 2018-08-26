@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.urls import include, path
 
 from . import views
 
@@ -26,7 +27,10 @@ urlpatterns = [
     
     url(r'^cards/$', views.cards, name='cardList'),
     url(r'^cards/add/$', views.addCard, name='addCard'),
+    path('cards/login/', views.noCardCode, name='noCardCode'),
+    path('cards/check/', views.noCardCode, name='noCardCode'),
     url(r'^cards/check/(?P<card_rfid>[ A-Fa-f0-9]+)/$', views.checkCard, name='checkCard'),
+    path('cards/login/<slug:card_rfid>', views.loginCard, name='loginCard'),
     url(r'^cards/details/(?P<card_id>\d+)/$', views.cardDetails, name='cardDetails'),
     url(r'^cards/assign/(?P<card_id>\d+)/$', views.cardAssign, name='assignCard'),
     url(r'^cards/edit/(?P<card_id>\d+)/$', views.editCard, name='editCard'),
@@ -35,6 +39,7 @@ urlpatterns = [
     url(r'^groups/$', views.groups, name='groupList'),
     url(r'^logs/events/$', views.event_log, name='eventLog'),
     url(r'^logs/access/$', views.access_log, name='accessLog'),
+    path('logs/logins/', views.logins_log, name='loginsLog'),
     
     url(r'^incidents/$', views.incidents, name='incidentList'),
     url(r'^incidents/report/$', views.incidentReport, name='incidentReport'),

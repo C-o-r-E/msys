@@ -1,0 +1,96 @@
+{% extends "members/main.html" %}
+{% load staticfiles %}
+{% block content %}
+
+<div class="page-header">
+	<h1>Card Login</h1>
+	{% if passed %}
+	<h2 style="color: green; font-size: 50px;">PASS</h2>
+	{% else %}
+	<h2 style="color: red; font-size: 50px;">DENIED</h2>
+	{% if msg %}
+	<tr>
+		<td>
+			{{ msg }}
+		</td>
+	</tr>
+	{% endif %}
+	{% endif %}
+</div>
+
+{% if card %}
+
+<table class="table table-condensed table-hover table-striped">
+	<thead>
+		<th>Member's information</th>
+	</thead>
+  <tbody>
+	{% if member %}
+		<tr>
+			<td>
+			Owner
+			</td>
+			<td>
+			{{ member.first_name }}
+			</td>
+		</tr>
+	{% endif %}
+	{% if email %}
+	<tr>
+	  <td>
+		Customer Email
+	  </td>
+	  <td>
+		{{ email }}
+	  </td>
+  </tr>
+	{% endif %}
+	{% if description %}
+	<tr>
+	  <td>
+		Description
+	  </td>
+	  <td>
+		{{ description }}
+	  </td>
+  </tr>
+	{% endif %}
+	{% if member.brief_notes %}
+	<tr>
+			<td>
+			Notes
+			</td>
+			<td>
+			{{ member.brief_notes }}
+			</td>
+		</tr>
+	{% endif %}
+	{% if subs %}
+	<table class = "table table-striped">
+	  <thead>
+			<tr>
+				<th>Subscriptions</th>
+				<th>ID</th>
+			</tr>
+			</thead>
+	  <tbody>
+			{% for sub in subs %}
+			<tr>
+				<td>{{ sub.name }}</td>
+				<td>{{ sub.id }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+  </tbody>
+</table>
+
+{% else %}
+
+Card does not exist.
+
+{% endif %} {# if card #}
+
+{% endblock %}
+
