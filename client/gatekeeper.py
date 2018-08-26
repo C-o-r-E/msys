@@ -55,13 +55,13 @@ class Gatekeeper():
             today = datetime.date.today().weekday()
             cur_time = datetime.datetime.now().time()
             data = json.loads(str(json_str))
-            print("data = {}\n\n".format(data))
+            #print("data = {}\n\n".format(data))
             for day, times in data.items():
-                print("day = [{}] day2day: [{}]".format(today, day2day[day]))
+                #print("day = [{}] day2day: [{}]".format(today, day2day[day]))
                 if today == day2day[day]:
                     start_t = datetime.datetime.strptime(times['start'], '%H:%M:%S').time()
                     end_t = datetime.datetime.strptime(times['end'], '%H:%M:%S').time()
-                    print("{} <= {} and {} >= {}".format(start_t, cur_time, end_t, cur_time))
+                    #print("{} <= {} and {} >= {}".format(start_t, cur_time, end_t, cur_time))
                     if start_t <= cur_time and end_t >= cur_time:
                         return True
 

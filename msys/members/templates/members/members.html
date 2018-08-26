@@ -23,11 +23,12 @@
 		  <th>Number</th>
 		  <th>Type</th>
 		  <th>Name</th>
-		  <th>Stripe Customer ID</th>
-		  {% if show_active %}
-		  <th>Active</th>
-		  {% endif %}
-          <th>Notes</th>
+			<th>Stripe Customer ID</th>
+			{% if show_active %}
+			<th>Active</th>
+			{% endif %}
+			<!--<th>Last Check-in</th>-->
+			<th>Notes</th>
 		</tr>
 	  </thead>
 	  <tbody>
@@ -35,10 +36,11 @@
 		<tr>
 		  <td>{{mem.number}}</td>
 		  <td>{{mem.type}}</td>
-		  <td><a href="{% url 'memberDetails' mem.pk %}">{{mem.first_name}} {{mem.last_name}}</a></td>
+			<td><a href="{% url 'memberDetails' mem.pk %}">{{mem.first_name}} {{mem.last_name}}</a></td>
 		  <td>{% if mem.stripe_customer_code %} {{mem.stripe_customer_code}} {% else %} &nbsp; {% endif %}</td>
-		  {% if show_active %}<td>{% if mem.has_active_membership %} &#x2713; {% endif %}</td>{% endif %}
-          <td>{% if mem.brief_notes %} {{mem.brief_notes}} {% else %} &nbsp; {% endif %}</td>
+			{% if show_active %}<td>{% if mem.has_active_membership %} &#x2713; {% endif %}</td>{% endif %}
+			<!-- <td>{{mem.last_seen_date.isoformat}}</td> -->
+			<td>{% if mem.brief_notes %} {{mem.brief_notes}} {% else %} &nbsp; {% endif %}</td>
 		</tr>
 		{% endfor %}
 	  </tbody>

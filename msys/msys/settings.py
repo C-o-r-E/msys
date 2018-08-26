@@ -126,5 +126,7 @@ STATICFILES_DIRS = (
 
 try:
     from .local_settings import *
+    if LOCAL_ALLOWED_HOSTS:
+        ALLOWED_HOSTS += LOCAL_ALLOWED_HOSTS
 except ImportError:
     pass

@@ -63,7 +63,7 @@ def user_login(request):
 @login_required
 def members(request):
     show_active = False
-    member_list = Member.objects.all()
+    member_list = Member.objects.all().order_by('-last_seen_date')
 
     if request.method == 'GET':
         if 'show_active' in request.GET:
@@ -923,6 +923,8 @@ def auth(request):
             else:
                 #one or more cards found
                 for card in cards:
+                    card.member.last_seen_date = datetime.date.today()
+                    card.member.save()
                     if card.has_access_now():
                         log_str = "Granted access for card {}".format(card)
                         LogAccessRequest.log_now(log_str)
