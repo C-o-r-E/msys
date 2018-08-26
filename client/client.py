@@ -56,7 +56,7 @@ try:
     if 'gpio_lock' in data:
         CONFIG_PIN_LOCK = data['gpio_lock']
     if 'poll_delay' in data:
-        CONFIG_PIN_LOCK = data['poll_delay']
+        CONFIG_POLL_DELAY = data['poll_delay']
 except FileNotFoundError as e:
     print("error opening file: [{}]".format(e))
     print("using default settings")
