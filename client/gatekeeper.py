@@ -83,6 +83,8 @@ class Gatekeeper():
         data = data.encode('utf-8')
         req = urllib.request.Request(self.weekly_url, data)
 
+        t1 = perf_counter()
+
         try:
             resp = urllib.request.urlopen(req, timeout=self.request_timeout)
         except URLError:
@@ -107,6 +109,9 @@ class Gatekeeper():
             
         db_file.write(text)
         db_file.close()
+
+        t2 = perf_counter()
+        print("cache updated in {} seconds".format(t2-t1))
 
     def auth_from_cache(self, rfid):
         """
@@ -166,8 +171,7 @@ class Gatekeeper():
         text = resp.read()
 
         t2 = perf_counter()
-
-        print("Auth got [{}] in {} sec".format(text, t2-t1))
+        print("Auth got [{}] in {} seconds".format(text, t2-t1))
 
         if text == b'Granted':
             return True
