@@ -140,20 +140,22 @@ def editDetails(request, member_id):
     """
 
     if request.method == 'POST':
-        mem_form = MemberForm(request.POST)
+        mem_form = MemberForm(request.POST, request.FILES)
         if mem_form.is_valid():
             edited_member = mem_form.save(commit=False)
             actual_member = get_object_or_404(Member, pk=member_id)
             edited_member.number = actual_member.number
             edited_member.pk = actual_member.pk
             edited_member.first_seen_date = actual_member.first_seen_date
-            edited_member.last_seen_date = actual_member.first_seen_date
+            edited_member.last_seen_date = actual_member.last_seen_date
+            edited_member.photo.name = "{}_{}".format(  member_id,
+                                                        edited_member.photo.name)
             edited_member.save()
 
             attributes = ['number', 'type', 'first_name', 'last_name',
                           'address', 'city', 'postal_code', 'email',
                           'emergency_contact', 'emergency_phone_number',
-                          'stripe_customer_code', 'brief_notes',
+                          'stripe_customer_code', 'brief_notes', 'photo'
                           ]
 
             diff_list = []

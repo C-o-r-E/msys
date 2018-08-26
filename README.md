@@ -58,6 +58,12 @@ python get-pip.py --user
 pip install django --user
 ```
 
+### get pillow
+
+```
+pip install pillow --user
+```
+
 ### clone the repo
 
 ```
@@ -70,6 +76,10 @@ cd msys/msys
 
 ```
 echo "somerandomdata" > key.txt
+```
+
+```
+sudo mkdir /var/www/msys/
 ```
 
 You should replace that string with real random data... (read the Django docs for more info)

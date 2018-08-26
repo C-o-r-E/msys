@@ -11,6 +11,7 @@ from django.forms import ModelForm
 from django.forms import Select, SelectMultiple, TextInput
 from django.forms import DateInput, NumberInput, TimeInput
 from django.forms import CheckboxSelectMultiple, Textarea
+from django.forms import ClearableFileInput
 
 
 class MemberType(models.Model):
@@ -60,6 +61,8 @@ class Member(models.Model):
     stripe_customer_code = models.CharField(max_length=200, null=True, blank=True)
 
     brief_notes = models.CharField(max_length=200, null=True, blank=True)
+    
+    photo = models.ImageField(upload_to="images/", blank=True)
 
     def has_active_membership(self):
         """
@@ -178,6 +181,8 @@ class AccessCard(models.Model):
         """Simplified wrapper for has_access_at_time(...)"""
         return self.has_access_at_time(datetime.datetime.now().date(),
                                        datetime.datetime.now().time())
+
+#    def has_access_now(self, node) -> bool:
 
     def has_access_at_time(self, date, time):
         """
@@ -351,7 +356,7 @@ class IncidentReport(models.Model):
     def __str__(self):
         simple_time = str(self.post_time).split('.')[0]
         ret = "Incident Report: {} {}".format(self.post_date, simple_time)
-        return ret;
+        return ret
 
 class IncidentReportForm(ModelForm):
     class Meta:
@@ -386,6 +391,10 @@ class IncidentReportForm(ModelForm):
                    'actions_todo': Textarea(attrs={'class': 'form-control'}),
         }
 
+# class EndPoint(models.Model):
+#     name = models.CharField(max_length=200)
+#     key = models.UUIDField(default=uuid.uuid4)
+
 ############### Forms #############
 
 class MemberForm(ModelForm):
@@ -395,7 +404,8 @@ class MemberForm(ModelForm):
                   'birth_date', 'address', 'city',
                   'postal_code', 'phone_number', 'email',
                   'emergency_contact', 'emergency_phone_number',
-                  'stripe_customer_code', 'brief_notes']
+                  'stripe_customer_code','brief_notes',
+                  'photo']
         labels = {
             'birth_date': 'Birthdate (MM/DD/YYYY)',
             'stripe_customer_code': 'Stripe customer code (Leave blank if none)',
@@ -415,6 +425,7 @@ class MemberForm(ModelForm):
                    'emergency_phone_number': TextInput(attrs={'class': 'form-control'}),
                    'stripe_customer_code': TextInput(attrs={'class': 'form-control'}),
                    'brief_notes': TextInput(attrs={'class': 'form-control'}),
+                   'photo': ClearableFileInput(attrs={'class': 'form-control'}),
         }
 
 class MembershipForm(ModelForm):

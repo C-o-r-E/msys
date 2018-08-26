@@ -4,14 +4,17 @@
 
 <h1>Edit member</h1>
 
-<form class="form-horizontal" role="form" action="{% url 'editDetails' member.pk %}" method="post"> {% csrf_token %}
-  {% for field in member_form %}
-  <div class="form-group">
-	 {{ field.errors }}
-	 {{ field.label_tag }} {{ field }}
-  </div>
-	 {% endfor %}
-	 <input type="submit" value="Submit" />
+<form	class="form-horizontal" role="form" 
+		action="{% url 'editDetails' member.pk %}" 
+		method="post" enctype="multipart/form-data"> 
+	{% csrf_token %}
+	{% for field in member_form %}
+	<div class="form-group">
+		{{ field.errors }}
+		{{ field.label_tag }} {{ field }}
+	</div>
+		{% endfor %}
+		<input type="submit" value="Submit" />
 </form>
 
 {% endblock %}
