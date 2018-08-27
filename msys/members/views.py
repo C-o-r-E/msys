@@ -89,8 +89,6 @@ def memberDetails(request, member_id):
 
     if mem.stripe_customer_code:
         stripe.api_key = settings.STRIPE_KEY
-        print(f"member has stripe code : [{mem.stripe_customer_code}]") #todo remove
-        #Added just in case no stripe custumer with said code was found
         try:
             sd = stripe.Customer.retrieve(mem.stripe_customer_code).to_dict()
             stripe_info = {}
@@ -101,7 +99,7 @@ def memberDetails(request, member_id):
             if len(sd['subscriptions']['data']) > 0:
                 subs =  sd['subscriptions']['data'][0].to_dict()['items']['data']
         except Exception as e:
-            print(e)
+            print(e) #Added just in case no stripe custumer with said code was found
             pass
 
         # Corey Note: Right now there is too much going on in the template
@@ -492,6 +490,49 @@ def confirmCard(request, card_rfid):
         return render(request, 'members/add_card.html', {'card_form': c_form,
                                                          'msg_info': notes,
                                                          'logged_in': True})
+
+@login_required
+def memberCheckin(request, member_id, card_id):
+    """
+    Check in a member. This is the action performed by a member presenting
+    themself to a checkpoint such as a service desk. Information about 
+    that member will then be displayed.
+    """
+
+    mem = get_object_or_404(Member, pk=member_id)
+    if card_id:
+        card = get_object_or_404(AccessCard, pk=card_id)
+
+    context = {
+        'card', card,
+        'member', mem,
+        'subs', None,
+        'good', True
+    }
+
+    if mem.stripe_customer_code:
+        stripe.api_key = settings.STRIPE_KEY
+        try:
+            sd = stripe.Customer.retrieve(mem.stripe_customer_code).to_dict()
+
+            #todo: check memberships too
+            if sd['delinquent']:
+                context['good'] = False
+
+            stripe_info = {}
+            # corey: maybe delete stripe_info?
+            for key in ['id', 'account_balance',
+                        'created', 'delinquent', 'description',
+                        'email']:
+                stripe_info[key] = sd[key]
+            if len(sd['subscriptions']['data']) > 0:
+                subs =  sd['subscriptions']['data'][0].to_dict()['items']['data']
+                context['subs'] = subs
+        except Exception as e:
+            print(e) #Added just in case no stripe custumer with said code was found
+            pass
+        
+        return render(request, 'members/member_checkin.html', context)
 
 @login_required
 def loginCard(request, card_rfid):

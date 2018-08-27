@@ -21,10 +21,10 @@ from django.conf.urls.static import static
 from django.views.generic import RedirectView
 
 urlpatterns = [
-    url(r'^/{0,1}$', RedirectView.as_view(url='members/')),
-    url(r'^admin/', admin.site.urls),
-    #url(r'^admin/', include(admin.site.urls)),
-    url(r'members/', include('members.urls')),
+    path(r'^[/]?$', RedirectView.as_view(url='members/')),
+    path(r'^admin/', admin.site.urls),
+    #path(r'^admin/', include(admin.site.urls)),
+    path(r'members/', include('members.urls')),
 ]
 
 if settings.DEBUG:

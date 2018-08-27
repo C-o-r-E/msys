@@ -221,16 +221,6 @@ class AccessCard(models.Model):
         ret += ' (' + str(self.member) + ')'
         return ret
 
-#class MemberPicture(models.Model):
-#    """
-#    Pictures of every memeber
-#    """
-#    member = models.ForeignKey(Member, models.PROTECT)
-#    dir = models.CharField(max_length=400)
-#
-#    def __str__(self):
-#        return str(self.member.first_name)
-
 class AccessGroup(models.Model):
     """
     AccessGroups are a many-to-many relationship between AccessCards and TimeBlocks
@@ -344,9 +334,9 @@ class LogAccessRequest(models.Model):
         ret = "{} {} || {}".format(self.date, self.time, self.text)
         return ret
 
-class LogCardLogin(models.Model):
+class LogCheckIn(models.Model):
     """
-    Record of logins perform by the members
+    Record of check-ins performed by the members
     """
     date = models.DateField()
     time = models.TimeField()
