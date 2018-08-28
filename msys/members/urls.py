@@ -1,5 +1,5 @@
 from django.conf.urls import url
-from django.urls import include, path
+from django.urls import include, path, re_path
 
 from . import views
 
@@ -9,7 +9,7 @@ urlpatterns = [
     url(r'^details/(?P<member_id>\d+)/$', views.memberDetails, name='memberDetails'),
     url(r'^byID/(?P<rfid>[ A-Fa-f0-9]+)/$', views.memberDetailsByRFID, name='memberDetailsByRFID'),
     url(r'^edit/(?P<member_id>\d+)/$', views.editDetails, name='editDetails'),
-    path(r'^checkin/(?P<member_id>\d+)/$')
+    re_path(r'^checkin/(?P<member_id>\d+)/$', views.memberCheckin, name='memberCheckin'),
     
     url(r'^memberships/$', views.memberships, name='membershipList'),
     url(r'^memberships/by-member/(?P<member_id>\d+)/$', views.memberships, name='membershipsByMember'),
@@ -28,10 +28,8 @@ urlpatterns = [
     
     url(r'^cards/$', views.cards, name='cardList'),
     url(r'^cards/add/$', views.addCard, name='addCard'),
-    path('cards/login/', views.noCardCode, name='noCardCode'),
-    path('cards/check/', views.noCardCode, name='noCardCode'),
     url(r'^cards/check/(?P<card_rfid>[ A-Fa-f0-9]+)/$', views.checkCard, name='checkCard'),
-    path(r'^cards/checkin/(?P<card_rfid>[ A-Fa-f0-9]+)/$', views.loginCard, name='loginCard'),
+    re_path(r'^cards/checkin/(?P<card_rfid>[ A-Fa-f0-9]+)/$', views.cardCheckin, name='cardCheckin'),
     url(r'^cards/details/(?P<card_id>\d+)/$', views.cardDetails, name='cardDetails'),
     url(r'^cards/assign/(?P<card_id>\d+)/$', views.cardAssign, name='assignCard'),
     url(r'^cards/edit/(?P<card_id>\d+)/$', views.editCard, name='editCard'),
@@ -40,7 +38,7 @@ urlpatterns = [
     url(r'^groups/$', views.groups, name='groupList'),
     url(r'^logs/events/$', views.event_log, name='eventLog'),
     url(r'^logs/access/$', views.access_log, name='accessLog'),
-    path(r'^logs/checkins/$', views.checkin_log, name='checkinLog'),
+    re_path(r'^logs/checkins/$', views.checkin_log, name='checkinLog'),
     
     url(r'^incidents/$', views.incidents, name='incidentList'),
     url(r'^incidents/report/$', views.incidentReport, name='incidentReport'),

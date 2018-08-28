@@ -344,7 +344,7 @@ class LogCheckIn(models.Model):
 
     @staticmethod
     def log_now(txt):
-        log = LogCardLogin()
+        log = LogCheckIn()
         log.date = datetime.date.today()
         log.time = datetime.datetime.now().time()
 

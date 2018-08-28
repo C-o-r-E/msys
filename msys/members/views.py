@@ -17,7 +17,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from time import sleep
 
-from .stripe_handler import manager
+#from .stripe_handler import manager
 
 import stripe
 
@@ -468,7 +468,7 @@ def cards(request):
                                                          'logged_in': True})
 
 @login_required
-def confirmCard(request, card_rfid):
+def checkCard(request, card_rfid):
     """
     Find a card by its uid and display its details.
 
@@ -479,7 +479,7 @@ def confirmCard(request, card_rfid):
     try:
         card = AccessCard.objects.get(unique_id=card_rfid)
 
-        return request, card
+        return cardDetails(request, card.pk)
     except AccessCard.DoesNotExist:
         data = {'unique_id': card_rfid}
         c_form = CardForm(initial=data)
@@ -492,22 +492,25 @@ def confirmCard(request, card_rfid):
                                                          'logged_in': True})
 
 @login_required
-def memberCheckin(request, member_id, card_id):
+def memberCheckin(request, member_id, card_id = None):
     """
     Check in a member. This is the action performed by a member presenting
     themself to a checkpoint such as a service desk. Information about 
     that member will then be displayed.
     """
 
+    #get the required Member object
     mem = get_object_or_404(Member, pk=member_id)
+    #Also get the optional AccessCard 
+    card = None
     if card_id:
         card = get_object_or_404(AccessCard, pk=card_id)
 
     context = {
-        'card', card,
-        'member', mem,
-        'subs', None,
-        'good', True
+        'card': card,
+        'member': mem,
+        'subs': None,
+        'good': True
     }
 
     if mem.stripe_customer_code:
@@ -531,104 +534,32 @@ def memberCheckin(request, member_id, card_id):
         except Exception as e:
             print(e) #Added just in case no stripe custumer with said code was found
             pass
-        
-        return render(request, 'members/member_checkin.html', context)
+    
+     #Create log
+    log_info = "Checkin: {} [#{}] checked in".format(
+        mem, mem.number)
+    if(card):
+        log_info += " with card: {}\n".format(card.unique_id)
+
+
+    if(context['good'] == False):
+        log_info += "Staff follow up required. Delinquent account."
+    LogCheckIn.log_now(log_info)
+    return render(request, 'members/member_checkin.html', context)
 
 @login_required
-def loginCard(request, card_rfid):
+def cardCheckin(request, card_rfid):
     """
-    Saves card login on LogCardLogin, and displays basic user info
+    Check member in via AccessCard
     """
-    CHECK_FOR_SUBSCRIPTION = 'sub_DThYiLwz1vS81u'
-    said_subscription_name = ' '
-    pass_status = False
-    msg = ' '
 
     #Confirm card exists
     try:
-        request, card = confirmCard(request, card_rfid)
-    except ValueError:
-        request = confirmCard(request, card_rfid)
-        return request
-    member = get_object_or_404(Member, id=card.member.id)
+        card = AccessCard.objects.get(unique_id=card_rfid)
+    except AccessCard.DoesNotExist:
+        raise Http404("Card {} not found.".format(card_rfid))
 
-    #Basic context for page rendering
-    context ={'card': card, 
-             'member': member
-            }
-
-    #Stripe related stuff
-    #Create manager obejct
-    handler = manager.manager()
-    if(member.stripe_customer_code == ''):
-        cus_code = '  '
-    else:
-        cus_code = member.stripe_customer_code
-    customer = handler.get_customer_object(cus_code)
-    #If customer exists on stripe platform
-    if(customer):
-        
-        stripe_context = {}
-        for item in ['email', 'description']:
-            stripe_context[item] = customer[item]
-        
-        context.update(stripe_context)
-        subs = customer.subscriptions
-        
-        #Get all the subscription names and compare them with CHECK_FOR_SUBSCRIPTION
-        if(len(subs.data)):
-            
-            sub_list = []
-            for data in subs.data:
-            
-                sub_id = data.to_dict()['items']['data'][0]['subscription']
-                said_subscription_name = name = data.to_dict()['items']['data'][0].to_dict()['plan']['name']
-            
-                if sub_id == CHECK_FOR_SUBSCRIPTION:
-                    pass_status = True
-            
-                sub = { 'name': name, 'id': sub_id}
-                sub_list.append(sub)
-            
-            context.update({'subs': sub_list})
-            
-            if(pass_status == False):
-                msg = "Membership '{}' not found. Could it be missing from stripe's database?".format(said_subscription_name)
-                context.update({'msg': msg})
-        
-        print(pass_status)
-        context.update({'passed': pass_status})
-    
-    else:
-        msg = "Member's ({}) customer code ({}) was not found in stripe's database. Could it be a connection problem?".format(member.first_name, cus_code)
-        context.update({'msg': msg})
-    
-    #Create log
-    if(pass_status):
-        log_info = "Member: {} [ID: {}] logged in with the card: {} [ID: {}]".format(member.first_name, member.id, card.numeric(), card.id)
-        LogCardLogin.log_now(log_info)
-    else:
-        log_info = "Member: {} [ID: {}] access denied with card: {} [ID: {}] ({})".format(member.first_name, member.id, card.numeric(), card.id, msg)
-        LogCardLogin.log_now(log_info)
-
-    return render(request, 'members/card_login.html', context)
-
-@login_required    
-def noCardCode(request):
-    """
-    Returns confirmCard() error message when no card RFID was supplied
-    """
-    return confirmCard(request, ' ')
-
-@login_required
-def checkCard(request, card_rfid):
-    try:
-        request, card = confirmCard(request, card_rfid)
-    except ValueError:
-        request = confirmCard(request, card_rfid)
-        return request
-    request, card = confirmCard(request, card_rfid)
-    return cardDetails(request, card.pk)
+    return memberCheckin(request, card.member_id, card.pk)
 
 @login_required
 def cardDetails(request, card_id):
@@ -888,11 +819,11 @@ def access_log(request):
                                                        'logged_in': True})
 
 @login_required
-def logins_log(request):
+def checkin_log(request):
     """
     Display log entries
     """
-    logs = LogCardLogin.objects.all().order_by('-pk')
+    logs = LogCheckIn.objects.all().order_by('-pk')
     paginator = Paginator(logs, 25)
 
     page = request.GET.get('page')
@@ -903,7 +834,7 @@ def logins_log(request):
     except EmptyPage:
         log_list = paginator.page(paginator.num_pages)
 
-    return render(request, 'members/login_logs.html', {'log_list': log_list,
+    return render(request, 'members/checkin_logs.html', {'log_list': log_list,
                                                        'logged_in': True})
 
 @login_required

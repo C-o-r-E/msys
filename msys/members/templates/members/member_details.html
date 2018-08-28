@@ -106,7 +106,7 @@
 			<tr>
 				<td>Photo</td>
 				<td>
-					<img class="usr-photo" src="{{member.photo.url}}">
+					{% if member.photo %}<img class="usr-photo" src="{{member.photo.url}}">{% endif %}
 				</td>
 			</tr>
 
