@@ -2,27 +2,61 @@
 {% load staticfiles %}
 {% block content %}
 
-<div class="page-header">
-	<h1>Card Login</h1>
-	{% if good %}
-	<h2 style="color: green; font-size: 50px;">GOOD</h2>
-	{% else %}
-	<h2 style="color: red; font-size: 50px;">BAD</h2>
-	{% if msg %}
-	<tr>
-		<td>
-			{{ msg }}
-		</td>
-	</tr>
-	{% endif %}
-	{% endif %}
+<h1>Check-in</h1>
+{% if good %}
+<!-- <h2 style="color: green; font-size: 50px;">ALL GOOD!</h2> -->
+<div class="alert alert-dismissible alert-success">
+		<strong>All Good!</strong> Member checked in with no issues</a>.
 </div>
+{% else %}
+<!-- <h2 style="color: red; font-size: 50px;">Review required...</h2> -->
+<div class="alert alert-dismissible alert-danger">
+		This member's account requires staff attention.
+</div>
+{% endif %}
+
+
+
+{% if member %}
+<table class="table table-hover">
+	<thead>
+			<th>Member</th>
+	</thead>
+	<tbody>
+		<tr>
+			<th scope="row">Name</th>
+			<td><a href="{% url 'memberDetails' member.pk %}">{{member.first_name}} {{member.last_name}}</a></td>
+		</tr>
+		{% if member.photo %}
+		<tr>
+			<th scope="row">Photo</th>
+			<td><img class="usr-photo" src="{{member.photo.url}}"></td>
+		</tr>
+		{% endif %}
+		<tr>
+			<th scope="row">Notes</th>
+			<td>{{member.brief_notes}}</td>
+		</tr>
+	</tbody>
+	
+</table>
+{% endif %}
+
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+
 
 {% if member %}
 
-<table class="table table-condensed table-hover table-striped">
+<table class="table table-hover ">
 	<thead>
-		<th>Member's information</th>
+		
 	</thead>
   <tbody>
 	{% if member %}
