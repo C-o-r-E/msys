@@ -17,7 +17,8 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.browser)
 
-        #self.setWindowState(Qt.WindowMaximized)
+        #todo: use config
+        self.setWindowState(Qt.WindowMaximized)
         self.show()
 
     def set_base_url(newUrl: str) -> None:
