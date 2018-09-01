@@ -557,7 +557,8 @@ def cardCheckin(request, card_rfid):
     try:
         card = AccessCard.objects.get(unique_id=card_rfid)
     except AccessCard.DoesNotExist:
-        raise Http404("Card {} not found.".format(card_rfid))
+        return checkCard(request, card_rfid)
+        #raise Http404("Card {} not found.".format(card_rfid))
 
     return memberCheckin(request, card.member_id, card.pk)
 
