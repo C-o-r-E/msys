@@ -3,7 +3,7 @@
 
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWebKitWidgets import QWebView
-from PyQt5.QtCore import QUrl, pyqtSlot
+from PyQt5.QtCore import QUrl, pyqtSlot, Qt
 
 class MainWindow(QMainWindow):
 
@@ -18,7 +18,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(self.browser)
 
         #todo: use config
-        self.setWindowState(Qt.WindowMaximized)
+        self.setWindowState(Qt.WindowFullScreen)
         self.show()
 
     def set_base_url(newUrl: str) -> None:
