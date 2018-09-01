@@ -13,7 +13,7 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         self.browser = QWebView()
-        self.browser.setUrl(QUrl(baseUrl))
+        self.browser.setUrl(QUrl(self.baseUrl))
 
         self.setCentralWidget(self.browser)
 
@@ -25,8 +25,9 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot(str)
     def navigate_to_url(self, url): #todo: fix naming (url is an id right now) ... after the demo
-        print("navigate_to_url: [{}/cards/checkin/{}/]".format(self.baseUrl, url))
-        q = QUrl(url)
+        final_url = "{}/cards/checkin/{}/".format(self.baseUrl, url)
+        print("navigate_to_url: [{}]".format(final_url))
+        q = QUrl(final_url)
         if q.scheme() == "":
             q.setScheme("http")
 
