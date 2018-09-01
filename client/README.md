@@ -12,13 +12,13 @@ sudo apt-get update
 sudo apt-get upgrade
 ```
 
-### System deps
+### System Dependencies
 
 ```
 sudo apt-get install git python3 python3-pip
 ```
 
-### Python deps
+### Python Dependencies
 
 ```
 mkdir git
@@ -33,7 +33,7 @@ sudo pip3 install RPi.GPIO
 
 ```
 
-### Get client
+### Get Client
 
 ```
 git clone https://github.com/C-o-r-E/msys.git
@@ -43,7 +43,20 @@ git clone https://github.com/C-o-r-E/msys.git
 
 ```
 cd msys/client/
-sudo python3 client.py
+chmod 755 client.py
+./client.py
 ```
 
-###
+## Kiosk Installation
+
+After installing the client, there are some additional dependencies for the Kiosk
+
+### System Dependencies
+
+```
+sudo apt-get install qt5-default pyqt5-dev pyqt5-dev-tools python3-pyqt5.qtwebkit
+```
+
+### Python Dependencies
+
+None at the moment
