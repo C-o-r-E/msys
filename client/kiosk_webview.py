@@ -3,7 +3,7 @@
 
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtWebKitWidgets import QWebView
-from PyQt5.QtCore import QUrl
+from PyQt5.QtCore import QUrl, pyqtSlot
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
