@@ -1,11 +1,9 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5.QtPrintSupport import *
+from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWebKitWidgets import QWebView
+from PyQt5.QtCore import QUrl
 
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
