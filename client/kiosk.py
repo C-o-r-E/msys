@@ -38,7 +38,7 @@ app.setOrganizationName("Helios Makerspace")
 app.setOrganizationDomain("heliosmakerspace.ca")
 
 window = MainWindow()
-t = nfcThread()
+t = nfcThread(CONFIG_POLL_DELAY)
 t.sig_got_ID.connect(window.navigate_to_url)
 
 t.start()
