@@ -37,9 +37,11 @@ app.setApplicationName("Helios Kiosk")
 app.setOrganizationName("Helios Makerspace")
 app.setOrganizationDomain("heliosmakerspace.ca")
 
-window = MainWindow()
+window = MainWindow(screen_mode=CONFIG_FULLSCREEN)
 t = nfcThread(CONFIG_POLL_DELAY)
 t.sig_got_ID.connect(window.navigate_to_url)
+
+
 
 t.start()
 app.exec_()

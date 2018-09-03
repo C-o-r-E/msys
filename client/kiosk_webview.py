@@ -7,6 +7,7 @@ from PyQt5.QtCore import QUrl, pyqtSlot, Qt
 
 class MainWindow(QMainWindow):
 
+    #todo: decouple this... maybe hand a callable to the object to form the url
     baseUrl = "https://msys.heliosmakerspace.ca/members"
 
     def __init__(self, *args, **kwargs):
@@ -17,8 +18,10 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.browser)
 
-        #todo: use config
-        self.setWindowState(Qt.WindowFullScreen)
+        if "screen_mode" in kwargs.items():
+            if kwargs["screen_mode"]:
+                self.setWindowState(Qt.WindowFullScreen)
+
         self.show()
 
     def set_base_url(newUrl: str) -> None:

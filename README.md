@@ -29,8 +29,11 @@ Msys is a member management and access control system.
 
 Msys is developed on Linux but it could probably run on a number of other systems. Certain packages are required in any case:
 
-	 * Python 3.x
- 	 * Django 2.1
+    * Python 3.5+
+    * Django 2.1
+    * Pillow
+    * Stripe
+
 
 A webserver and database will also be required. In this guide we will focus on the following ones:
 
@@ -62,6 +65,12 @@ pip install django --user
 
 ```
 pip install pillow --user
+```
+
+### get stripe
+
+```
+pip install stripe --user
 ```
 
 ### clone the repo
@@ -108,7 +117,7 @@ Once the superuser is created, we need to create the database tables required fo
 python manage.py makemigrations members
 ```
 
-### Import data
+### Import data (Ancient stuff, safe to ignore)
 
 This section is for importing the memberlist used by Helios (google sheet). It expects the sheet with member information to be exported to a CSV file. The script will attempt to open the file "members.csv" and populate the database with both member and membership information.
 
