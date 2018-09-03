@@ -10,7 +10,7 @@ class MainWindow(QMainWindow):
     #todo: decouple this... maybe hand a callable to the object to form the url
     baseUrl = "https://msys.heliosmakerspace.ca/members"
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, screen_mode=None, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
         self.browser = QWebView()
@@ -18,9 +18,8 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(self.browser)
 
-        if "screen_mode" in kwargs.items():
-            if kwargs["screen_mode"]:
-                self.setWindowState(Qt.WindowFullScreen)
+        if screen_mode:
+            self.setWindowState(Qt.WindowFullScreen)
 
         self.show()
 
