@@ -64,6 +64,10 @@ class Member(models.Model):
     
     photo = models.ImageField(upload_to="images/", blank=True)
 
+    @property
+    def full_name(self):
+        return str(self)
+
     def has_active_membership(self):
         """
         Check to see if the Member has an active Membership
