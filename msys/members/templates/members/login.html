@@ -24,7 +24,7 @@
     {% csrf_token %}
     <div group="form-group">
         <label>Username</label>
-        <input type="text" class="form-control" name="usr" placeholder="Username">
+        <input type="text" class="form-control" id="usrname_input" name="usr" placeholder="Username">
     </div>
     
     <div group="form-group">
@@ -35,9 +35,14 @@
     <button type="submit" class="btn btn-default">Submit</button>
     
 </form>
-
-
 {% endif %}
 
 {% endblock %}
 
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        $('#usrname_input').focus();
+    });
+</script>
+{% endblock %}
