@@ -727,7 +727,7 @@ def editCard(request, card_id):
                                                      'logged_in': True})
 
 @login_required
-def addCard(request):
+def addCard(request, member_id=None):
     """
     Create a new AccessCard
     """
@@ -760,6 +760,8 @@ def addCard(request):
 
     else:
         c_form = CardForm()
+        if member_id:
+            c_form=CardForm(initial={'member':member_id})
 
     return render(request, 'members/add_card.html', {'card_form': c_form, 'logged_in': True})
 

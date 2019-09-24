@@ -68,6 +68,10 @@ class Member(models.Model):
     def full_name(self):
         return str(self)
 
+    @property
+    def memberships(self):
+        return self.membership_set
+
     def has_active_membership(self):
         """
         Check to see if the Member has an active Membership

@@ -28,6 +28,7 @@ urlpatterns = [
     
     url(r'^cards/$', views.cards, name='cardList'),
     url(r'^cards/add/$', views.addCard, name='addCard'),
+    url(r'^cards/add/(?P<member_id>\d+)$', views.addCard, name='addCardForMember'),
     url(r'^cards/check/(?P<card_rfid>[ A-Fa-f0-9]+)/$', views.checkCard, name='checkCard'),
     re_path(r'^cards/checkin/(?P<card_rfid>[ A-Fa-f0-9]+)/$', views.cardCheckin, name='cardCheckin'),
     url(r'^cards/details/(?P<card_id>\d+)/$', views.cardDetails, name='cardDetails'),
