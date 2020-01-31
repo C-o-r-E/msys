@@ -160,15 +160,17 @@ class Maintenence:
             report += " )\n"
         report += "\nActive Non-staff w/o Stripe, no promotion (paid cash? zombies? action required?): {}\n".format(
             len(zombies))
-        report += "Those members are:\n"
-        for z in zombies:
-            report += "\t{}\n".format(z)
+        if zombies:
+            report += "Those members are:\n"
+            for z in zombies:
+                report += "\t{}\n".format(z)
 
         # Stripe related stats
 
         m_list = Member.objects.exclude(stripe_customer_code__exact='').exclude(stripe_customer_code__exact=None)
         report += "\n\nMembers with Stripe IDs: {}\n".format(len(m_list))
 
+        del_lst = []
         bad_lst = []
         bad_active = []
         err_lst = []
@@ -181,15 +183,24 @@ class Maintenence:
             try:
                 cus = stripe.Customer.retrieve(mem.stripe_customer_code)
                 cus_d = cus.to_dict()
-                if cus_d['delinquent']:
+                if 'delinquent' in cus_d and cus_d['delinquent']:
                     bad_lst.append(mem)
                     if mem.has_active_membership():
                         bad_active.append(mem)
+                elif 'deleted' in cus_d:
+                    del_lst.append(mem)
 
             except stripe.error.InvalidRequestError as e:
                 print("error on member {}: {}".format(mem, e))
                 err_lst.append({'member': mem, 'error': e})
                 pass
+
+        if len(del_lst) > 0:
+            report += "\n\nThere are {} members with deleted stripe data:\n".format(len(del_lst))
+            for m in del_lst:
+                report += "\t{} (#:{})\n".format(m, m.number)
+        else:
+            report += "\n\nThere are no members with deleted stripe data\n"
 
         if len(bad_active) > 0:
             report += "\n\nThere are {} active delinquent members (failed payment on Stripe):\n".format(len(bad_active))
